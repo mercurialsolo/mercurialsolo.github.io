@@ -39,40 +39,21 @@ params:
   showtoc: true
   tocopen: false
 
-  # Profile mode (like Lilian Weng's site)
-  profileMode:
-    enabled: true
-    title: "mercurialsolo"
-    subtitle: "Ideas at the intersection of technology and creativity"
-    imageUrl: ""
-    imageWidth: 120
-    imageHeight: 120
-    imageTitle: ""
-    buttons:
-      - name: Posts
-        url: posts
-      - name: Projects
-        url: projects
-      - name: Reading
-        url: reading
-      - name: Travel
-        url: travel
+  # Home info mode (like Lilian Weng's site) - shows intro + post list
+  homeInfoParams:
+    Title: "mercurialsolo"
+    Content: "Ideas at the intersection of technology and creativity"
 
-  # Social icons
+  # Social icons (shown below home info)
   socialIcons:
     - name: github
       url: "https://github.com/mercurialsolo"
-    - name: twitter
-      url: "https://twitter.com/mercurialsolo"
+    - name: x
+      url: "https://x.com/mercurialsolo"
     - name: linkedin
       url: "https://linkedin.com/in/mercurialsolo"
     - name: rss
       url: "index.xml"
-
-  # Home info (fallback if profile mode disabled)
-  homeInfoParams:
-    Title: "mercurialsolo"
-    Content: "Ideas at the intersection of technology and creativity"
 
   # Search
   fuseOpts:
