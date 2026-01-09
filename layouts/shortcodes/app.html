@@ -1,0 +1,13 @@
+{{- $src := .Get "src" -}}
+{{- $height := .Get "height" | default "400px" -}}
+{{- $title := .Get "title" | default "Embedded App" -}}
+
+<div class="embedded-app" style="margin: 1.5rem 0;">
+  <iframe
+    src="{{ $src }}"
+    title="{{ $title }}"
+    style="width: 100%; height: {{ $height }}; border: 1px solid var(--border); border-radius: 8px; background: var(--code-bg);"
+    loading="lazy"
+    sandbox="allow-scripts allow-same-origin"
+  ></iframe>
+</div>
