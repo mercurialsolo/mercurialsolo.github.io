@@ -41,8 +41,3 @@ Open source project for running Cabal containers
 | **segmentor** | User cohort segmentation based on behavior | Python |
 | **apix** | Docs optimizer platform for coding models | TypeScript |
 
----
-
-## Work Experience
-
-*Paste your LinkedIn experience here or share it with me to populate this section.*
