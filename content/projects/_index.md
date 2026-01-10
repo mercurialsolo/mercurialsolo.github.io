@@ -29,9 +29,10 @@ Open source project for running Cabal containers
 | Project | Description | Stack |
 |---------|-------------|-------|
 | **counsel** | Multi-LLM Council for AI debate & synthesis | Python |
-| **cabal-core** | Autonomous Coding Cluster | Python |
-| **tansen** | Convert documents into Socratic audio shows | Python |
+| **apix** | Docs optimizer platform for coding models | Rust |
+| **cabal** | Autonomous Coding Cluster | Python |
 | **milo** | Model Instruction Language Optimizer | TypeScript |
+| **tansen** | Convert documents into Socratic audio shows | Python |
 | **ada** | Autonomous Digital Agents | Python |
 | **chatty** | Voice agent for outbound calls | Python |
 | **househunter** | AI assistant for housing relocation | Python |
@@ -39,5 +40,4 @@ Open source project for running Cabal containers
 | **rudra** | Multi-cloud deployment platform | TypeScript |
 | **email-assistant** | Email Assistant AI | TypeScript |
 | **segmentor** | User cohort segmentation based on behavior | Python |
-| **apix** | Docs optimizer platform for coding models | TypeScript |
 
