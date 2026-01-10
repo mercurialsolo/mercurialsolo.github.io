@@ -1,6 +1,6 @@
 baseURL: https://mercurialsolo.github.io/
 languageCode: en-us
-title: mercurialsolo
+title: Barada's log
 theme: PaperMod
 
 enableRobotsTXT: true
@@ -15,7 +15,7 @@ minify:
 
 params:
   env: production
-  title: mercurialsolo
+  title: Barada's log
   description: "Ideas, projects, and explorations"
   keywords: [Blog, Portfolio, Technology, AI]
   author: mercurialsolo
@@ -41,7 +41,7 @@ params:
 
   # Home info mode (like Lilian Weng's site) - shows intro + post list
   homeInfoParams:
-    Title: "mercurialsolo"
+    Title: "Barada's log"
     Content: "Ideas at the intersection of technology and creativity"
 
   # Social icons (shown below home info)

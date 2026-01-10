@@ -1,0 +1,5 @@
+/* Reduce whitespace in home info section */
+.first-entry.home-info {
+    min-height: auto;
+    margin-bottom: var(--gap);
+}
