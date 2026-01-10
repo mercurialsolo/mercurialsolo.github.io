@@ -20,11 +20,6 @@ Practices & code for reducing hallucination in coding agents
 
 Open source project for running Cabal containers
 
-### [python-feedgen](https://github.com/mercurialsolo/python-feedgen)
-`Python`
-
-Python module to generate ATOM feeds, RSS feeds and Podcasts
-
 ---
 
 ## Private Projects
@@ -44,6 +39,7 @@ Python module to generate ATOM feeds, RSS feeds and Podcasts
 | **rudra** | Multi-cloud deployment platform | TypeScript |
 | **email-assistant** | Email Assistant AI | TypeScript |
 | **segmentor** | User cohort segmentation based on behavior | Python |
+| **apix** | Docs optimizer platform for coding models | TypeScript |
 
 ---
 
