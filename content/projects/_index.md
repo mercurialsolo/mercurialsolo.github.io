@@ -20,6 +20,16 @@ Practices & code for reducing hallucination in coding agents
 
 Open source project for running Cabal containers
 
+### [plan-lint](https://github.com/mercurialsolo/plan-lint)
+`TypeScript`
+
+Linter for AI agent plans - validates structure and safety
+
+### [safeguards](https://github.com/mercurialsolo/safeguards)
+`TypeScript`
+
+Safety guardrails and constraints for AI agents
+
 ---
 
 ## Private Projects
