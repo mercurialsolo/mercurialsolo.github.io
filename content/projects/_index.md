@@ -38,7 +38,7 @@ Safety guardrails and constraints for AI agents
 
 | Project | Description | Stack |
 |---------|-------------|-------|
-| **counsel** | Multi-LLM Council for AI debate & synthesis | Python |
+| **counsel** | Multi-LLM Council for deep research, debate & synthesis | Python |
 | **apix** | Docs optimizer platform for coding models | Rust |
 | **cabal** | Autonomous Coding Cluster | Python |
 | **milo** | Model Instruction Language Optimizer | TypeScript |
