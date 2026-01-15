@@ -1,14 +1,14 @@
 ---
-title: "Appliances, Factories, Grids: Where AI Value Accrues"
+title: "Appliances, Factories, Grids"
 date: 2026-01-15T00:00:00
 author: mercurialsolo
 tags: [ai, infrastructure, investing, startups, vertical-ai, barbell-thesis]
-summary: "The barbell thesis is correct, but most people misunderstand which barbells matter. Value concentrates at atoms (chips) and relationships (vertical apps). Everything else gets squeezed."
+summary: "Most misunderstand which barbells matter. Value concentrates at atoms (chips) and relationships (vertical apps). Everything else gets squeezed."
 ShowToc: true
 TocOpen: false
 ---
 
-> ***The winners own the chips or the customers; everything else is a footnote.***
+> ***Own the chips or the customers; everything else is a footnote.***
 
 ---
 
