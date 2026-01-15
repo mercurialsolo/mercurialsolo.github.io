@@ -121,7 +121,9 @@ The Cursor paradox: $400M → $2.6B → $9.9B → $29.3B in 15 months. Fastest B
 
 Is Cursor building a defensible relationship layer, or riding a temporary capability gap?
 
-I genuinely don't know. That uncertainty is the point. The barbell thesis gives false confidence. Vertical integration means the rules keep changing.
+I genuinely don't know. How long is the party gonna last? Will it get scooped up by the labs? 
+
+The barbell thesis gives false confidence. Vertical integration means the rules keep changing.
 
 ---
 
