@@ -1,0 +1,68 @@
+{{- /* Term shortcode for inline popover explanations
+     Usage:
+       {{< term "RAG" >}}                          - lookup from glossary, display as "RAG"
+       {{< term name="RAG" >}}                     - same as above
+       {{< term name="moat" def="..." >}}          - inline definition
+       {{< term key="context-window" text="context windows" >}} - custom display text
+*/ -}}
+
+{{- $key := "" -}}
+{{- $displayText := "" -}}
+{{- $definition := "" -}}
+
+{{- /* Get term key - positional arg takes precedence */ -}}
+{{- if .Get 0 -}}
+  {{- $key = .Get 0 -}}
+{{- else if .Get "name" -}}
+  {{- $key = .Get "name" -}}
+{{- else if .Get "key" -}}
+  {{- $key = .Get "key" -}}
+{{- end -}}
+
+{{- /* Get display text - defaults to key */ -}}
+{{- if .Get "text" -}}
+  {{- $displayText = .Get "text" -}}
+{{- else -}}
+  {{- $displayText = $key -}}
+{{- end -}}
+
+{{- /* Get definition - priority: inline > frontmatter > global glossary */ -}}
+{{- if .Get "def" -}}
+  {{- $definition = .Get "def" -}}
+{{- else -}}
+  {{- /* Check per-post frontmatter glossary */ -}}
+  {{- with .Page.Params.glossary -}}
+    {{- with index . $key -}}
+      {{- $definition = . -}}
+    {{- end -}}
+  {{- end -}}
+
+  {{- /* Fall back to global glossary */ -}}
+  {{- if not $definition -}}
+    {{- with site.Data.glossary -}}
+      {{- with index . $key -}}
+        {{- $definition = .definition -}}
+      {{- end -}}
+    {{- end -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* Mark page as having terms (for conditional JS loading) */ -}}
+{{- .Page.Store.Set "hasTerms" true -}}
+
+{{- /* Generate unique ID for accessibility */ -}}
+{{- $id := printf "term-%s" (anchorize $key) -}}
+
+{{- /* Render the term */ -}}
+{{- if $definition -}}
+<span class="term-link"
+      tabindex="0"
+      data-tippy-content="{{ $definition | htmlEscape }}"
+      aria-describedby="{{ $id }}"
+      role="button"
+      aria-haspopup="true">{{ $displayText }}</span>
+{{- else -}}
+{{- /* No definition found - render plain text with warning class */ -}}
+<span class="term-link term-undefined" title="Definition not found for: {{ $key }}">{{ $displayText }}</span>
+{{- warnf "Term shortcode: No definition found for '%s' in %s" $key .Page.File.Path -}}
+{{- end -}}

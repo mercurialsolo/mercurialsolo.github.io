@@ -7,6 +7,11 @@ tags: [ai, infrastructure, investing, startups, vertical-ai, barbell-thesis]
 summary: "Own the chips or the customers. Everything else is a footnote."
 ShowToc: true
 TocOpen: false
+glossary:
+  barbell-thesis: "The theory that AI value concentrates at two extremes: infrastructure (chips, compute) and applications (user relationships), while the middle layer gets squeezed."
+  data-gravity: "The tendency for applications and services to be pulled toward where data resides, making migration increasingly costly over time."
+  vertical-integration: "When a company controls multiple layers of the stack (infrastructure, platform, and application) rather than specializing in one."
+  acqui-hire: "An acquisition made primarily to recruit a company's employees rather than to obtain its products or services."
 ---
 
 > ***Own the chips or the customers. Everything else is a footnote.***
@@ -17,7 +22,7 @@ TocOpen: false
 
 The AI infrastructure buildout is $400B annually. Revenue across all AI companies is maybe $20B. Either we're in a historic bubble, or we're funding something we can't yet articulate.
 
-Every VC newsletter makes the same argument: models will commoditize, value shifts to applications. The barbell thesis. And yet those same VCs keep funding orchestration middleware, model routers, and evaluation platforms. LangChain raised $125M at $1.25B in October 2025. Cursor hit $29B after five rounds in 18 months.
+Every VC newsletter makes the same argument: models will commoditize, value shifts to applications. The {{< term "barbell-thesis" >}}. And yet those same VCs keep funding orchestration middleware, model routers, and evaluation platforms. LangChain raised $125M at $1.25B in October 2025. Cursor hit $29B after five rounds in 18 months.
 
 The contradiction reveals something: **the barbell thesis assumes the two ends stay separate.** They don't.
 
@@ -45,7 +50,7 @@ This is correct as a static snapshot. It's wrong as a prediction.
 
 ## Vertical Integration Collapses the Stack
 
-The labs aren't subject to the barbell squeeze because they're playing all three layers simultaneously. And they're getting better at appliances faster than startups are getting better at factories.
+The labs aren't subject to the barbell squeeze because they're playing all three layers simultaneously—{{< term "vertical-integration" >}} in action. And they're getting better at appliances faster than startups are getting better at factories.
 
 **The API cannibalization problem:** OpenAI cut its API revenue forecast by $5B over five years. ChatGPT Pro ($200/month) loses money due to "higher than expected usage." The pattern: appliance success eats infrastructure revenue. Labs compete with their own API customers. This isn't an aberration; it's the strategy.
 
@@ -58,7 +63,7 @@ The labs aren't subject to the barbell squeeze because they're playing all three
 | Company | Fate | Signal |
 |---------|------|--------|
 | Weights & Biases | Acquired ($1.7B) by CoreWeave | Infrastructure absorbs factory |
-| Humanloop | Acqui-hired by Anthropic | Labs absorb factory |
+| Humanloop | {{< term "acqui-hire" >}}d by Anthropic | Labs absorb factory |
 | Pinecone | CEO change (Sept 2025) | Struggling for relevance |
 | LangChain | Independent | $16M revenue on $1.25B valuation (78x multiple) |
 
@@ -74,22 +79,34 @@ The barbell isn't two weights on opposite ends anymore. It's one giant weight (i
 
 **1. Infrastructure suppliers with manufacturing moats**
 
-NVIDIA and TSMC maintain 73% gross margins through complexity and ecosystem lock-in. The January 2025 DeepSeek moment (NVIDIA shed $600B in a single day when DeepSeek claimed $5.5M training costs) briefly questioned this. A week later, NVIDIA recovered half the losses. Cheap training doesn't mean cheap inference at scale.
+NVIDIA and TSMC maintain 73% gross margins through complexity and ecosystem lock-in. The January 2025 DeepSeek moment (NVIDIA shed $600B in a single day when DeepSeek claimed $5.5M training costs) briefly questioned this. A week later, NVIDIA recovered half the losses. Cheap training doesn't mean cheap {{< term "inference" >}} at scale.
 
 **2. Vertical specialists with domain moats**
 
 Harvey: $1.5B → $3B → $5B → $8B valuation in 18 months. Four rounds, majority of top 10 U.S. law firms. Abridge in clinical AI. ElevenLabs in voice. Regulatory complexity and proprietary data create barriers labs can't easily cross.
 
-**3. Embedded platforms with data gravity**
+**3. Embedded platforms with {{< term "data-gravity" >}}**
 
 Databricks at $62B. Once your data lives there, switching costs compound. The difference between point solutions (absorbed) and platforms (survive) is whether you become the system of record.
 
 **What doesn't survive:**
 
 - Horizontal wrappers (Cursor vs. Claude Code, Grammarly vs. Office Editor)
-- Standalone vector DBs (Pinecone lost Notion; pgvector absorbed simple use cases)
+- Standalone {{< term name="vector DBs" def="Databases optimized for storing and querying high-dimensional vectors (embeddings), enabling semantic search and similarity matching." >}} (Pinecone lost Notion; pgvector absorbed simple use cases)
 - "Better ChatGPT" plays
 - Single-model dependencies
+
+{{< highlight-box title="The Survival Test" >}}
+Ask yourself three questions before building:
+
+1. **Do you have a manufacturing moat?** Physical complexity that takes years to replicate (NVIDIA, TSMC).
+
+2. **Do you have a regulatory moat?** Domain expertise in healthcare, legal, or finance where compliance is the product.
+
+3. **Do you have data gravity?** Are you the system of record where switching costs compound over time?
+
+If you can't answer yes to at least one, you're building a feature—not a company.
+{{< /highlight-box >}}
 
 ---
 

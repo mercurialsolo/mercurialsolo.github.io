@@ -98,9 +98,90 @@ Manual build outputs to `./public/`.
 3. **Series posts** use naming convention: `topic-partN-subtitle.md`
 4. **PaperMod theme** is a submodule - don't edit files in `themes/`
 
+## Custom Formatting
+
+### Term Popups (Glossary)
+
+Add clickable terms that reveal definitions on click. Great for jargon, acronyms, or concepts that need brief explanation.
+
+```markdown
+<!-- From global glossary (data/glossary.yaml) -->
+The {{< term "RAG" >}} approach improves accuracy.
+
+<!-- Custom display text -->
+Understanding {{< term key="context-window" text="context windows" >}} is crucial.
+
+<!-- Inline definition (one-off terms) -->
+The {{< term name="moat" def="A sustainable competitive advantage" >}} erodes quickly.
+```
+
+**Adding to global glossary** (`data/glossary.yaml`):
+```yaml
+RAG:
+  definition: "Retrieval-Augmented Generation - combining LLMs with external knowledge retrieval."
+```
+
+**Post-specific terms** (in frontmatter):
+```yaml
+glossary:
+  barbell-thesis: "Value concentrates at infrastructure and applications, squeezing the middle."
+  custom-term: "A definition only relevant to this post"
+```
+
+Priority: inline `def` > post frontmatter > global glossary
+
+---
+
+### Highlight Boxes (Callouts)
+
+Create visually distinct sections for key insights, summaries, or important callouts.
+
+```markdown
+{{< highlight-box title="The Key Insight" >}}
+This content gets a subtle background and left border accent.
+
+Supports **full markdown**: lists, links, bold, etc.
+
+- Point one
+- Point two
+{{< /highlight-box >}}
+```
+
+Omit `title=""` for a titleless callout box.
+
+---
+
+### Collapsible Sections
+
+Use the built-in `collapse` shortcode for expandable content:
+
+```markdown
+{{< collapse summary="Click to expand" >}}
+Hidden content goes here.
+
+Supports markdown.
+{{< /collapse >}}
+```
+
+---
+
+### Embedded Apps
+
+For interactive JavaScript applications:
+
+```markdown
+{{< app src="/apps/demo.html" height="400px" title="Demo App" >}}
+```
+
+Place HTML files in `static/apps/`.
+
+---
+
 ## Content Guidelines
 
 - Posts focus on AI, technology, and professional insights
 - Write in clear, direct prose (no excessive hedging)
 - Include code examples where relevant
 - Link to external sources with context
+- Use **term popups** for jargon that readers might not know
+- Use **highlight boxes** sparingly for key takeaways

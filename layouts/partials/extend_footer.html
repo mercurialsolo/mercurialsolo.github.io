@@ -1,0 +1,44 @@
+{{- /* Load Tippy.js only on pages that use the term shortcode */ -}}
+{{- if or (findRE `\{\{<\s*term\s` .RawContent) (findRE `\{\{%\s*term\s` .RawContent) }}
+<script src="https://unpkg.com/@popperjs/core@2"></script>
+<script src="https://unpkg.com/tippy.js@6"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Tippy on all term links
+    tippy('.term-link:not(.term-undefined)', {
+      trigger: 'click',
+      interactive: true,
+      allowHTML: true,
+      placement: 'top',
+      maxWidth: 350,
+      theme: 'term-popup',
+      animation: 'fade',
+      duration: [200, 150],
+      // Accessibility
+      aria: {
+        content: 'describedby',
+        expanded: 'auto'
+      },
+      // Allow keyboard dismissal
+      onShow(instance) {
+        // Close other open tooltips
+        document.querySelectorAll('[data-tippy-root]').forEach(el => {
+          if (el._tippy && el._tippy !== instance) {
+            el._tippy.hide();
+          }
+        });
+      }
+    });
+
+    // Add keyboard support - Enter to open
+    document.querySelectorAll('.term-link:not(.term-undefined)').forEach(el => {
+      el.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          el.click();
+        }
+      });
+    });
+  });
+</script>
+{{- end }}

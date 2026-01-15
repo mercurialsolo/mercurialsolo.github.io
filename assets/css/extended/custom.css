@@ -49,3 +49,105 @@
         padding: 0.5em 0.75em;
     }
 }
+
+/* Term popup link styling */
+.term-link {
+    border-bottom: 1px dashed var(--primary);
+    cursor: pointer;
+    text-decoration: none;
+    transition: border-color 0.2s ease;
+}
+
+.term-link:hover,
+.term-link:focus {
+    border-bottom-style: solid;
+    outline: none;
+}
+
+.term-link:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+    border-radius: 2px;
+}
+
+.term-undefined {
+    border-bottom-color: var(--secondary);
+    opacity: 0.7;
+}
+
+/* Tippy.js custom theme for term popups */
+.tippy-box[data-theme~='term-popup'] {
+    background-color: var(--theme);
+    color: var(--primary);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+    font-size: 0.9em;
+    line-height: 1.5;
+    padding: 0.25em;
+}
+
+.tippy-box[data-theme~='term-popup'] .tippy-content {
+    padding: 0.75em 1em;
+}
+
+.tippy-box[data-theme~='term-popup'] .tippy-arrow {
+    color: var(--theme);
+}
+
+/* Arrow border effect */
+.tippy-box[data-theme~='term-popup'] .tippy-arrow::before {
+    border-top-color: var(--border);
+}
+
+.tippy-box[data-theme~='term-popup'][data-placement^='bottom'] .tippy-arrow::before {
+    border-bottom-color: var(--border);
+}
+
+.tippy-box[data-theme~='term-popup'][data-placement^='left'] .tippy-arrow::before {
+    border-left-color: var(--border);
+}
+
+.tippy-box[data-theme~='term-popup'][data-placement^='right'] .tippy-arrow::before {
+    border-right-color: var(--border);
+}
+
+/* Highlight box / callout sections */
+.highlight-box {
+    background: var(--code-bg);
+    border-left: 3px solid var(--tertiary);
+    border-radius: 6px;
+    padding: 1.25em 1.5em;
+    margin: 1.5em 0;
+}
+
+.highlight-box-title {
+    font-size: 1.2em;
+    font-weight: 600;
+    margin: 0 0 0.75em 0;
+    color: var(--primary);
+}
+
+.highlight-box-content {
+    color: var(--content);
+    line-height: 1.7;
+}
+
+.highlight-box-content p {
+    margin: 0 0 1em 0;
+}
+
+.highlight-box-content p:last-child {
+    margin-bottom: 0;
+}
+
+.highlight-box-content a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-decoration-color: var(--secondary);
+    text-underline-offset: 2px;
+}
+
+.highlight-box-content a:hover {
+    text-decoration-color: var(--primary);
+}

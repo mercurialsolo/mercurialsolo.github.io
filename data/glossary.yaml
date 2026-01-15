@@ -1,0 +1,32 @@
+# Global glossary for term popups
+# Usage: {{< term "term-key" >}} in markdown
+
+RAG:
+  definition: "Retrieval-Augmented Generation - combining LLMs with external knowledge retrieval to reduce hallucinations and provide up-to-date information."
+
+context-window:
+  definition: "The maximum amount of text (measured in tokens) an LLM can process at once. Larger windows enable longer conversations and document analysis."
+
+hallucination:
+  definition: "When an LLM generates plausible-sounding but factually incorrect information with apparent confidence."
+
+fine-tuning:
+  definition: "Training a pre-trained model on domain-specific data to improve performance on particular tasks."
+
+prompt-engineering:
+  definition: "The practice of crafting inputs to LLMs to elicit desired outputs, often involving specific formatting, examples, or instructions."
+
+inference:
+  definition: "The process of running a trained model to generate predictions or outputs, as opposed to training the model."
+
+embeddings:
+  definition: "Dense vector representations of text that capture semantic meaning, enabling similarity search and clustering."
+
+transformer:
+  definition: "The neural network architecture behind modern LLMs, using self-attention mechanisms to process sequences in parallel."
+
+token:
+  definition: "The basic unit of text processing in LLMs - roughly 4 characters or 0.75 words in English."
+
+agent:
+  definition: "An AI system that can take actions autonomously, often using tools and making decisions to accomplish goals."

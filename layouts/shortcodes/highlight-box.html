@@ -1,0 +1,19 @@
+{{- /* Highlight box shortcode for callout sections
+     Usage:
+       {{< highlight-box title="The Glass Slipper Effect" >}}
+       Content goes here with **markdown** support.
+
+       Multiple paragraphs work too.
+       {{< /highlight-box >}}
+*/ -}}
+
+{{- $title := .Get "title" -}}
+
+<div class="highlight-box">
+  {{- if $title }}
+  <h3 class="highlight-box-title">{{ $title }}</h3>
+  {{- end }}
+  <div class="highlight-box-content">
+    {{ .Inner | markdownify }}
+  </div>
+</div>
