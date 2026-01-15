@@ -12,6 +12,8 @@ A reference for writing well-formatted articles on this site. These techniques i
 | Highlight box | `{{< highlight-box title="..." >}}` | Key insights, summaries |
 | Collapsible | `{{< collapse summary="..." >}}` | Optional details, long content |
 | Table | Markdown tables | Comparisons, structured data |
+| Mermaid diagram | ` ```mermaid ` | Flowcharts, sequences, relationships |
+| Interactive chart | `{{< app src="..." >}}` | Explorable data, hover states |
 | Blockquote | `> text` | Quotes, key statements |
 
 ---
@@ -133,6 +135,8 @@ memoization for performance...
 
 Use for comparisons and structured data.
 
+### Basic Table
+
 ```markdown
 | Layer | Examples | Margin |
 |-------|----------|--------|
@@ -141,12 +145,246 @@ Use for comparisons and structured data.
 | Appliance | Cursor, Harvey | 70-80% |
 ```
 
+### Column Alignment
+
+```markdown
+| Left | Center | Right |
+|:-----|:------:|------:|
+| Text | Text   | $100  |
+| More | More   | $250  |
+```
+
+- `:---` left align
+- `:---:` center align
+- `---:` right align
+
+### Tables with Rich Content
+
+```markdown
+| Company | Status | Signal |
+|---------|--------|--------|
+| **Weights & Biases** | Acquired ($1.7B) | Infrastructure absorbs factory |
+| Humanloop | {{< term "acqui-hire" >}}d | Labs absorb factory |
+| LangChain | Independent | 78x revenue multiple |
+```
+
+Tables support bold, links, and term popups inside cells.
+
 ### Table Best Practices
 
 - Keep tables simple (3-5 columns max)
 - Use bold for row headers when needed
-- Align numbers to make comparisons easy
+- Right-align numbers for easy comparison
 - Consider a highlight box for single-row "key facts"
+- For complex data, consider a chart instead
+
+### When Tables Don't Work
+
+If your table has:
+- More than 5 columns → split into multiple tables or use a chart
+- Long text in cells → use a list or prose instead
+- Hierarchical data → use nested lists or a diagram
+
+---
+
+## Charts & Diagrams
+
+Three options depending on complexity and interactivity needs.
+
+### Option 1: Mermaid Diagrams (Built-in)
+
+Best for: flowcharts, sequences, simple visualizations. Renders automatically.
+
+#### Flowchart
+
+````markdown
+```mermaid
+graph TD
+    A[User Request] --> B{Has Context?}
+    B -->|Yes| C[Use Cache]
+    B -->|No| D[Call API]
+    C --> E[Return Response]
+    D --> E
+```
+````
+
+#### Sequence Diagram
+
+````markdown
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as App
+    participant M as Model
+    U->>A: Send prompt
+    A->>M: Forward with context
+    M->>A: Generate response
+    A->>U: Display result
+```
+````
+
+#### Pie Chart
+
+````markdown
+```mermaid
+pie title Market Share 2025
+    "OpenAI" : 45
+    "Anthropic" : 25
+    "Google" : 20
+    "Others" : 10
+```
+````
+
+#### Timeline
+
+````markdown
+```mermaid
+timeline
+    title AI Infrastructure Evolution
+    2022 : ChatGPT launches
+    2023 : GPT-4, Claude 2
+    2024 : Multimodal models
+    2025 : Agent frameworks
+```
+````
+
+#### Quadrant Chart
+
+````markdown
+```mermaid
+quadrantChart
+    title Build vs Buy Decision
+    x-axis Low Differentiation --> High Differentiation
+    y-axis Low Complexity --> High Complexity
+    quadrant-1 Build In-House
+    quadrant-2 Partner
+    quadrant-3 Buy Off-Shelf
+    quadrant-4 Outsource
+    Product A: [0.7, 0.8]
+    Product B: [0.3, 0.2]
+```
+````
+
+**Mermaid reference:** https://mermaid.js.org/syntax/flowchart.html
+
+---
+
+### Option 2: Static Images
+
+Best for: complex charts, branded visuals, charts from other tools.
+
+```markdown
+![Bar chart showing revenue by segment: Grid $200B, Factory $30B, Appliance $15B](/images/post-name/revenue-chart.png)
+```
+
+**Creating static charts:**
+- Use tools like Figma, Excalidraw, or Python (matplotlib/seaborn)
+- Export as PNG with transparent or matching background
+- Place in `static/images/post-name/`
+- Always include descriptive alt text
+
+**Best practices:**
+- Use consistent colors across posts
+- Export at 2x resolution for retina displays
+- Keep file sizes reasonable (<500KB)
+
+---
+
+### Option 3: Interactive Charts (Embedded Apps)
+
+Best for: explorable data, hover states, animations, complex interactivity.
+
+Interactive charts require creating a standalone HTML file with JavaScript.
+
+#### Step 1: Create the chart file
+
+Create `static/apps/my-chart.html`:
+
+```html
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { margin: 0; background: transparent; }
+    #chart { max-width: 100%; }
+  </style>
+</head>
+<body>
+  <canvas id="chart"></canvas>
+  <script>
+    new Chart(document.getElementById('chart'), {
+      type: 'bar',
+      data: {
+        labels: ['Grid', 'Factory', 'Appliance'],
+        datasets: [{
+          label: 'Market Size ($B)',
+          data: [200, 30, 15],
+          backgroundColor: ['#4a9eff', '#ff6b6b', '#4ecdc4']
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { labels: { color: '#fff' } }
+        },
+        scales: {
+          x: { ticks: { color: '#fff' } },
+          y: { ticks: { color: '#fff' } }
+        }
+      }
+    });
+  </script>
+</body>
+</html>
+```
+
+#### Step 2: Embed in your post
+
+```markdown
+{{< app src="/apps/my-chart.html" height="300px" title="Market Size by Layer" >}}
+```
+
+#### Interactive Chart Libraries
+
+| Library | Best For | Size |
+|---------|----------|------|
+| [Chart.js](https://chartjs.org) | Simple charts, small footprint | 60KB |
+| [D3.js](https://d3js.org) | Custom visualizations, full control | 250KB |
+| [Plotly](https://plotly.com/javascript/) | Scientific charts, 3D | 3MB |
+| [Apache ECharts](https://echarts.apache.org) | Complex dashboards | 800KB |
+
+#### When to Use Interactive
+
+- Data that benefits from hover/tooltip exploration
+- Time series with zoom/pan
+- Comparisons where users want to filter
+- Animations that tell a story
+
+#### When NOT to Use Interactive
+
+- Simple comparisons (use a table)
+- Static relationships (use Mermaid)
+- One-time reference (use static image)
+- Mobile-first audience (interactions are harder on touch)
+
+---
+
+### Chart Decision Guide
+
+```
+Is the data simple (< 5 items)?
+├── Yes → Use a TABLE
+└── No ↓
+
+Is it a flow, process, or relationship?
+├── Yes → Use MERMAID
+└── No ↓
+
+Does it need interactivity (hover, zoom, filter)?
+├── Yes → Use EMBEDDED APP (Chart.js, D3, etc.)
+└── No → Use STATIC IMAGE
+```
 
 ---
 
