@@ -1,0 +1,40 @@
+# Barada's Log
+
+> Personal blog exploring AI infrastructure economics, model-adjacent product development, competitive strategy, and technology trends. Written by mercurialsolo.
+
+## Blog Posts
+
+- [Appliances, Factories, Grids](/posts/appliances-factories-grids/): AI infrastructure economics and the barbell thesis - value concentrates at atoms (chips, silicon) and relationships (vertical apps with workflow embedding). Everything in the middle gets squeezed.
+- [Every Inch Matters](/posts/every-inch-matters/): Strategy in dense competitive environments - when maneuver space collapses, marginal gains compound and optimization beats innovation. From chess endgames to trench warfare to hypercompetitive markets.
+- [Personal Agents](/posts/personal-agents/): The rise of augmented knowledge workers - AI as calibration layer between human intent and machine execution. Workers become orchestrators of AI capabilities.
+
+## Model-Adjacent Products Series
+
+A 6-part guide to building production AI systems. The foundation model is the CPU; your product is the computer you build around it.
+
+- [Series Overview](/posts/model-adjacent-series/): Introduction to model-adjacent products and the cognition infrastructure built around foundation models
+- [Pre-Read: The Autonomy Ladder](/posts/model-adjacent-part0-autonomy-ladder/): Mental models for human-AI collaboration - why L1 copilots need different infrastructure than L4 autonomous agents
+- [Part 1: Architecture](/posts/model-adjacent-part1-architecture/): The physics of production AI - latency engineering, token economics, streaming patterns
+- [Part 2: Context & Tools](/posts/model-adjacent-part2-context-tools/): Memory systems, RAG pipelines, MCP protocol, and tool orchestration
+- [Part 3: Quality Gates](/posts/model-adjacent-part3-quality/): Verification pipelines, observability, evals, and catching failures before users do
+- [Part 4: Governance](/posts/model-adjacent-part4-governance/): Runtime alignment, policy enforcement, OWASP LLM risks, and safety boundaries
+- [Part 5: Implementation](/posts/model-adjacent-part5-implementation/): 90-day roadmap from prototype to production-grade AI system
+
+## Sections
+
+- [Projects](/projects/): Open source and private AI/infrastructure projects including counsel-mcp, never-hallucinate, plan-lint, and safeguards
+- [Reading](/reading/): Books and articles
+- [Travel](/travel/): Interactive Three.js globe showing visited locations
+
+## About
+
+This blog documents ideas at the intersection of technology and creativity. Topics include AI agents, infrastructure economics, competitive strategy, and building production systems.
+
+## Optional
+
+Technical details for LLM context:
+
+- Built with Hugo static site generator and PaperMod theme
+- Diagrams rendered with Mermaid.js
+- Interactive applications embedded via iframe shortcodes
+- Source available at github.com/mercurialsolo/mercurialsolo.github.io

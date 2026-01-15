@@ -40,6 +40,13 @@ flowchart LR
     J -->|Escalate| H[Human Review]
 ```
 
+<details>
+<summary>Text description of diagram</summary>
+
+Left-to-right flowchart showing the verification pipeline for model outputs. Output enters Syntax check: if fail, goes to Error; if pass, proceeds to Execute check: if fail, goes to Error; if pass, proceeds to Judge (LLM or human evaluation): if pass, marked as Verified with checkmark; if Escalate, sent to Human Review. Three gates (Syntax, Execute, Judge) filter outputs before they reach production.
+
+</details>
+
 ### Execution-Based
 
 For code, SQL, or executable output:

@@ -42,6 +42,13 @@ block-beta
     FM["Foundation Model"]
 ```
 
+<details>
+<summary>Text description of diagram</summary>
+
+Vertical stack diagram showing 8 layers of model-adjacent architecture, from bottom to top: Foundation Model (base), Layer 1: Latency & Interactivity, Layer 2: Retrieval & Context, Layer 3: Tools & Action, Layer 4: Memory, Layer 5: Verification, Layer 6: Observability & Evals, Layer 7: Alignment & Governance. Lower layers (1-3) enable capability. Upper layers (5-7) gate trust.
+
+</details>
+
 **Layers 1-3** determine what's possible. Latency keeps humans in the loop. Retrieval reduces hallucination. Tool permissions create hard boundaries.
 
 **Layers 5-7** determine what's safe. Verification gates autonomous execution. Observability enables audit trails. Governance defines the ceiling.
@@ -66,6 +73,13 @@ flowchart LR
     F --> O[Output]
     S --> O
 ```
+
+<details>
+<summary>Text description of diagram</summary>
+
+Left-to-right flowchart showing request routing. Query enters a Router which splits traffic: 80% goes to Fast Path, 20% goes to Slow Path. Both paths converge to Output. Fast path uses cache plus small model. Slow path requires retrieval plus large model plus tools.
+
+</details>
 
 Most requests hit cache + small model. 20% need retrieval + large model + tools.
 

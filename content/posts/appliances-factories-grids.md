@@ -32,7 +32,7 @@ Here's where I landed: the barbell thesis is correct, but most people misunderst
 
 The AI economy operates in three distinct layers:
 
-![The Three-Layer AI Stack](/images/appliances-factories-grids/three_layers_stack.png)
+![Diagram showing the three-layer AI stack as horizontal bars. Top layer: Appliance (Interface Layer) showing Cursor, v0, Replit, Harvey with $5-25K ACV, data flywheels and workflow embedding, projecting 15B to 120B by 2030. Middle layer: Factory (Orchestration Layer) showing OpenAI, Anthropic, vLLM, Anyscale with API pricing war 140-90% per year and swappability imperative, projecting 30B to 120B by 2030. Bottom layer: Grid (Infrastructure Layer) showing NVIDIA, TSMC, Equinix, utilities with 75%+ gross margins and 10+ year moats from physical scarcity, projecting 200B to 400B by 2030. Y-axis shows value creation from low to high as you move up, and capital intensity from low to high as you move down.](/images/appliances-factories-grids/three_layers_stack.png)
 
 | Layer | What It Is | Examples |
 |-------|------------|----------|
@@ -44,7 +44,7 @@ Value doesn't distribute evenly. It concentrates at the extremes.
 
 > *"The AI stack is hardening. Economic power shifts to those who own the rails OR own the interface. Everything else gets squeezed."* — Lo Toney, Plexo Capital
 
-![The Barbell Effect](/images/appliances-factories-grids/barbell_effect.png)
+![Barbell diagram illustrating value concentration. Left weight (dark green circle) labeled ATOMS - Own the Rails, containing Chips (NVIDIA, TSMC) with 75% margins, Foundries with 10+ year moats, and Power Infrastructure with physical scarcity. Right weight (dark blue circle) labeled RELATIONSHIPS - Own the Interface, containing Vertical Apps with data flywheels, Workflow Embedding with behavioral lock-in, and Regulatory Moats with 5-10 year durability. The bar between them shows the Squeeze Zone with margin compression from Cloud IaaS, Model APIs, and Horizontal Wrappers. Quote at bottom: Own the atoms, or own the relationship. Everything else gets squeezed.](/images/appliances-factories-grids/barbell_effect.png)
 
 **The barbell effect:** Value accumulates at two poles:
 - **Atoms** (chips, power, silicon, physical infrastructure)
@@ -97,9 +97,9 @@ Horizontal wrappers face platform absorption: Cursor vs. Claude Code, Grammarly 
 
 ## Value Accrual: 2026-2030
 
-![Market Size by Layer](/images/appliances-factories-grids/market_size_by_layer.png)
+![Bar chart comparing AI stack market sizes by layer with 2025 and 2030 projections. Grid (Infrastructure): $525B in 2025 growing 2.2x to $1150B by 2030, shown as tallest bars. Factory (Orchestration): $14B in 2025 growing 4.6x to $67B by 2030, shown as smallest bars. Appliance (Interface): $55B in 2025 growing 4.4x to $240B by 2030. Note indicates Grid is 9x larger than Factory plus Appliance combined. Sources listed as Sequoia, Goldman Sachs, McKinsey.](/images/appliances-factories-grids/market_size_by_layer.png)
 
-![Defensibility Matrix](/images/appliances-factories-grids/defensibility_matrix.png)
+![Defensibility matrix showing moat strength across AI stack layers. Columns represent moat types: Physical Scarcity, Data Flywheel, Workflow Embedding, Switching Costs, Regulatory Moat. Rows show layers: Grid has HIGH physical scarcity, LOW data flywheel, LOW workflow embedding, MED switching costs, HIGH regulatory moat. Factory has LOW physical scarcity, MED data flywheel, LOW workflow embedding, LOW switching costs, MED regulatory moat. Appliance has LOW physical scarcity, HIGH data flywheel, HIGH workflow embedding, HIGH switching costs, MED regulatory moat. Color coding: GREEN for strong moat, YELLOW for moderate, RED for weak. Key insight: Moat Mismatch equals Strategic Error. Moat durability ranges from 10+ years for Grid to 6-18 months for Factory to 3-7 years for Appliance.](/images/appliances-factories-grids/defensibility_matrix.png)
 
 | Layer | Current Margin | 2030 Outlook | Why |
 |-------|----------------|--------------|-----|
@@ -144,11 +144,11 @@ The market may not bifurcate cleanly into atoms vs. relationships. It may consol
 
 The barbell thesis is correct, but the weights aren't balanced. Infrastructure is eating everything above it.
 
-![The Lopsided Barbell](/images/appliances-factories-grids/lopsided_barbell_iconic.png)
+![Diagram showing the lopsided barbell where infrastructure dominates. Left side: massive dark circle labeled INFRASTRUCTURE plus LABS (OpenAI, Anthropic, Google) with smaller text showing absorbed companies (W&B, Humanloop, Vector DBs). An arrow points right labeled value flows here. Along the bar: three green circles representing surviving domain specialists - Harvey (Legal), Abridge (Healthcare), and ElevenLabs (Voice). Right side: faded dashed circle labeled APPLIANCES (being absorbed). Caption reads: The barbell is not two equal weights anymore. Infrastructure absorbed the middle; only vertical specialists survive.](/images/appliances-factories-grids/lopsided_barbell_iconic.png)
 
 **The API cannibalization problem:** OpenAI cut its API revenue forecast by $5 billion over five years. ChatGPT Pro ($200/month) is losing money due to "higher than expected usage." The pattern is clear: appliance success eats infrastructure revenue. Labs are competing with their own API customers. This isn't an aberration; it's the strategy now.
 
-![Revenue and Cannibalization Dynamics](/images/appliances-factories-grids/revenue_cannibalization.png)
+![Text excerpt discussing AI startup challenges. Key points: Companies like OpenAI trying to build business software face the same challenge as every tech giant before them - creating entire business systems from scratch. Code is now relatively easy. What is hard is decades of industry knowledge, thousands of existing connections to other software, deep understanding of industry-specific regulations, and built-up trust of large enterprises. The math is against AI startups: they need to deliver gains large enough to justify the work and risk of managing a separate tool. Established software companies will win by integrating innovation rather than fragmenting it.](/images/appliances-factories-grids/revenue_cannibalization.png)
 
 Anthropic builds Claude Code ($500M ARR in late 2025, 10x growth in three months) and competes directly with Cursor. OpenAI builds Canvas and competes with every Artifacts wrapper. Google embeds Gemini everywhere and competes with its own Vertex AI customers.
 

@@ -59,6 +59,13 @@ flowchart LR
     L1 --> L2 --> L3 --> L4 --> L5
 ```
 
+<details>
+<summary>Text description of diagram</summary>
+
+Horizontal flowchart showing the 5 autonomy levels as connected stages progressing left to right: L1 Copilot (User drives) → L2 Collaborator (AI drafts) → L3 Consultant (AI executes) → L4 Approver (AI acts) → L5 Observer (AI autonomous). Arrows indicate progression through levels, with each level requiring increasing infrastructure maturity and accountability structures. Most products today sit at L2-L3.
+
+</details>
+
 ---
 
 ## Why Autonomy Requires Different Mental Models

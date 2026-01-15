@@ -42,6 +42,13 @@ flowchart TB
     L1 --> L2 --> L3 --> L4
 ```
 
+<details>
+<summary>Text description of diagram</summary>
+
+Top-to-bottom flowchart showing a 4-level RAG cache hierarchy. L1 Prompt Cache (60-90% hit rate) contains system prompts. L2 Embedding Cache (20-40% hit rate) contains query embeddings. L3 Result Cache (10-30% hit rate) maps (query, version) pairs to chunks. L4 Document Store holds ground truth. Each level flows to the next, trading freshness for speed.
+
+</details>
+
 Each level trades freshness for speed. Make these tradeoffs explicit.
 
 ### Freshness SLAs
@@ -65,6 +72,13 @@ flowchart LR
     B --> RRF
     RRF --> R[Final Results]
 ```
+
+<details>
+<summary>Text description of diagram</summary>
+
+Left-to-right flowchart showing hybrid retrieval. Query splits into two parallel paths: Vector Search (semantic similarity) and BM25 Search (keyword matching). Both results feed into Reciprocal Rank Fusion (RRF) which combines rankings, then outputs Final Results. This hybrid approach catches both semantic and exact keyword matches.
+
+</details>
 
 The reranker is where quality is won or lost.
 
