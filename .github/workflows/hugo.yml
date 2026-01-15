@@ -6,6 +6,9 @@ on:
     branches:
       - main
   workflow_dispatch:
+  schedule:
+    # Rebuild daily at 6:00 AM UTC to publish scheduled posts
+    - cron: '0 6 * * *'
 
 permissions:
   contents: read
