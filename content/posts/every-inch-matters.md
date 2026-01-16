@@ -14,9 +14,7 @@ glossary:
 ---
 > "We built a browser with GPT-5.2 in Cursor. It ran uninterrupted for one week. It's 3M+ lines of code across thousands of files. The rendering engine is from-scratch in Rust with HTML parsing, CSS cascade, layout, text shaping, paint, and a custom JS VM. It *kind of* works!" — [Michael Truell (@mntruell)](https://x.com/mntruell/status/2011562190286045552)
 
-A browser from scratch in one week: 3 million lines of code. This isn't an anomaly; it's the new baseline.
-
-When building becomes trivially easy, every software market becomes a red ocean. And in red oceans, every inch matters.
+A browser from scratch in one week: 3 million lines of code. This isn't an anomaly; it's the new baseline. When building becomes trivially easy, every software market becomes a red ocean. And in red oceans, every inch matters.
 
 ---
 
@@ -52,7 +50,7 @@ There's now literally zero switching costs with vLLM, SGLang, and dozens of infe
 Claude and ChatGPT now score within percentage points on benchmarks. Inference costs collapsed 280x: from $20 per million tokens (2022) to [$0.07 per million tokens](https://www.baytechconsulting.com/blog/the-state-of-artificial-intelligence-in-2025/) (2024). When quality is indistinguishable and price is negligible, what's left to defend?
 
 {{< highlight-box title="The Glass Slipper Effect" >}}
-A16z and OpenRouter's [100 trillion token study](https://a16z.com/the-cinderella-glass-slipper-effect-retention-rules-in-the-ai-era/) reveals the physics of AI stickiness.
+a16z and OpenRouter's [100 trillion token study](https://a16z.com/the-cinderella-glass-slipper-effect-retention-rules-in-the-ai-era/) reveals the physics of AI stickiness.
 
 They call it the "Glass Slipper Effect": Only the foundational cohort survives. Users who adopt when a model is perceived as "frontier" integrate deeply into workflows, develop tacit knowledge about the model's specific strengths, and face real switching costs from workflow reengineering.
 
@@ -60,7 +58,7 @@ All subsequent cohorts show identical churn patterns. They "cluster at the botto
 
 Stickiness depends on the underlying model capabilities, not your product's UI or features. When a better model arrives, even sticky users evaluate alternatives.
 
-A16z puts it plainly: "The limited switching observed is due to user preference and habit rather than technical barriers." One bad experience, one price increase, one better model, and exodus begins.
+a16z puts it plainly: "The limited switching observed is due to user preference and habit rather than technical barriers." One bad experience, one price increase, one better model, and exodus begins.
 {{< /highlight-box >}}
 
 ---
