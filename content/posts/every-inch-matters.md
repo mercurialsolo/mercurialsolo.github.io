@@ -1,7 +1,7 @@
 ---
 title: "Every Inch Matters"
 date: 2026-01-18T08:00:00
-lastmod: 2026-01-15T22:30:00
+lastmod: 2026-01-16T08:00:00
 author: mercurialsolo
 tags: [strategy, ai, startups, competition, moats, density]
 summary: "When building becomes trivially easy, every software market becomes a red ocean. A browser from scratch in one week. 3 million lines of code. This isn't an anomaly; it's the new baseline."
@@ -11,13 +11,11 @@ glossary:
   PMF: "Product-Market Fit - when a product satisfies strong market demand."
   ARR: "Annual Recurring Revenue - yearly value of recurring subscriptions."
   GRR: "Gross Revenue Retention - percentage of revenue retained from existing customers."
-  CAC: "Customer Acquisition Cost - total cost to acquire a new customer."
-  LTV: "Lifetime Value - total revenue expected from a customer over their lifetime."
 ---
 
-In January 2026, Cursor CEO Michael Truell posted a tweet that should terrify every software founder:
+Yesterday, Cursor CEO Michael Truell posted a tweet that should terrify every software founder:
 
-> "We built a browser with GPT-5.2 in Cursor. It ran uninterrupted for one week. It's 3M+ lines of code across thousands of files. The rendering engine is from-scratch in Rust with HTML parsing, CSS cascade, layout, text shaping, paint, and a custom JS VM. It *kind of* works!"
+> "We built a browser with GPT-5.2 in Cursor. It ran uninterrupted for one week. It's 3M+ lines of code across thousands of files. The rendering engine is from-scratch in Rust with HTML parsing, CSS cascade, layout, text shaping, paint, and a custom JS VM. It *kind of* works!" — [Michael Truell (@mntruell)](https://x.com/mntruell/status/2011562190286045552)
 
 A browser from scratch in one week: 3 million lines of code. This isn't an anomaly; it's the new baseline.
 
@@ -27,15 +25,15 @@ When building becomes trivially easy, every software market becomes a red ocean.
 
 ## There's no barrier to entry
 
-A founder I spoke with recently put it bluntly: "We used to worry about whether we could build it. Now we worry about whether we can survive the twelve competitors who'll ship the same thing next week."
+A founder I spoke with last month put it bluntly: "We used to worry about whether we could build it. Now we worry about whether we can survive the twelve competitors who'll ship the same thing next week."
 
 | Before AI Coding | After AI Coding |
 |------------------|-----------------|
 | Building is hard | Building is trivial |
-| Code is the moat | Code is commodity |
+| Code is our moat | Code is commodity |
 | 10x engineers rare | 10x tools ubiquitous |
-| Features differentiate | Features get copied in days |
-| First-mover advantage | First-mover target |
+| Features used to be defensible | Every feature gets copied in days |
+| There's an advantage to being first-mover | The first-mover is now the target |
 
 This is what military strategists call "density": when maneuver space collapses and every position is contested. At Thermopylae, 300 Spartans held a narrow pass against 100,000 Persians because geography negated numerical advantage. Software markets have reached their Thermopylae. The pass has narrowed; flanking is impossible.
 
@@ -43,7 +41,7 @@ This is what military strategists call "density": when maneuver space collapses 
 
 ## PMF is dead
 
-Brian Balfour at Reforge has documented what he calls "[Product-Market Fit Collapse](https://www.reforge.com/blog/product-market-fit-collapse)": customer expectations spike nearly instantly rather than rising gradually. ChatGPT reached 1 million users in 5 days. When the threshold for "good enough" accelerates faster than companies can innovate, moats dissolve.
+Brian Balfour (at Reforge) documented what he calls "[Product-Market Fit Collapse](https://www.reforge.com/blog/product-market-fit-collapse)": customer expectations spike nearly instantly rather than rising gradually. ChatGPT reached 1 million users in 5 days. When the threshold for "good enough" is faster than the rate that companies innovate, moats dissolve.
 
 Stack Overflow illustrated the collapse in real time. Monthly visits dropped from 110 million (2022) to 55 million (2024); new questions fell 75% from peak. By February 2025, [the site received only 29,693 new questions](https://www.ericholscher.com/blog/2025/jan/21/stack-overflows-decline/), the lowest monthly total since 2010.
 
@@ -51,119 +49,82 @@ Elena Verna's insight: "Features are easy to copy. Trust isn't." When capabiliti
 
 ---
 
-## Stickiness is a myth
+## Stickiness is a myth now
 
 Traditional product stickiness mechanisms don't work in AI. AI-native products under $50/month show [23% gross revenue retention](https://www.growthunhinged.com/p/the-ai-churn-wave) versus 43% for traditional SaaS. That's a 20-point gap.
 
 - Character.AI → 60% user base collapse in 12 months
 - Jasper AI → 53% collapse in revenue
 
-### Zero switching costs
-
-vLLM, SGLang, and dozens of inference backends provide [OpenAI-compatible endpoints out of the box](https://bentoml.com/llm/llm-inference-basics/openai-compatible-api). OpenRouter normalizes the schema across 100+ models, letting teams ["switch between hundreds of models without changing your code."](https://openrouter.ai/docs/guides/overview/models)
+There's now literally zero switching costs with vLLM, SGLang, and dozens of inference backends providing [OpenAI-compatible endpoints out of the box](https://bentoml.com/llm/llm-inference-basics/openai-compatible-api). OpenRouter normalizes the schema across 100+ models, letting teams ["switch between hundreds of models without changing your code."](https://openrouter.ai/docs/guides/overview/models)
 
 Claude and ChatGPT now score within percentage points on benchmarks. Inference costs collapsed 280x: from $20 per million tokens (2022) to [$0.07 per million tokens](https://www.baytechconsulting.com/blog/the-state-of-artificial-intelligence-in-2025/) (2024). When quality is indistinguishable and price is negligible, what's left to defend?
 
 {{< highlight-box title="The Glass Slipper Effect" >}}
 A16z and OpenRouter's [100 trillion token study](https://a16z.com/the-cinderella-glass-slipper-effect-retention-rules-in-the-ai-era/) reveals the physics of AI stickiness.
 
-**Only the foundational cohort survives.** Users who adopt when a model is perceived as "frontier" integrate deeply into workflows, develop tacit knowledge about the model's specific strengths, and face real switching costs from workflow reengineering.
+They call it the "Glass Slipper Effect": Only the foundational cohort survives. Users who adopt when a model is perceived as "frontier" integrate deeply into workflows, develop tacit knowledge about the model's specific strengths, and face real switching costs from workflow reengineering.
 
-**All subsequent cohorts show identical churn patterns.** They "cluster at the bottom" because they see the model as "good enough" but not irreplaceable.
+All subsequent cohorts show identical churn patterns. They "cluster at the bottom" because they see the model as "good enough" but not irreplaceable.
 
 Stickiness depends on the underlying model capabilities, not your product's UI or features. When a better model arrives, even sticky users evaluate alternatives.
 
-As Nathan Lambert [wrote](https://www.interconnects.ai/p/gpt4-commoditization-and-moats): "The early idea that models could be moats has been resoundingly defeated."
+A16z puts it plainly: "The limited switching observed is due to user preference and habit rather than technical barriers." One bad experience, one price increase, one better model, and exodus begins.
 {{< /highlight-box >}}
 
 ---
 
-## Winning in Density
+## Playing the board
 
-When the board fills with competitors who can all build the same features, bold product moves become liabilities. A flashy new feature gets copied in days.
+85-95% of AI wrappers fail. Only 2-5% reach $10K monthly revenue. Sam Altman warned generic GPT wrappers directly: "We're just going to steamroll you."
 
-**1. Distribution is the product**
+Generic advice won't save you. The 2-5% who survive read one thing correctly: which game they're actually playing.
 
-Traditional growth channels are collapsing. [Elena Verna documents the shift](https://www.elenaverna.com/p/growth-is-now-a-trust-problem): SEO undermined by AI-generated content, paid search economics deteriorating, corporate social hostile to external links. When features commoditize, distribution becomes the moat.
+### When density is real: optimize every inch
 
-[Cursor reached $500M {{< term "ARR" >}}](https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/) through pure bottom-up virality. GitHub Copilot ships embedded in the workflow. Gemini dropped itself into Gmail - a single integration gets 100mn customers on launch. The product that's already there wins.
+About 70% of the time, density is real. The market is crowded, switching costs are near-zero, and the winners are those who compound small advantages.
 
-**2. Retain through distillation**
+**1. Win the abandonment war, not the feature war**
 
-Every user interaction should make the product better for all users. This is harder to replicate than algorithms or workflows. When users collectively improve the product, switching means starting over.
+Users don't switch to competitors; they return to spreadsheets. [Fewer than 10% of ChatGPT weekly users visit another AI provider](https://a16z.com/state-of-consumer-ai-2025-product-hits-misses-and-whats-next/) despite zero switching costs. Your enemy isn't Gemini; it's the workflow they used before you.
 
-**3. Embed into workflows**
+**2. Own the memory**
 
-Become infrastructure, not application. Products embedded in workflows survive; adjacent tools get absorbed.
+If your vendor holds indexed documents and embeddings, switching costs become astronomical. If the enterprise holds its own memory, you're a swappable utility. Hold the context graph. Make replacement feel like firing your best employee.
 
-**4. Domain expertise isn't synthetic**
+**3. Design for dormancy**
 
-Harvey for legal. Abridge for clinical. Vertical specialization with regulatory moats. The closer to "human judgment required," the safer.
+AI users exhibit "smiling" retention curves; they leave and return when capabilities improve. Don't optimize for DAU; optimize for re-engagement friction. One-click return beats daily engagement metrics.
 
-**5. Compound marginal gains**
+**4. Manufacture foundational moments**
 
-When building features becomes table stakes, victory goes to whoever compounds improvements fastest. The rate of learning matters.
+Only foundational cohorts survive (Glass Slipper). Gradual improvement = commodity. Discrete perception shifts = loyalty. Each release needs a "this changes everything" moment, not incremental feature updates.
 
-British Cycling coach Dave Brailsford [proved this](https://jamesclear.com/marginal-gains): "If you broke down everything you could think of that goes into riding a bike, and then improve it by 1%, you will get a significant increase when you put them all together."
+### When density is perceptual: escape the board
 
-The math: **(1.01)^365 = 37.78**
+The remaining 30% splits between dimension shifts, perception plays, and ground-up rebuilds. The winning plays are often counter-intuitive.
 
-They went from [a single Olympic gold in 76 years to dominating three consecutive Olympics](https://hbr.org/2015/10/how-1-performance-improvements-led-to-olympic-gold) (2008-2016) by optimizing everything from saddle position to tire temperature. None revolutionary. Together, decisive.
-
-### The Tactical Shift
-
-| Growth Mode | Density Mode |
-|-------------|--------------|
-| Cross-functional product teams | Centers of excellence for optimization |
-| Move fast, ship features | Data science, operations research, industrial engineering |
-
-Amazon's transition from "get big fast" (1995-2005) to "operational excellence" (2005+) is the template.
-
----
-
-## When to Escape
-
-But if density always rewards optimization, why did Bezos launch AWS instead of squeezing more margin from retail?
-
-The winning plays are often counter-intuitive:
-
-**Shift dimensions**
+**5. Shift dimensions**
 
 In 2006, Amazon's retail margins were compressing against Walmart and Target. Instead of operational efficiency, Bezos bet that the same infrastructure powering Amazon could power everyone else. AWS now runs at [$107B annual revenue](https://www.aboutamazon.com/news/company-news/amazon-q4-2024-earnings).
 
 When this works: you have asymmetric capabilities transferable to adjacent markets while competitors build the wrong defenses.
 
-**Rebuild from scratch**
+**6. Rebuild from scratch**
 
 Technology transitions temporarily reopen closed markets. Incumbents who integrate new tech into existing products lose to challengers who rebuild from scratch.
 
-[Instagram](https://about.fb.com/news/2012/04/facebook-to-acquire-instagram/) (mobile-only, no desktop) sold for $1B; Flickr (desktop-first, mobile-adapted) [sold for ~$35M](https://www.vox.com/2017/6/15/15782200/how-yahoo-killed-flickr-marissa-mayer). [Kodak invented the digital camera in 1975](https://en.wikipedia.org/wiki/Kodak) but protected [80% film margins](https://quartr.com/insights/edge/the-dilemma-that-brought-down-kodak); bankruptcy followed.
+[Instagram](https://about.fb.com/news/2012/04/facebook-to-acquire-instagram/) (mobile-only, no desktop) sold for $1B; Flickr (desktop-first, mobile-adapted) [sold for ~$35M](https://www.vox.com/2017/6/15/15782200/how-yahoo-killed-flickr-marissa-mayer). Adding "AI features" to existing SaaS will lose to those rebuilding workflows with AI at the core.
 
-The pattern is Clayton Christensen's [Innovator's Dilemma](https://www.hbs.edu/faculty/Pages/item.aspx?num=46): legacy architecture constrains, cannibalization fears paralyze, organizational antibodies attack. For AI, this window is open now. Companies adding "AI features" to existing SaaS will lose to those rebuilding workflows with AI at the core.
+**7. See what others miss**
 
-**Reframe the game**
-
-AlphaGo's [Move 37](https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol) looked wrong but exploited patterns humans missed. When density is perceptual rather than physical, seeing the market differently than consensus reveals openings others miss.
-
-{{< highlight-box >}}
-About 70% of the time, density is real and optimization wins. The remaining 30% splits between dimension shifts (transferable assets), perception plays (seeing what others miss), and ground-up rebuilds (during technology transitions).
-{{< /highlight-box >}}
+AlphaGo's [Move 37](https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol) looked wrong but exploited patterns humans missed. Seeing the market with a different lens rather than the consensus reveals openings others miss.
 
 ---
 
-## Coda: Finding Alpha
-
-Finding alpha isn't a strategy by itself. It's the outcome, the gap between your clarity and everyone else's confusion. Most players are hedging, debating, preserving optionality. The alpha is in reading the game correctly while others misdiagnose it.
-
-> Buffett on Amazon: "The problem is when I think something will be a miracle, I tend not to bet on it." He [missed a 44,000% return](https://www.cnbc.com/2018/05/05/buffett-i-was-wrong-on-google-and-amazon-bezos-achieved-a-business-miracle.html) waiting for complete certainty. Preserving optionality meant winning nothing.
-
-In density, the temptation is to chase shiny things. In transitions, the temptation is to "wait and see." Both are hedging. Both kill alpha.
-
-Kasparov didn't beat Karpov in their [1990 World Championship](https://www.chessgames.com/perl/chess.pl?tid=55223) endgame by waiting for clarity. He moved his king to the critical square one tempo before Karpov reached his. [That single move separated the championship](https://www.mark-weeks.com/chess/90kk$$.htm). In contested positions, the cost of hesitation exceeds the cost of imperfect execution.
-
-The AI transition window is open. Some markets within it are already densifying (basic chatbots, simple automations). Others are still wide open (agentic workflows, vertical AI, AI-native interfaces). The skill is reading which zone you're in, then playing that game with full commitment while others hedge across both.
-
-Pick your game. Then play it like every inch matters.
+{{< highlight-box >}}
+The skill is being able to read which zone you're in, then playing that game with full commitment while others hedge across both. Pick your game. Then play it like every inch matters.
+{{< /highlight-box >}}
 
 ---
 
@@ -177,8 +138,6 @@ Pick your game. Then play it like every inch matters.
 - Thompson, Ben. "[AI Integration and Modularization](https://stratechery.com/2024/ai-integration-and-modularization/)." Stratechery, 2024.
 
 **Case Studies**
-- Clear, James. "[How 1% Improvements Led to Olympic Gold](https://jamesclear.com/marginal-gains)." On British Cycling's marginal gains philosophy.
-- "[How 1% Performance Improvements Led to Olympic Gold](https://hbr.org/2015/10/how-1-performance-improvements-led-to-olympic-gold)." Harvard Business Review, 2015.
 - Netflix. "[Completing the Netflix Cloud Migration](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration)." 2016. Seven-year rebuild from monolith to microservices.
 - Quartr. "[The Dilemma That Brought Down Kodak](https://quartr.com/insights/edge/the-dilemma-that-brought-down-kodak)." On Kodak's 80% film margins and digital denial.
 - Vox. "[How Yahoo Killed Flickr](https://www.vox.com/2017/6/15/15782200/how-yahoo-killed-flickr-marissa-mayer)." 2017.
