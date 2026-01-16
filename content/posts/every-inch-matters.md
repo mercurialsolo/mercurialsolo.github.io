@@ -12,9 +12,6 @@ glossary:
   ARR: "Annual Recurring Revenue - yearly value of recurring subscriptions."
   GRR: "Gross Revenue Retention - percentage of revenue retained from existing customers."
 ---
-
-Yesterday, Cursor CEO Michael Truell posted a tweet that should terrify every software founder:
-
 > "We built a browser with GPT-5.2 in Cursor. It ran uninterrupted for one week. It's 3M+ lines of code across thousands of files. The rendering engine is from-scratch in Rust with HTML parsing, CSS cascade, layout, text shaping, paint, and a custom JS VM. It *kind of* works!" — [Michael Truell (@mntruell)](https://x.com/mntruell/status/2011562190286045552)
 
 A browser from scratch in one week: 3 million lines of code. This isn't an anomaly; it's the new baseline.
