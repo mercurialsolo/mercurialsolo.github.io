@@ -1,6 +1,6 @@
 ---
 title: "Every Inch Matters"
-date: 2026-01-16T08:00:00
+date: 2026-01-16T00:00:00
 lastmod: 2026-01-16T08:00:00
 author: mercurialsolo
 tags: [strategy, ai, startups, competition, moats, density]
