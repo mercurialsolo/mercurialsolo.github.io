@@ -27,13 +27,7 @@ When building becomes trivially easy, every software market becomes a red ocean.
 
 A founder I spoke with last month put it bluntly: "We used to worry about whether we could build it. Now we worry about whether we can survive the twelve competitors who'll ship the same thing next week."
 
-| Before AI Coding | After AI Coding |
-|------------------|-----------------|
-| Building is hard | Building is trivial |
-| Code is our moat | Code is commodity |
-| 10x engineers rare | 10x tools ubiquitous |
-| Features used to be defensible | Every feature gets copied in days |
-| There's an advantage to being first-mover | The first-mover is now the target |
+![The Inversion: Before AI Coding vs After AI Coding - Building is hard becomes trivial, code moats become commodity, 10x engineers become 10x tools, defensible features get copied in days, first-mover advantage becomes first-mover as target](/images/every-inch-matters/before-after-coding.png)
 
 This is what military strategists call "density": when maneuver space collapses and every position is contested. At Thermopylae, 300 Spartans held a narrow pass against 100,000 Persians because geography negated numerical advantage. Software markets have reached their Thermopylae. The pass has narrowed; flanking is impossible.
 
@@ -100,25 +94,27 @@ AI users exhibit "smiling" retention curves; they leave and return when capabili
 
 Only foundational cohorts survive (Glass Slipper). Gradual improvement = commodity. Discrete perception shifts = loyalty. Each release needs a "this changes everything" moment, not incremental feature updates.
 
+Trust compounds with foundational cohorts. As Elena Verna observes, "[broken trust is nearly impossible to recover from](https://www.elenaverna.com/p/growth-is-now-a-trust-problem)." Move fast, but bring users along. The referral is the ultimate trust signal; customers retained through trust don't comparison-shop when capabilities commoditize.
+
 ### When density is perceptual: escape the board
 
 The remaining 30% splits between dimension shifts, perception plays, and ground-up rebuilds. The winning plays are often counter-intuitive.
 
 **5. Shift dimensions**
 
-In 2006, Amazon's retail margins were compressing against Walmart and Target. Instead of operational efficiency, Bezos bet that the same infrastructure powering Amazon could power everyone else. AWS now runs at [$107B annual revenue](https://www.aboutamazon.com/news/company-news/amazon-q4-2024-earnings).
-
-When this works: you have asymmetric capabilities transferable to adjacent markets while competitors build the wrong defenses.
+In 2024, Anthropic's revenue was $100M. By July 2025, it hit [$4B ARR](https://www.saastr.com/anthropics-4b-arr-the-enterprise-ai-growth-playbook-thats-rewriting-saas-economics/). The move: while OpenAI and Google fought for consumer attention, Anthropic focused on enterprise API infrastructure. 70-75% of revenue comes from API calls, not subscriptions. When you have asymmetric capabilities transferable to adjacent markets while competitors optimize the wrong game.
 
 **6. Rebuild from scratch**
 
-Technology transitions temporarily reopen closed markets. Incumbents who integrate new tech into existing products lose to challengers who rebuild from scratch.
-
-[Instagram](https://about.fb.com/news/2012/04/facebook-to-acquire-instagram/) (mobile-only, no desktop) sold for $1B; Flickr (desktop-first, mobile-adapted) [sold for ~$35M](https://www.vox.com/2017/6/15/15782200/how-yahoo-killed-flickr-marissa-mayer). Adding "AI features" to existing SaaS will lose to those rebuilding workflows with AI at the core.
+Technology transitions temporarily reopen closed markets. Cursor built an entirely new IDE achieving [$500M ARR in 18 months](https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/) while VS Code plugin competitors added features. Harvey rebuilt legal workflows AI-first and reached [$100M ARR in 3 years](https://www.cnbc.com/2025/08/04/legal-ai-startup-harvey-revenue.html), capturing 42% of AmLaw 100 firms while legacy legal tech retrofitted. Adding "AI features" to existing products loses to those rebuilding workflows with AI at the core.
 
 **7. See what others miss**
 
-AlphaGo's [Move 37](https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol) looked wrong but exploited patterns humans missed. Seeing the market with a different lens rather than the consensus reveals openings others miss.
+In 2022, ["no VCs wanted to back ElevenLabs"](https://www.cnbc.com/2025/10/25/vc-bet-on-3-billion-ai-firm-elevenlabs-after-one-meeting-with-founder.html) because voice AI wasn't getting attention. Everyone was building text chatbots. Result: [$330M ARR](https://techcrunch.com/2026/01/13/elevenlabs-ceo-says-the-voice-ai-startup-crossed-330-million-arr-last-year/) and a $6.6B valuation by betting on voice when everyone else bet on text.
+
+NotebookLM started as a 20% project inside Google Labs with 4-5 people. While everyone else built general-purpose chatbots, they built a document grounding tool. The breakthrough? Audio Overviews (AI-generated podcasts) wasn't even the original vision; it emerged later and went viral. Result: [371% traffic growth](https://www.similarweb.com/blog/insights/ai-news/notebooklm-growth/) in September 2024, [31.5M monthly visits](https://www.similarweb.com/blog/insights/ai-news/notebooklm-growth/) by October, and Google calling it "one of our breakout AI successes."
+
+Counterintuitive positioning works at any scale: a startup rejected by VCs, a 20% project inside Google. When density is perceptual rather than physical, seeing differently reveals openings.
 
 ---
 
@@ -137,15 +133,17 @@ The skill is being able to read which zone you're in, then playing that game wit
 - Christensen, Clayton. *[The Innovator's Dilemma](https://www.hbs.edu/faculty/Pages/item.aspx?num=46)*. Harvard Business School Press, 1997.
 - Thompson, Ben. "[AI Integration and Modularization](https://stratechery.com/2024/ai-integration-and-modularization/)." Stratechery, 2024.
 
-**Case Studies**
-- Netflix. "[Completing the Netflix Cloud Migration](https://about.netflix.com/en/news/completing-the-netflix-cloud-migration)." 2016. Seven-year rebuild from monolith to microservices.
-- Quartr. "[The Dilemma That Brought Down Kodak](https://quartr.com/insights/edge/the-dilemma-that-brought-down-kodak)." On Kodak's 80% film margins and digital denial.
-- Vox. "[How Yahoo Killed Flickr](https://www.vox.com/2017/6/15/15782200/how-yahoo-killed-flickr-marissa-mayer)." 2017.
+**AI-Era Case Studies**
+- SaaStr. "[How Anthropic Rocketed to $4B ARR](https://www.saastr.com/anthropics-4b-arr-the-enterprise-ai-growth-playbook-thats-rewriting-saas-economics/)." 2025. On Anthropic's enterprise API strategy.
+- TechCrunch. "[Cursor's Anysphere nabs $9.9B valuation, soars past $500M ARR](https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/)." 2025.
+- CNBC. "[Legal AI startup Harvey hits $100 million in annual recurring revenue](https://www.cnbc.com/2025/08/04/legal-ai-startup-harvey-revenue.html)." 2025.
+- SimilarWeb. "[NotebookLM Growth Analysis](https://www.similarweb.com/blog/insights/ai-news/notebooklm-growth/)." 2024. On Audio Overviews viral growth.
+- TechCrunch. "[ElevenLabs reaches $330M ARR](https://techcrunch.com/2026/01/13/elevenlabs-ceo-says-the-voice-ai-startup-crossed-330-million-arr-last-year/)." 2026.
+- DemandSage. "[Midjourney Statistics 2026](https://www.demandsage.com/midjourney-statistics/)." On Discord-first distribution strategy.
+- Sacra. "[Perplexity Revenue, Valuation & Funding](https://sacra.com/c/perplexity/)." 2025.
+- Fortune. "[Glean hits $200 million ARR](https://fortune.com/2025/12/08/exclusive-glean-hits-200-million-arr-up-from-100-million-nine-months-back/)." 2025.
 
 **Historical & Technical**
-- "[AlphaGo versus Lee Sedol](https://en.wikipedia.org/wiki/AlphaGo_versus_Lee_Sedol)." Wikipedia. On Move 37.
-- "[1990 Kasparov-Karpov World Championship](https://www.chessgames.com/perl/chess.pl?tid=55223)." ChessGames.com.
-- Weeks, Mark. "[1990 World Championship Prize Fund](https://www.mark-weeks.com/chess/90kk$$.htm)." $3M total, 5/8 winner split.
 - Holscher, Eric. "[Stack Overflow's Decline](https://www.ericholscher.com/blog/2025/jan/21/stack-overflows-decline/)." 2025.
 
 **AI Stickiness & Retention**
@@ -159,5 +157,3 @@ The skill is being able to read which zone you're in, then playing that game wit
 - Electroiq. "[Jasper AI Statistics](https://electroiq.com/stats/jasper-ai-statistics/)." 2025.
 - Context Pack. "[Transfer ChatGPT to Claude](https://www.context-pack.com/docs/transfer-chatgpt-to-claude)." On one-click conversation migration.
 - Bay Tech Consulting. "[The State of Artificial Intelligence in 2025](https://www.baytechconsulting.com/blog/the-state-of-artificial-intelligence-in-2025/)." On inference cost collapse.
-- "[AWS Q4 2024 Earnings](https://www.aboutamazon.com/news/company-news/amazon-q4-2024-earnings)." Amazon, 2025.
-- "[Cursor ARR $500M](https://techcrunch.com/2025/06/05/cursors-anysphere-nabs-9-9b-valuation-soars-past-500m-arr/)." TechCrunch, 2025.
