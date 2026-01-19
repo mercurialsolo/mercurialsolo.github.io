@@ -9,14 +9,12 @@ description: "Things I'm building and have built"
 
 | Date | Project | Notes |
 |------|---------|-------|
-| 2026-01 | [awesome-mcp-servers](https://github.com/mercurialsolo/awesome-mcp-servers) | MCP server collection (fork) |
 | 2026-01 | [mercurialsolo.github.io](https://github.com/mercurialsolo/mercurialsolo.github.io) | Personal site repo |
 | 2026-01 | [counsel-mcp](https://github.com/mercurialsolo/counsel-mcp) | MCP server for counsel |
 | 2025-08 | [cabal-sandbox-python](https://github.com/mercurialsolo/cabal-sandbox-python) | Open source project for running Cabal containers |
 | 2025-06 | [never-hallucinate](https://github.com/mercurialsolo/never-hallucinate) | Practices & code for reducing hallucination in coding agents |
 | 2025-04 | [plan-lint](https://github.com/cirbuk/plan-lint) | Static analysis toolkit for LLM agent plans |
 | 2025-04 | [safeguards](https://github.com/cirbuk/safeguards) | Agentic safety framework |
-| 2023-07 | [python-feedgen](https://github.com/mercurialsolo/python-feedgen) | Feed generator library (fork) |
 
 ---
 
