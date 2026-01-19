@@ -9,7 +9,6 @@ description: "Things I'm building and have built"
 
 | Date | Project | Notes |
 |------|---------|-------|
-| 2026-01 | [hnpwd.github.io](https://github.com/mercurialsolo/hnpwd.github.io) | HN personal site directory (fork) |
 | 2026-01 | [awesome-mcp-servers](https://github.com/mercurialsolo/awesome-mcp-servers) | MCP server collection (fork) |
 | 2026-01 | [mercurialsolo.github.io](https://github.com/mercurialsolo/mercurialsolo.github.io) | Personal site repo |
 | 2026-01 | [counsel-mcp](https://github.com/mercurialsolo/counsel-mcp) | MCP server for counsel |
