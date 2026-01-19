@@ -3,8 +3,6 @@ title: "Conferences & Talks"
 description: "Talks, panels, and conference appearances"
 ---
 
-A running list of conference appearances, talks, and panels.
-
 ## Talks
 
 | Date | Event | Talk |
