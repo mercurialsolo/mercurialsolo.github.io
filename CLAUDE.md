@@ -1,13 +1,12 @@
 # mercurialsolo.github.io
 
-Personal website built with Hugo + PaperMod theme. Contains blog posts about AI/technology, project portfolio, reading list, and interactive travel globe.
+Personal website built with Hugo + PaperMod theme. Contains blog posts about AI/technology, project portfolio, and conference appearances & talks.
 
 ## Tech Stack
 
 - **Hugo** (v0.154.3) - Static site generator
 - **PaperMod** - Theme (git submodule in `themes/PaperMod`)
 - **GitHub Pages** - Hosting via Actions workflow
-- **JavaScript/Three.js** - Interactive apps (travel globe)
 
 ## Commands
 
@@ -31,8 +30,7 @@ hugo new <section>/filename.md
 content/
 ├── posts/       # Blog posts (AI, technology, ideas)
 ├── projects/    # Portfolio (_index.md with project list)
-├── reading/     # Books and articles
-├── travel/      # Travel page with interactive globe
+├── conferences-talks/ # Conference appearances and talks
 ├── archives.md  # Archive listing
 └── search.md    # Search page
 ```
@@ -66,7 +64,6 @@ Use the `app` shortcode to embed HTML/JS apps:
 
 - Place app HTML files in `static/apps/`
 - Apps run in sandboxed iframe with `allow-scripts allow-same-origin`
-- See `static/apps/travel-globe.html` for reference implementation
 
 ## Configuration
 
@@ -94,7 +91,7 @@ Manual build outputs to `./public/`.
 ## Important Patterns
 
 1. **Projects page** uses `_index.md` with inline markdown table for project list
-2. **Travel page** embeds Three.js globe via app shortcode
+2. **Conferences & Talks page** uses `_index.md` for the section overview
 3. **Series posts** use naming convention: `topic-partN-subtitle.md`
 4. **PaperMod theme** is a submodule - don't edit files in `themes/`
 

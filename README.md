@@ -35,8 +35,7 @@ hugo server -D
 content/
 ├── posts/      # Blog posts
 ├── projects/   # Work and side projects
-├── reading/    # Books and articles
-├── travel/     # Places visited
+├── conferences-talks/ # Conference appearances and talks
 ├── archives.md # Archive page
 └── search.md   # Search page
 ```

@@ -23,8 +23,7 @@ A 6-part guide to building production AI systems. The foundation model is the CP
 ## Sections
 
 - [Projects](/projects/): Open source and private AI/infrastructure projects including counsel-mcp, never-hallucinate, plan-lint, and safeguards
-- [Reading](/reading/): Books and articles
-- [Travel](/travel/): Interactive Three.js globe showing visited locations
+- [Conferences & Talks](/conferences-talks/): Talks, panels, and conference appearances
 
 ## About
 
