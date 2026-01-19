@@ -9,5 +9,5 @@ description: "Talks, panels, and conference appearances"
 |------|-------|------|
 | July 2025 | AI Engineer Conference | Lightning talk - "Never Hallucinate: Reducing hallucination in Coding Agents" |
 | Feb 2024 | Sauga Talks | AI-Driven Commerce |
-| 2019 | HaystackEU | - |
+| 2019 | HaystackEU | Vectors in Search |
 | 11 Dec 2019 | Demuxed | Video as Code |
