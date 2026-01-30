@@ -8,10 +8,6 @@ ShowToc: true
 TocOpen: false
 ---
 
-**Version 2.0** — Rewritten with Q4 2025/early 2026 case studies, verified sources, practitioner voices.
-
----
-
 > 📈 **The Economic Shift**
 >
 > Inference workloads now account for [80% of AI compute spending](https://www.computerworld.com/article/4114579/ces-2026-ai-compute-sees-a-shift-from-training-to-inference.html), with [test-time compute emerging as the third scaling law](https://fourweekmba.com/the-three-scaling-laws-of-ai-pre-training-post-training-and-test-time/) alongside pre-training and post-training. The economic pattern mirrors human work: pre-training builds world models (school), inference creates value (work).
