@@ -1,6 +1,6 @@
 ---
 title: "Every Token an Iceberg"
-date: 2026-01-30T00:00:00-08:00
+date: 2026-01-29T12:00:00-08:00
 author: mercurialsolo
 tags: ["ai", "reasoning", "economics", "verification"]
 summary: "Inference workloads now account for 80% of AI compute spending. The hierarchy in tokens is no longer about information density—it's what happens when the token leads somewhere wrong."
