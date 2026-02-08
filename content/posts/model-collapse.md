@@ -1,16 +1,21 @@
 ---
 title: "Model Collapse"
 date: 2026-02-07T12:00:00-08:00
+lastmod: 2026-02-08T12:00:00-08:00
 author: mercurialsolo
 tags: [ai, future-of-work, economics, inequality, automation, predistribution]
 summary: "The productivity gains are flowing to capital holders instead of the workers generating them. The old framework said credentials lead to knowledge, knowledge leads to value. But value is concentrating in weird corners now; places where someone has to be sued, where platforms control distribution, where tacit knowledge can't be extracted from text."
+ShowToc: true
+TocOpen: false
 ---
 
 Knowledge workers spent the 20th century believing credentials meant stable income. Get a degree, accumulate expertise, get paid for it; a simple exchange.
 
 The anomalies are everywhere now. Junior lawyers with top credentials watching their document review skills become worthless overnight. Creative workers with genuine taste losing income while the platforms that control distribution get rich. Companies hitting record valuations, then laying off the people who actually built the product.
 
-> **The productivity gains are flowing to capital holders instead of the workers generating them.**
+{{< highlight-box >}}
+**The productivity gains are flowing to capital holders instead of the workers generating them.**
+{{< /highlight-box >}}
 
 The old framework said credentials lead to knowledge, knowledge leads to value. It was some sort of a linear career progression. But that's not what's happening. Value is concentrating in weird corners now. Places where someone has to be sued (accountability barriers). Places where platforms control access to customers (distribution chokepoints). Places where you need tacit knowledge you can't just extract from text.
 
@@ -24,19 +29,23 @@ I keep hearing the same thing from practitioners. "I don't write code anymore. I
 
 But there's a slight difference this time round, the diffusion rate is unprecedented. Printing press took 50 years to reach mass adoption. Calculators took 20. ATMs took 15. ChatGPT → 18 months.
 
-> These comparisons are rhetorically clean but methodologically messy. We're comparing physical infrastructure rollout (printing presses) to software distribution (ChatGPT). Different adoption curves, different enabling conditions. The 18-month number measures account creation, not actual sustained use or economic impact. But the directional point holds: software-based technologies diffuse faster than hardware-based ones.
->
-> Technology diffusion usually follows predictable patterns; infrastructure dependency, capital barriers, regulatory friction all slow things down. Physical infrastructure takes decades to build, but cloud services scale instantly. Network effects that cost billions slow adoption, freemium accelerates it. Regulated industries crawl, unregulated spaces sprint.
->
-> Which tells you which sectors transform fastest. Creative work moves at maximum speed (digital delivery, low capital requirements, minimal regulation). Healthcare slowest (physical presence required, FDA approval gates, heavy regulation). Legal work somewhere in the middle with its mixed constraints.
+{{< highlight-box title="⚡ Diffusion Caveat" >}}
+These comparisons are rhetorically clean but methodologically messy. We're comparing physical infrastructure rollout (printing presses) to software distribution (ChatGPT). Different adoption curves, different enabling conditions. The 18-month number measures account creation, not actual sustained use or economic impact. But the directional point holds: software-based technologies diffuse faster than hardware-based ones.
+
+Technology diffusion usually follows predictable patterns: infrastructure dependency, capital barriers, and regulatory friction all slow things down. Physical infrastructure takes decades to build, but cloud services scale instantly. Network effects that cost billions slow adoption, while freemium models accelerate it. Regulated industries crawl; unregulated spaces sprint.
+
+Which tells you which sectors transform fastest. Creative work moves at maximum speed (digital delivery, low capital requirements, minimal regulation). Healthcare moves slowest (physical presence required, FDA approval gates, heavy regulation). Legal work sits somewhere in the middle with mixed constraints.
+{{< /highlight-box >}}
 
 The question is no longer about whether the professions will transform (they will). The question is whether people within can transform faster than their jobs disappear. For knowledge workers operating in unregulated domains, I'm increasingly convinced the answer is no.
 
 ## The old economics models no longer hold
 
-> David Autor's research at MIT helped me understand the split that's happening. AI automates routine cognitive tasks; document review, code templates, the stuff junior people used to do. But it struggles with non-routine judgment (partner-level decisions) and physical manipulation (elder care work).
->
-> So value concentrates at extremes. Judgment at the top, manual work at the bottom. The middle just disappears. Those junior lawyers who spent years mastering document review? That skill is suddenly worthless. Junior developers who learned CRUD apps discovering the ladder they climbed doesn't reach anywhere useful anymore.
+{{< highlight-box title="🎯 Autor's Split" >}}
+David Autor's research at MIT helped me understand the split that's happening. AI automates routine cognitive tasks: document review, code templates, and the work junior people used to do. But it struggles with non-routine judgment (partner-level decisions) and physical manipulation (elder care work).
+
+So value concentrates at extremes. Judgment at the top, manual work at the bottom. The middle disappears. Those junior lawyers who spent years mastering document review? That skill is suddenly worthless. Junior developers who learned CRUD apps are discovering the ladder they climbed does not reach anywhere useful anymore.
+{{< /highlight-box >}}
 
 ### The Piketty Paradox: When AI Validates What Economists Rejected
 
@@ -60,13 +69,15 @@ But if AI achieves complete displacement, the dynamics change. AI handles routin
 
 If this scenario plays out, Piketty may have been wrong about the past but could be right about the future. The same mechanism economists used to refute him (labor-capital complementarity) only works if labor maintains positive marginal value. Remove that assumption and his r > g inequality spiral becomes structurally inevitable.
 
-> There's a second mechanism I didn't appreciate until recently. The shift to private markets. By the time AI companies go public, exponential gains have already accrued to early investors. Ordinary citizens hit three barriers: accreditation requirements keep regular investors out of private markets. Information asymmetry makes intangible valuations (model capabilities, training data quality) opaque until deployment. And capital concentration means wealth managers control allocation while median households get locked out.
->
-> The data tells the story. Corporate capital held privately rose from 8% in 2000 to 19% in 2024 in the US (NVCA/PitchBook data). Compare this to the 1960s tech boom when IBM and Xerox went public early and middle class participated in gains through pension funds.
->
-> Modern pattern looks completely different. OpenAI raises at $157B valuation in private markets. By the time it goes public (if it ever does), early capital holders have already captured orders of magnitude returns. High capital requirements for training ($100M+ for frontier models) create natural barriers favoring incumbent wealth.
->
-> Top 10% now hold 67.2% of total U.S. household wealth (Federal Reserve, 2024). That number keeps growing.
+{{< highlight-box title="⚠️ The Private Market Flywheel" >}}
+There's a second mechanism I didn't appreciate until recently: the shift to private markets. By the time AI companies go public, exponential gains have already accrued to early investors. Ordinary citizens hit three barriers. Accreditation requirements keep regular investors out of private markets. Information asymmetry makes intangible valuations (model capabilities, training data quality) opaque until deployment. Capital concentration means wealth managers control allocation while median households get locked out.
+
+The data tells the story. Corporate capital held privately rose from 8% in 2000 to 19% in 2024 in the US (NVCA/PitchBook data). Compare this to the 1960s tech boom when IBM and Xerox went public early and the middle class participated in gains through pension funds.
+
+Modern pattern looks different. OpenAI raises at $157B valuation in private markets. By the time it goes public (if it ever does), early capital holders have already captured orders of magnitude returns. High capital requirements for training ($100M+ for frontier models) create natural barriers favoring incumbent wealth.
+
+Top 10% now hold 67.2% of total U.S. household wealth (Federal Reserve, 2024). That number keeps growing.
+{{< /highlight-box >}}
 
 ### Why this time is different
 
@@ -74,13 +85,11 @@ Look, every technological transition faces similar concerns. And every time, new
 
 Three things, if the trajectory continues:
 
-Speed of displacement outpaces adaptation. Previous transitions took 40-60 years. AI adoption compressed to 18 months. Human institutions (education, retraining, social safety nets) operate on decade timescales. The gap between displacement speed and adaptation capacity is unprecedented.
+1. **Speed of displacement outpaces adaptation.** Previous transitions took 40-60 years. AI adoption compressed to 18 months. Human institutions (education, retraining, social safety nets) operate on decade timescales. The gap between displacement speed and adaptation capacity is unprecedented.
+2. **Cognitive automation, not just physical automation.** Past automation replaced physical labor, which created cognitive work. AI automates cognition itself. New work categories might exist, but absorbing the scale of displaced cognitive workers is a different challenge.
+3. **Winner-take-all economics at AI scale.** Network effects and economies of scale in AI are extreme. Training GPT-4 cost $100M, but marginal inference costs pennies. The first mover with the best model captures market share, and second place gets scraps. AI market structure trends toward natural monopolies in a way previous technologies did not.
 
-Second thing: cognitive automation, not just physical. Past automation replaced physical labor which created cognitive work. AI automates cognition itself. New work categories might exist, but absorbing the scale of displaced cognitive workers... I don't see it.
-
-Third: winner-take-all economics at AI scale. Network effects and economies of scale in AI are extreme. Training GPT-4 cost $100M, but marginal inference costs pennies. First mover with best model captures market, second place gets scraps. AI market structure trends toward natural monopolies in a way previous technologies didn't.
-
-The most telling signal I've seen: [AI assistants now negotiate directly with business services](https://arxiv.org/pdf/2505.15799). Your assistant books appointments, compares prices, handles refunds. No human required. And here's the kicker; more AI suppliers just makes workers more replaceable. Platforms don't even need to own the agents. They own the marketplace where transactions happen.
+The most telling signal I've seen: [AI assistants now negotiate directly with business services](https://arxiv.org/pdf/2505.15799). Your assistant books appointments, compares prices, handles refunds. No human required. And here's the kicker: more AI suppliers just make workers more replaceable. Platforms don't even need to own the agents. They own the marketplace where transactions happen.
 
 ## Reasons for Optimism
 
@@ -146,9 +155,11 @@ But (again with the caveats) this only works for those who already have platform
 
 The three barriers suggest creative work should resist commoditization. But [music creators are facing major revenue losses](https://www.cisac.org/Newsroom/news-releases/global-economic-study-shows-human-creators-future-risk-generative-ai) according to CISAC's 2024 global study. Platforms control recommendation algorithms. Thousands of tracks flood Spotify daily. Quality becomes undiscoverable in volume.
 
-> **Distribution power beats skill quality. Every time.**
->
-> Automation-resistant skills command no market value if platforms control distribution. Same pattern in legal work, journalism, software. Skill quality matters less than platform position.
+{{< highlight-box title="🎯 Distribution Trumps Skill Quality" >}}
+**Distribution power beats skill quality. Every time.**
+
+Automation-resistant skills command no market value if platforms control distribution. Same pattern in legal work, journalism, and software. Skill quality matters less than platform position.
+{{< /highlight-box >}}
 
 This extends to wealth too. If AI generates value while eliminating labor, who benefits? [By the time redistribution becomes necessary](https://www.noemamag.com/heres-how-to-share-ais-future-wealth/), those who control the AI economy may have already structured things to evade taxation. History repeats. Power concentrates, the powerful reshape the rules.
 
@@ -176,15 +187,17 @@ When everyone has AI assistants, status differentials between those with basic A
 
 Louis C.K. identified something fundamental. Human happiness is determined by relative position, not absolute circumstances. You feel rich or poor, successful or unsuccessful, based on comparison to your peers, not objective measures.
 
-> Which creates a problem none of the proposed solutions really address.
->
-> Progressive taxation (Piketty's model) addresses material inequality but not status anxiety. Universal basic income provides material security but might worsen relative deprivation. "I'm living on UBI while capital owners command AGI empires." You can't tax away the psychological experience of being lower status.
->
-> Predistribution (worker ownership, AI bonds) works better for status reasons. You're a participant, not a dependent. But if ownership distributes broadly while control concentrates, you own equity while others make decisions. Psychological benefit exists but has limits.
->
-> The human premium (Thompson's optimism) works for those who successfully build audience, reputation, authentic voice. Doesn't address the 80% who lack platform or incumbency advantage. Creates a new status hierarchy: recognized humans versus anonymous humans versus AI agents.
->
-> None of these models directly tackle the core problem. Algorithmic amplification of relative deprivation in an era of material abundance.
+{{< highlight-box title="🧠 The Policy Blind Spot" >}}
+Which creates a problem none of the proposed solutions really address.
+
+Progressive taxation (Piketty's model) addresses material inequality but not status anxiety. Universal basic income provides material security but might worsen relative deprivation. "I'm living on UBI while capital owners command AGI empires." You cannot tax away the psychological experience of lower status.
+
+Predistribution (worker ownership, AI bonds) works better for status reasons. You're a participant, not a dependent. But if ownership distributes broadly while control concentrates, you own equity while others make decisions. The psychological benefit exists but has limits.
+
+The human premium (Thompson's optimism) works for those who successfully build an audience, reputation, and authentic voice. It does not address the 80% who lack platform or incumbency advantage. It creates a new status hierarchy: recognized humans versus anonymous humans versus AI agents.
+
+None of these models directly tackle the core problem: algorithmic amplification of relative deprivation in an era of material abundance.
+{{< /highlight-box >}}
 
 ### When does felt inequality trigger instability?
 
@@ -200,13 +213,15 @@ At what point does *felt inequality* trigger instability regardless of material 
 
 Kuhn observed these shifts don't happen through persuasion. Conversion happens at the edges. People willing to abandon the collapsing framework. New models emerge by asking different questions, not patching old ones.
 
-> So here's what I keep coming back to. Three barriers protect certain work from automation: accountability (someone has to be sued), trade-offs between competing values, and tacit knowledge from lived experience. But there's a catch. Distribution power beats skill quality every time.
->
-> **Work where AI can't:** Take decisions where you're personally liable for the outcome. Balance competing priorities that can't be reduced to a single metric. Build expertise through repetition in high-stakes situations.
->
-> **Own the customer relationship.** If a platform sits between you and your customers, you're competing on the platform's terms. Either become the platform, build direct relationships, or accept you're playing a rigged game.
->
-> **Look for what becomes scarce.** When AI makes something abundant, the adjacent scarcity becomes valuable. Knowledge gets cheaper, so judgment about which knowledge to trust becomes more expensive. Code generation gets easier, so knowing when generated code will fail in production becomes the bottleneck.
+{{< highlight-box title="🧭 Operating Rules" >}}
+So here's what I keep coming back to. Three barriers protect certain work from automation: accountability (someone has to be sued), trade-offs between competing values, and tacit knowledge from lived experience. But there's a catch. Distribution power beats skill quality every time.
+
+**Work where AI cannot:** Take decisions where you're personally liable for the outcome. Balance competing priorities that cannot be reduced to a single metric. Build expertise through repetition in high-stakes situations.
+
+**Own the customer relationship.** If a platform sits between you and your customers, you are competing on the platform's terms. Either become the platform, build direct relationships, or accept you're playing a rigged game.
+
+**Look for what becomes scarce.** When AI makes something abundant, adjacent scarcity becomes valuable. Knowledge gets cheaper, so judgment about which knowledge to trust becomes more expensive. Code generation gets easier, so knowing when generated code will fail in production becomes the bottleneck.
+{{< /highlight-box >}}
 
 ### The Social Choice: Ownership by Design, Not Policy
 
@@ -218,29 +233,30 @@ Traditional predistribution focuses on policy: AI sovereign wealth funds, AI bon
 
 But there's a more interesting path.
 
+[Predistribution: An Economic Model for the AI Age](https://www.notion.so/2fb2d8a2d60e814b91f2dd95cfb1ddeb) sketches one version of this path.
+
 **Labor reclassified as capital:**
 
 Think about what this actually means. Right now, we treat labor and capital as separate categories. You either own the means of production or you sell your time. But AI enables a third category.
 
-Micro-equity in agentic workflows. You don't just deploy an AI agent. You own a stake in the automations you create and deploy. Every workflow you build, every prompt chain you optimize, every dataset you curate becomes equity you own, not labor you sell.
-
-Revenue share attached to data and relationship assets. Your customer relationships, your domain expertise, your historical data; these become assets that generate ongoing revenue streams, not one-time compensation. The mechanic who knows engine sounds doesn't just get paid per repair. They own a stake in the diagnostic system trained on their expertise.
-
-Personal brands as durable income streams. This is basically human IP equity. Bill Simmons doesn't just have a following. He owns the value of his perspective, his taste, his accumulated knowledge. That ownership generates income independently of his time.
-
-Co-ops and guilds that bundle liability, distribution, and reputation. Individual freelancers can't compete with platforms. But cooperatives can. Pool accountability through shared insurance structures. Pool distribution through collective recommendation algorithms. Pool reputation through verified guild membership.
+- **Micro-equity in agentic workflows.** You don't just deploy an AI agent. You own a stake in the automations you create and deploy. Every workflow you build, every prompt chain you optimize, every dataset you curate becomes equity you own, not labor you sell.
+- **Revenue share attached to data and relationship assets.** Your customer relationships, your domain expertise, your historical data: these become assets that generate ongoing revenue streams, not one-time compensation. The mechanic who knows engine sounds doesn't just get paid per repair. They own a stake in the diagnostic system trained on their expertise.
+- **Personal brands as durable income streams.** This is basically human IP equity. Bill Simmons doesn't just have a following. He owns the value of his perspective, his taste, his accumulated knowledge. That ownership generates income independently of his time.
+- **Co-ops and guilds that bundle liability, distribution, and reputation.** Individual freelancers can't compete with platforms. But cooperatives can. Pool accountability through shared insurance structures. Pool distribution through collective recommendation algorithms. Pool reputation through verified guild membership.
 
 This isn't hypothetical. Early versions already exist. GitHub Copilot sharing revenue with open-source maintainers. Substack giving writers equity in platform growth. Creator DAOs bundling audience relationships into tradeable assets. These are experiments in designing ownership into the tools, not hoping policy arrives on time.
 
 **The critical insight:** If the next decade's fight is labor versus capital, you want to reclassify labor as capital before the lines get drawn. Not through legislation (too slow, too easily captured). Through product design. Build ownership structures directly into the tools people use to work.
 
-> Timing matters because of the feedback spiral. AI adoption concentrates wealth. Concentrated wealth buys political influence. Influence blocks redistribution. History shows when inequality crosses certain thresholds (French Revolution at 60% wealth concentration, Gilded Age at 45%, Roaring Twenties at 50%), structural reform becomes nearly impossible.
->
-> Current US wealth concentration sits at 37%. Three percentage points below where the feedback loop becomes self-reinforcing.
->
-> Two patterns are emerging. [Stability AI's open models](https://stability.ai/) and Barcelona's [Decidim participatory platform](https://decidim.org/) show one path. Faster adoption with distributed ownership.
->
-> Platform-captured models show another. Gains concentrate, workers lose leverage. Adoption speed matters less than ownership structure. Who owns the tools, who controls the infrastructure, whether users can take their data elsewhere.
+{{< highlight-box title="⏳ Timing and Feedback Loops" >}}
+Timing matters because of the feedback spiral. AI adoption concentrates wealth. Concentrated wealth buys political influence. Influence blocks redistribution. History shows that when inequality crosses certain thresholds (French Revolution at 60% wealth concentration, Gilded Age at 45%, Roaring Twenties at 50%), structural reform becomes nearly impossible.
+
+Current US wealth concentration sits at 37%, three percentage points below where the feedback loop becomes self-reinforcing.
+
+Two patterns are emerging. [Stability AI's open models](https://stability.ai/) and Barcelona's [Decidim participatory platform](https://decidim.org/) show one path: faster adoption with distributed ownership.
+
+Platform-captured models show another. Gains concentrate, workers lose leverage. Adoption speed matters less than ownership structure: who owns the tools, who controls the infrastructure, and whether users can take their data elsewhere.
+{{< /highlight-box >}}
 
 The old model required decades of education, institutional access, capital for training. The new one doesn't have to replicate that structure. But the default path replicates the same concentration under different mechanisms.
 
