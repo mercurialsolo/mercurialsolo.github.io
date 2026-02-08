@@ -233,7 +233,7 @@ Traditional predistribution focuses on policy: AI sovereign wealth funds, AI bon
 
 But there's a more interesting path.
 
-[Predistribution: An Economic Model for the AI Age](https://www.notion.so/2fb2d8a2d60e814b91f2dd95cfb1ddeb) sketches one version of this path.
+[Predistribution: An Economic Model for the AI Age](/posts/predistribution-an-economic-model-for-the-ai-age/) sketches one version of this path.
 
 **Labor reclassified as capital:**
 
