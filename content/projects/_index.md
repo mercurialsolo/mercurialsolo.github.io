@@ -74,7 +74,7 @@ description: "Things I'm building and have built"
 
 ## Company
 
-| Project | Description | Stack |
-|---------|-------------|-------|
-| **Kubric** | GAN-based rendering engine | — |
-| **Mason** | Autonomous Agent Harness for Commerce | — |
+| Project | Description | Stack | Links |
+|---------|-------------|-------|-------|
+| **Kubric** | GAN-based rendering engine | — | [Site](https://kubric.io) |
+| **Mason** | Autonomous Agent Harness for Commerce | — | [Site](https://getmason.io) |
