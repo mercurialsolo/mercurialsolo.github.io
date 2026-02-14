@@ -8,8 +8,9 @@
 */ -}}
 
 {{- $title := .Get "title" -}}
+{{- $type := .Get "type" | default "" -}}
 
-<div class="highlight-box">
+<div class="highlight-box{{ with $type }} highlight-box--{{ . }}{{ end }}">
   {{- if $title }}
   <h3 class="highlight-box-title">{{ $title }}</h3>
   {{- end }}

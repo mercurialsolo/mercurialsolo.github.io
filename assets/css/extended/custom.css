@@ -150,3 +150,9 @@
 .highlight-box-content a:hover {
     text-decoration-color: var(--primary);
 }
+
+/* Highlight box variants */
+.highlight-box--warning {
+    background: rgba(220, 53, 69, 0.08);
+    border-left: 3px solid rgba(220, 53, 69, 0.5);
+}

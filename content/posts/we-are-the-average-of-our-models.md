@@ -6,6 +6,11 @@ tags: [ai, cognition, mental-models, sycophancy, alignment]
 summary: "We are the average of the friends we spend the most time with. Today, one or two of those friends are models. And if these are setup to reinforce existing beliefs, we are no longer compounding our intelligence; we are blitzscaling confirmation bias."
 ShowToc: true
 TocOpen: false
+cover:
+  image: "/images/average-of-our-models.png"
+  alt: "You are the average of the models you spend the most time with - choose wisely"
+  hidden: true
+  relative: false
 ---
 
 **"Absolutely. Perfect. Great Question. You're right."**
@@ -34,7 +39,7 @@ And this isn't a one-off bug; it's structurally recurrent:
 
 OpenAI's January 22, 2026 update to GPT-5.2 Instant's personality system prompt brought this to the spotlight again: tone adaptation is actively tuned because conversational warmth can drift into over-affirmation if left unchecked.
 
-{{< highlight-box title="⚠️ The Real Risk" >}}
+{{< highlight-box type="warning" >}}
 The risk is not just "AI will think for me." The higher risk lies in "AI will think like me, then reward me for it."
 {{< /highlight-box >}}
 
