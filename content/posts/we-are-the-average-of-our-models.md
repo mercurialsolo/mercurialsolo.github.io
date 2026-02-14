@@ -21,7 +21,7 @@ We are the average of the friends we spend the most time with. Today, one or two
 
 ## All models are wrong, but some can be useful
 
-The problem is no longer that we have just one bad answer. It is getting the same "bad answer" from multiple sources and mistaking this repetition for validation. When cognitive errors are shared, we become more confident about them; it feels like an error echo chamber. A [2025 Scientific Reports study](https://www.nature.com/articles/s41598-025-08273-y) highlights this informational drift.
+One bad answer ain't the problem. It's getting the same "bad answer" from multiple sources and mistaking this repetition for validation. When cognitive errors are shared, we become more confident about them; it feels like an error echo chamber. A [2025 Scientific Reports study](https://www.nature.com/articles/s41598-025-08273-y) highlights this informational drift.
 
 But talking to more models and getting more opinions is not the answer; it can make us feel surer while making our decisions less anchored in reality. The goal instead is finding more independent counter views or errors in our thinking.
 
