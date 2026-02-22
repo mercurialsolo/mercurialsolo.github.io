@@ -256,23 +256,10 @@
     gap: 0.5em;
 }
 
-/* Remove all spacing between filename and code block inside wrapper */
-.code-block-wrapper .code-filename ~ * {
-    margin-top: 0;
-    padding-top: 0;
-}
-
-.code-block-wrapper .highlight,
-.code-block-wrapper .highlight pre {
-    margin-top: 0;
-}
-
-.code-filename ~ .highlight pre,
-.code-filename ~ * .highlight pre,
-.code-filename + .highlight pre {
-    border-top-left-radius: 0;
-    border-top-right-radius: 0;
-    margin-top: 0;
+/* Connect filename header and code block as one unit */
+.code-block-wrapper .highlight:not(table) {
+    margin: 0;
+    border-radius: 0 0 var(--radius) var(--radius);
 }
 
 /* Hide theme's built-in copy button inside code-file wrapper (shortcode has its own) */
