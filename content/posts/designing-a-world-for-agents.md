@@ -171,7 +171,7 @@ The circuit breaker is the one that matters most in practice. Recursive loops ar
 
 Cost control also depends on crash recovery. A crashed agent that restarts without budget state resets its spending counter to zero. The $47 session could have been a $470 session if the agent had crashed and restarted with a fresh budget.
 
-## What we're building next
+## What we're working on next?
 
 All of the above gave us the foundation: agents that survive crashes, keep secrets contained, hand off work reliably, respect channel boundaries, and don't burn money unsupervised. Reliability is the floor, not the ceiling.
 
