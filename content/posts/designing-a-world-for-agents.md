@@ -234,7 +234,7 @@ graph LR
 
 You can't build smart agents on unreliable infrastructure.
 
-## The world is the product
+## Agents need their worlds 
 
 We keep investing in smarter agents. Better models, bigger prompts, more sophisticated routing. But the agents are already smart enough. What they lack is a world that's built for them.
 
