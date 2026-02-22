@@ -42,7 +42,7 @@ That was Tuesday. By Friday we'd also watched a research agent forget 22 sources
   </div>
 </div>
 
-The agents maybe capable but the worlds we'd built for them weren't. I'm starting [OpenHydra](https://github.com/openhydra), an open source foundation for running agents with real tools over long-running sessions. Here's what broke and what I've been building  to fix it.
+The agents maybe capable but the worlds we'd built for them weren't. I'm starting [OpenHydra](https://github.com/mercurialsolo/openhydra), an open source foundation for running agents with real tools over long-running sessions. Here's what broke and what I've been building  to fix it.
 
 ## The agent that died at source 22
 
