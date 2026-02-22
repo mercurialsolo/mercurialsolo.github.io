@@ -175,7 +175,7 @@ Cost control also depends on crash recovery. A crashed agent that restarts witho
 
 ## What we're working on next?
 
-All of the above gave us the foundation: agents that survive crashes, keep secrets contained, hand off work reliably, respect channel boundaries, and don't burn money unsupervised. Reliability is the floor, not the ceiling.
+All of the above gave us the foundation: agents that survive crashes, keep secrets contained, hand off work reliably, respect channel boundaries, and don't burn money unsupervised. Reliability is the starting point for any autonomous agent. Without it the consequences is what we end up facing - wrong messages, leaked secrets, $100k overnight bills. 
 
 ### Structured memory
 
