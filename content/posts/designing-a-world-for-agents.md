@@ -236,7 +236,7 @@ You can't build smart agents on unreliable infrastructure.
 
 ## The world is the product
 
-The industry keeps investing in smarter agents. Better models, fancier prompts, more sophisticated routing. But the agents are already smart enough. What they lack is a world that's ready for them.
+We keep investing in smarter agents. Better models, bigger prompts, more sophisticated routing. But the agents are already smart enough. What they lack is a world that's built for them.
 
 <div class="callout callout-insight">
   <blockquote>A world where crashes don't erase progress, secrets stay contained, handoffs survive failures, channels enforce boundaries, costs stay predictable, and humans get paged when it actually matters.</blockquote>
