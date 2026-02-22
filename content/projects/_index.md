@@ -9,6 +9,7 @@ description: "Things I'm building and have built"
 
 | Date | Project | Notes |
 |------|---------|-------|
+| 2026-02 | [openhydra](https://github.com/mercurialsolo/openhydra) | Open source world engine for agents |
 | 2026-02 | [writer-engine](https://github.com/mercurialsolo/writer-engine) | Multi-agent writing system |
 | 2026-01 | [hydra](https://github.com/mercurialsolo/hydra) | Local Long-Lived Agent OS |
 | 2026-01 | [pitch-timer](https://github.com/mercurialsolo/pitch-timer) | macOS menu bar timer |
@@ -28,6 +29,7 @@ description: "Things I'm building and have built"
 
 | Project | Details | Stack | Launch | Links |
 |---------|---------|-------|--------|-------|
+| **openhydra** | Open source world engine for agents | — | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
 | **pitch-timer** | macOS menu bar timer with overlay display, global hotkeys, and network sync | Swift | 2026-01 | [GitHub](https://github.com/mercurialsolo/pitch-timer) |
 | **counsel-mcp** | MCP server for counsel | JavaScript · ⭐ 2 | 2026-01 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
 | **cabal-sandbox-python** | Open source project for running Cabal containers | — | 2025-08 | [GitHub](https://github.com/mercurialsolo/cabal-sandbox-python) |
