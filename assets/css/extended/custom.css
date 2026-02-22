@@ -1,3 +1,24 @@
+/* Warm background override (Anthropic-style) */
+:root {
+    --theme: #faf8f3;
+    --code-bg: #f0eee9;
+    --border: #e8e5df;
+}
+
+:root[data-theme="dark"] {
+    --theme: #141413;
+    --code-bg: #2a2a2e;
+    --border: #3a3a3a;
+}
+
+/* Italic post description (Anthropic-style) */
+.post-description {
+    font-style: italic;
+    color: var(--secondary);
+    font-size: 1.05em;
+    line-height: 1.6;
+}
+
 /* Reduce whitespace in home info section */
 .first-entry.home-info {
     min-height: auto;
