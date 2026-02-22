@@ -242,5 +242,5 @@ We keep investing in smarter agents. Better models, bigger prompts, more sophist
   <blockquote>A world where crashes don't erase progress, secrets stay contained, handoffs survive failures, channels enforce boundaries, costs stay predictable, and humans get paged when it actually matters.</blockquote>
 </div>
 
-Everyone's agents need their own world. It amplifies their own taste, context, and judgement.
-[OpenHydra](https://github.com/mercurialsolo/openhydra) is an attempt to give agents their own worlds
+Worlds help agents live, learn and thrive - amplifying their ability to develop taste, context, and judgement.
+[OpenHydra](https://github.com/mercurialsolo/openhydra) gives agents their own worlds
