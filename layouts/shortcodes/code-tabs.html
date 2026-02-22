@@ -1,0 +1,57 @@
+{{- /* Code tabs shortcode: show same concept in multiple languages
+     Usage:
+       {{< code-tabs >}}
+       {{< tab name="Python" >}}
+       ```python
+       def hello():
+           print("Hello")
+       ```
+       {{< /tab >}}
+       {{< tab name="JavaScript" >}}
+       ```javascript
+       function hello() {
+           console.log("Hello");
+       }
+       ```
+       {{< /tab >}}
+       {{< /code-tabs >}}
+*/ -}}
+
+{{- $id := printf "code-tabs-%d" (index (seq 1 999 | shuffle) 0) -}}
+
+<div class="code-tabs" id="{{ $id }}">
+  <div class="code-tabs-nav" role="tablist">
+  </div>
+  {{ .Inner }}
+</div>
+
+<script>
+(function() {
+  const container = document.getElementById('{{ $id }}');
+  const panels = container.querySelectorAll('.code-tab-panel');
+  const nav = container.querySelector('.code-tabs-nav');
+
+  panels.forEach(function(panel, i) {
+    const name = panel.getAttribute('data-tab-name');
+    const btn = document.createElement('button');
+    btn.textContent = name;
+    btn.setAttribute('role', 'tab');
+    btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+    if (i === 0) {
+      btn.classList.add('active');
+      panel.classList.add('active');
+    }
+    btn.addEventListener('click', function() {
+      nav.querySelectorAll('button').forEach(function(b) {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      });
+      panels.forEach(function(p) { p.classList.remove('active'); });
+      btn.classList.add('active');
+      btn.setAttribute('aria-selected', 'true');
+      panel.classList.add('active');
+    });
+    nav.appendChild(btn);
+  });
+})();
+</script>

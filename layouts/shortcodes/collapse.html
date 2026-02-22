@@ -1,0 +1,22 @@
+{{- /* Collapsible section shortcode
+     Usage:
+       {{< collapse summary="Technical details" >}}
+       Hidden content with **markdown** support.
+
+       Multiple paragraphs work too.
+       {{< /collapse >}}
+
+       {{< collapse summary="Show code" open="true" >}}
+       Starts expanded.
+       {{< /collapse >}}
+*/ -}}
+
+{{- $summary := .Get "summary" | default "Details" -}}
+{{- $open := .Get "open" | default "" -}}
+
+<details class="collapse-section"{{ if eq $open "true" }} open{{ end }}>
+  <summary>{{ $summary }}</summary>
+  <div class="collapse-content">
+    {{ .Inner | markdownify }}
+  </div>
+</details>

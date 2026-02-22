@@ -1,0 +1,38 @@
+{{- /* Side-by-side code diff shortcode
+     Usage:
+       {{< code-diff before="Before" after="After" >}}
+       ---before---
+       ```python
+       def process(data):
+           result = slow_query(data)
+           return result
+       ```
+       ---after---
+       ```python
+       def process(data):
+           result = cached_query(data)
+           return result
+       ```
+       {{< /code-diff >}}
+*/ -}}
+
+{{- $beforeLabel := .Get "before" | default "Before" -}}
+{{- $afterLabel := .Get "after" | default "After" -}}
+
+{{- $inner := .Inner -}}
+{{- $parts := split $inner "---after---" -}}
+
+<div class="code-diff">
+  <div class="code-diff-header">
+    <span>{{ $beforeLabel }}</span>
+    <span>{{ $afterLabel }}</span>
+  </div>
+  <div class="code-diff-panels">
+    <div class="code-diff-panel">
+      {{ index $parts 0 | replaceRE "---before---" "" | markdownify }}
+    </div>
+    <div class="code-diff-panel">
+      {{ if gt (len $parts) 1 }}{{ index $parts 1 | markdownify }}{{ end }}
+    </div>
+  </div>
+</div>

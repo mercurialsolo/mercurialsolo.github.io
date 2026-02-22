@@ -11,6 +11,9 @@ A reference for writing well-formatted articles on this site. These techniques i
 | Term popup | `{{< term "RAG" >}}` | Jargon, acronyms, technical terms |
 | Highlight box | `{{< highlight-box title="..." >}}` | Key insights, summaries |
 | Collapsible | `{{< collapse summary="..." >}}` | Optional details, long content |
+| Code with filename | `{{< code-file name="config.py" >}}` | Named code blocks + copy button |
+| Code tabs | `{{< code-tabs >}}` | Same concept in multiple languages |
+| Code diff | `{{< code-diff before="..." after="..." >}}` | Side-by-side code changes |
 | Table | Markdown tables | Comparisons, structured data |
 | Mermaid diagram | ` ```mermaid ` | Flowcharts, sequences, relationships |
 | Interactive chart | `{{< app src="..." >}}` | Explorable data, hover states |
@@ -128,6 +131,143 @@ memoization for performance...
 - Extended examples or code
 - Historical context or background
 - Methodology explanations
+
+### Pre-expanded
+
+```markdown
+{{< collapse summary="Details (expanded by default)" open="true" >}}
+This starts open.
+{{< /collapse >}}
+```
+
+---
+
+## Code Presentation
+
+### Code with Filename and Copy Button
+
+Show code with a file header and one-click copy.
+
+```markdown
+{{< code-file name="agent.py" >}}
+```python
+from anthropic import Anthropic
+client = Anthropic()
+```
+{{< /code-file >}}
+```
+
+### Code Tabs (Multi-Language)
+
+Show the same concept in multiple languages with tab switching.
+
+```markdown
+{{< code-tabs >}}
+{{< tab name="Python" >}}
+```python
+resp = httpx.get(url)
+```
+{{< /tab >}}
+{{< tab name="JavaScript" >}}
+```javascript
+const resp = await fetch(url);
+```
+{{< /tab >}}
+{{< /code-tabs >}}
+```
+
+### Code Diff (Before/After)
+
+Side-by-side code comparison. Stacks vertically on mobile.
+
+```markdown
+{{< code-diff before="Without cache" after="With cache" >}}
+---before---
+```python
+def get_user(uid):
+    return db.query(User, id=uid)
+```
+---after---
+```python
+@lru_cache(maxsize=256)
+def get_user(uid):
+    return db.query(User, id=uid)
+```
+{{< /code-diff >}}
+```
+
+### Code Presentation Decision Guide
+
+```
+Single block with a filename? → {{< code-file >}}
+Same concept, multiple languages? → {{< code-tabs >}}
+Before/after change? → {{< code-diff >}}
+Long block (30+ lines), optional? → {{< collapse >}}
+Readers should run/edit it? → {{< app >}} with sandbox
+Plain snippet? → standard fenced block
+```
+
+---
+
+## Layout Components
+
+### Stat Row
+
+Horizontal row of key metrics.
+
+```html
+<div class="stat-row">
+  <div class="stat">
+    <div class="stat-number">$400B</div>
+    <div class="stat-label">Annual AI CapEx</div>
+  </div>
+  <div class="stat">
+    <div class="stat-number">73%</div>
+    <div class="stat-label">NVIDIA Gross Margin</div>
+  </div>
+</div>
+```
+
+### Side-by-Side
+
+Compare two approaches or concepts.
+
+```html
+<div class="side-by-side">
+  <div class="side">
+    <div class="side-header side-header-red">Traditional</div>
+    <div class="side-body">Manual process, error-prone...</div>
+  </div>
+  <div class="side">
+    <div class="side-header side-header-green">Modern</div>
+    <div class="side-body">Automated, with guardrails...</div>
+  </div>
+</div>
+```
+
+### Callout Variants
+
+Beyond highlight boxes:
+
+```html
+<!-- Warning -->
+<div class="callout callout-warning">
+  <div class="callout-icon">&#9888;</div>
+  <div class="callout-body"><strong>Warning:</strong> Known failure modes in production.</div>
+</div>
+
+<!-- Pull-quote insight -->
+<div class="callout callout-insight">
+  <blockquote>The model is the CPU; your product is the computer.</blockquote>
+</div>
+
+<!-- Metric spotlight -->
+<div class="callout callout-metric">
+  <div class="metric-value">86%</div>
+  <div class="metric-label">Task success with guardrails</div>
+  <div class="metric-delta">+9pp from baseline</div>
+</div>
+```
 
 ---
 
@@ -555,6 +695,9 @@ If you can't answer yes to at least one, you're building a feature—not a compa
 - [ ] Technical terms have {{< term >}} popups where helpful
 - [ ] Key insights in highlight boxes (1-2 per post max)
 - [ ] Tables used for comparisons
+- [ ] Code blocks use appropriate shortcode (code-file, code-tabs, code-diff)
+- [ ] Long optional content uses {{< collapse >}}
 - [ ] Images have descriptive alt text
+- [ ] Interactive charts only when interactivity adds value
 - [ ] Links work and add value
 - [ ] Read aloud to check flow
