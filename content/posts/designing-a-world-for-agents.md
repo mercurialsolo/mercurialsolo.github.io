@@ -179,7 +179,7 @@ All of the above gave us the foundation: agents that survive crashes, keep secre
 
 ### Structured memory
 
-We're working on structured memory so agents can query what they've learned across sessions, not just what files they produced. A research agent that forgets everything between sessions is doing first-day work every day. The tricky part isn't storage; it's deciding what gets remembered, what expires, and making sure one tenant's memories don't leak into another's.
+We're working on structured memory so agents can query what they've learned across sessions, not just what files they produced. A research agent that forgets everything between sessions is doing first-day work every day. The tricky part here isn't the storage format - it's deciding what gets remembered, what needs to expire, and making sure one tenant's memories don't leak over into another's.
 
 ### Tool discovery
 
