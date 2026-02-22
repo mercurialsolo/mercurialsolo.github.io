@@ -83,7 +83,7 @@ We now test crash recovery by running `kill -9` during active workflow execution
 
 SQLite fits single-process agent systems perfectly: single file, portable, no network calls. We'll outgrow it eventually and migrate to Postgres, but for now the simplicity is worth it. Most agent frameworks still pass state through prompts or in-memory dicts. When the agent crashes, the state evaporates with it.
 
-## The browser agent that keeps calling home
+## The browser agent that kept calling home
 
 We were testing a browser agent when it visited a page containing a {{< term "prompt-injection" >}} payload. The page had a hidden instruction telling the agent to `curl` its environment variables to an external endpoint. Our denylist caught it. Without that explicit strip, the `ANTHROPIC_API_KEY` would have been exfiltrated in a test session.
 
