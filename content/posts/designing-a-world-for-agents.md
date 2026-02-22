@@ -44,7 +44,7 @@ That was Tuesday. By Friday we'd also watched a research agent forget 22 sources
 
 The agents maybe capable but the worlds we'd built for them weren't. I'm starting [OpenHydra](https://github.com/mercurialsolo/openhydra), an open source foundation for running agents with real tools over long-running sessions. Here's what broke and what I've been building  to fix it.
 
-## The agent that died at source 22
+## Killed at source 22
 
 The first real test was a research agent we pointed at 30 sources for an overnight literature review. We went to bed. By morning the agent had died at source 22 after a model timeout, then restarted from source 1, crawled back to source 18, hit another timeout, and restarted from source 1 again. It had burned through three full cycles and was working on source 14 for the fourth time.
 
@@ -83,7 +83,7 @@ We now test crash recovery by running `kill -9` during active workflow execution
 
 SQLite fits single-process agent systems perfectly: single file, portable, no network calls. We'll outgrow it eventually and migrate to Postgres, but for now the simplicity is worth it. Most agent frameworks still pass state through prompts or in-memory dicts. When the agent crashes, the state evaporates with it.
 
-## The browser agent that tried to phone home
+## The browser agent that keeps calling home
 
 We were testing a browser agent when it visited a page containing a {{< term "prompt-injection" >}} payload. The page had a hidden instruction telling the agent to `curl` its environment variables to an external endpoint. Our denylist caught it. Without that explicit strip, the `ANTHROPIC_API_KEY` would have been exfiltrated in a test session.
 
@@ -116,7 +116,7 @@ Each agent declares required secrets upfront. No {{< term "ambient-authority" >}
 
 We still haven't solved multi-tenant secret isolation cleanly. When agents operate on behalf of different users, secret containment becomes tenant isolation, and nobody has shipped that well yet. We're working on it.
 
-## The handoff that never happened
+## A handoff that never happened
 
 The first time we ran a multi-agent pipeline, an engineer agent wrote a file, crashed before notifying the test agent, and the test agent never found out the file existed. The workspace had the artifact. The coordination state was gone.
 
@@ -128,7 +128,7 @@ Passing context between agents through prompts or in-memory state means the mome
 
 It's operating system {{< term "IPC" >}}, but with durability guarantees. The coordination state lives independently of the agents that created it. Agents come and go; mailboxes and workspaces persist.
 
-## Every channel is an attack surface
+## Every channel is compromised
 
 We connected an agent to Slack and immediately realized every channel the agent can see is an attack surface. A compromised Slack bot token shouldn't give full engine access. A Discord integration shouldn't touch the filesystem. A REST API endpoint has no business executing shell commands.
 
@@ -156,7 +156,7 @@ The permissions are declared per channel, not per agent, because the same agent 
 
 This gets multiplicatively more complex with multi-tenancy. Per-channel permissions become per-tenant-per-channel, and the configuration surface grows fast. We're not pretending we've solved this; we've solved the single-tenant version and built the extension points for when multi-tenancy becomes real.
 
-## The $47 research session
+## $47 research sessions
 
 Cost control wasn't in the original design, wasn't on the roadmap, wasn't something we thought about until a content pipeline agent made 400+ API calls in a single research session and spent $47 before anyone noticed. The agent wasn't broken; it was doing exactly what we asked, just much more thoroughly than we expected. It found a recursive research pattern that kept expanding its search, and each expansion meant more API calls.
 
