@@ -206,39 +206,10 @@
     margin-bottom: 0;
 }
 
-/* Code block enhancements: copy button */
+/* Code block wrapper */
 .code-block-wrapper {
     position: relative;
     margin: 1.5em 0;
-}
-
-.code-block-wrapper .copy-btn {
-    position: absolute;
-    top: 8px;
-    right: 8px;
-    background: var(--code-bg);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 4px 10px;
-    font-size: 0.75em;
-    cursor: pointer;
-    opacity: 0;
-    transition: opacity 0.2s ease;
-    color: var(--secondary);
-    z-index: 1;
-}
-
-.code-block-wrapper:hover .copy-btn {
-    opacity: 1;
-}
-
-.code-block-wrapper .copy-btn:hover {
-    background: var(--tertiary);
-    color: var(--primary);
-}
-
-.code-block-wrapper .copy-btn.copied {
-    color: #27AE60;
 }
 
 /* Code block: filename header */
@@ -262,10 +233,6 @@
     border-radius: 0 0 var(--radius) var(--radius);
 }
 
-/* Hide theme's built-in copy button inside code-file wrapper (shortcode has its own) */
-.code-block-wrapper .highlight .copy-code {
-    display: none;
-}
 
 /* Code block: line highlighting */
 .highlight .hl {

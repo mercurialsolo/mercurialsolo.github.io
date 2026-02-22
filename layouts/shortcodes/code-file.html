@@ -1,4 +1,4 @@
-{{- /* Code block with filename header and copy button
+{{- /* Code block with filename header
      Usage:
        {{< code-file name="config.py" >}}
        ```python
@@ -16,26 +16,5 @@
     {{ $name }}
   </div>
   {{- end }}
-  <button class="copy-btn" onclick="copyCode(this)" aria-label="Copy code">Copy</button>
   {{ .Inner | markdownify }}
 </div>
-
-{{ if not (.Page.Scratch.Get "copyScriptLoaded") }}
-{{ .Page.Scratch.Set "copyScriptLoaded" true }}
-<script>
-function copyCode(btn) {
-  const wrapper = btn.closest('.code-block-wrapper');
-  const code = wrapper.querySelector('code');
-  if (code) {
-    navigator.clipboard.writeText(code.textContent).then(function() {
-      btn.textContent = 'Copied';
-      btn.classList.add('copied');
-      setTimeout(function() {
-        btn.textContent = 'Copy';
-        btn.classList.remove('copied');
-      }, 2000);
-    });
-  }
-}
-</script>
-{{ end }}
