@@ -4,6 +4,8 @@ date: 2026-02-21T10:00:00
 author: mercurialsolo
 tags: [ai, agents, infrastructure, engineering, security]
 summary: "A browser agent tried to exfiltrate our API keys on Tuesday. By Friday we'd also watched a research agent forget 22 sources of work, a pipeline lose an entire handoff to a crash, and a content agent spend $47 unsupervised. The agents were capable. The worlds we'd built for them weren't."
+description: "An AI agent tried to steal our API keys. By Friday, four more things had gone wrong. Here's the infrastructure we built so it wouldn't happen again."
+images: ["/images/designing-a-world-for-agents/cover.webp"]
 ShowToc: true
 TocOpen: false
 glossary:
