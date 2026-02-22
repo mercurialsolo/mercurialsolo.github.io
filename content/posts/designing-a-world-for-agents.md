@@ -243,4 +243,4 @@ The industry keeps investing in smarter agents. Better models, fancier prompts, 
 </div>
 
 Everyone's agents need their own world. It amplifies their own taste, context, and judgement.
-[OpenHydra](https://github.com/openhydra) is an attempt to give agents their own worlds
+[OpenHydra](https://github.com/mercurialsolo/openhydra) is an attempt to give agents their own worlds
