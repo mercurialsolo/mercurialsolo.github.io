@@ -19,7 +19,7 @@ glossary:
   DAG: "Directed Acyclic Graph; a structure defining task dependencies and execution order, with no cycles"
 ---
 
-The browser agent had been running for forty minutes when it visited a page with a hidden instruction to `curl` our environment variables. The denylist caught this activity. Without that strip, the `ANTHROPIC_API_KEY` would have been on someone else's machine - we weren't watching the agent.That was Tuesday. 
+The browser agent had been running for forty minutes when it visited a page with a hidden instruction to `curl` our environment variables. The denylist caught this activity. Without that strip, the `ANTHROPIC_API_KEY` would have been on someone else's machine - we weren't watching the agent. This was Tuesday. 
 
 By Friday we'd also watched a research agent forget 22 sources of work overnight, a multi-agent pipeline lose a handoff to a crash, and a content agent spend $47 in a single unsupervised session. And we aren't the only ones having trouble: in December 2025, Amazon pointed their internal coding agent Kiro at AWS Cost Explorer for a routine update, and Kiro [deleted and recreated the entire environment](https://www.neowin.net/news/internal-ai-bot-caused-aws-outages-amazon-says-its-employees-fault/), triggering a 13-hour outage for customers in mainland China.
 
