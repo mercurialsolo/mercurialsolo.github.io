@@ -32,7 +32,7 @@ The enterprise claw needs abstractions that don't exist in polished form for age
 
 ### Wiki for Agents
 
-No persistent memory across runs, no fleet-wide learning loop. When one agent discovers a data source is stale, no other agent in the org benefits. Same lessons relearned independently, at the same token cost, across every team. Multi-agent pipelines consume 15x more tokens than single-agent chats because every agent starts from zero context.
+There's no persistent memory across runs, no fleet-wide learning loop. When one agent discovers a data source is stale, no other agent in the org benefits. Same lessons relearned independently, at the same token cost, across every team. Multi-agent pipelines consume 15x more tokens than single-agent chats because every agent starts from zero context.
 
 Every cloud provider offers some memory primitive; none solve fleet-wide knowledge sharing with tenant isolation. The opportunity is the organizational memory layer between agent runtime and knowledge store. You'd start single-team, prove token savings, then expand to cross-team sharing. Usage grows with agent adoption; the data flywheel makes it hard to rip out.
 
@@ -42,7 +42,7 @@ Every cloud provider offers some memory primitive; none solve fleet-wide knowled
 
 OAuth handles per-app grants, not per-agent per-task grants at runtime. IAM policies don't model "this agent is on Q3 planning, so it reads the finance channel but not HR." Agents are non-deterministic, autonomous, and act through toolchains at machine speed.
 
-The incidents are real. Supabase MCP exfiltrated integration tokens via prompt injection (June 2025). Stolen OAuth tokens from Salesloft's Drift accessed hundreds of Salesforce instances (August 2025). Amazon's Kiro deleted an entire AWS environment, 13-hour outage. Every incident: over-broad credentials on autonomous systems.
+The incidents are everywhere around us. Supabase MCP exfiltrated integration tokens via prompt injection (June 2025). Stolen OAuth tokens from Salesloft's Drift accessed hundreds of Salesforce instances (August 2025). Amazon's Kiro deleted an entire AWS environment, 13-hour outage.Pretty much every incident was an over-broad credentials on autonomous systems.
 
 You'd build intent-based authorization: agents declare what they need, the system generates minimum-viable permissions, monitors drift, flags violations. Start with one SaaS surface, expand connector coverage. Integration breadth is the moat.
 
