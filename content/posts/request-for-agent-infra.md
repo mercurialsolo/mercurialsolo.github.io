@@ -3,16 +3,14 @@ title: "Why It's Hard to Claw the Enterprise"
 date: 2026-02-24T00:00:00
 author: mercurialsolo
 tags: [ai, agents, enterprise, infrastructure, startups]
-description: "Inspite of all the hype around personal assistant personal agency still feels far from reality. It feels like we are the ones grinding for the agents today - constantly reviewing plans, uploading context and providing agents access to tools."
+description: "Inspite of all the hype around personal assistants, personal agency still feels far from reality. It feels like we are the ones grinding for the agents today - constantly reviewing plans, uploading context and providing agents access to tools."
 ShowToc: true
 TocOpen: false
 ---
 
 I've been running OpenClaw for personal use and the first reaction: it works as a basic personal assistant. Browser as the universal tool, Slack and WhatsApp and email as the comms layer and the event stream, the filesystem as the memory layer. They come together well when we own everything the agent touches. Authentication, authorization, data governance: no-problem, especially when the user and the admin are the same person.
 
-> In spite of all this personal agency still feels far from reality. It feels like we are the ones grinding for the agents today, constantly approving plans, context and providing them access to tools.
-
-The harness is straightforward: let's now bolt on SSO, add an admin panel, and start selling it to teams. Not so easy, because the failure modes run deeper than what is evident at the surface.
+The harness looks straightforward: let's now bolt on SSO, add an admin panel, and start selling it to teams. Not so easy, because the failure modes run deeper than what is evident at the surface.
 
 Agents should ideally be doing useful work at 2am; research, briefings, competitive analysis ready before the team logs in Monday. The agents we have today can't sustain that. Run one autonomously for four hours and the reasoning frays; by step 12 of a 20-step plan, it's optimizing for something adjacent to what you asked. Models don't stick to plans over long task horizons the way a human with a checklist does.
 

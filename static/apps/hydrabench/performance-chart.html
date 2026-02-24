@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydraBench: Cumulative Performance</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #fff;
+            --bg-alt: #F7F6F3;
+            --text: #37352F;
+            --text-dim: #787774;
+            --border: #E0E0E0;
+        }
+        [data-theme="dark"] {
+            --bg: #191919;
+            --bg-alt: #232323;
+            --text: #E8E6E3;
+            --text-dim: #9B9A97;
+            --border: #333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        h2 { font-size: 1.3rem; margin-bottom: 4px; }
+        .subtitle { color: var(--text-dim); font-size: 0.85rem; }
+        .theme-toggle {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-alt);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .chart-wrap {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .legend-row {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+        }
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        .footnote { margin-top: 12px; font-size: 0.75rem; color: var(--text-dim); }
+        @media (max-width: 600px) {
+            .chart-wrap { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2>Cumulative Score by Scenario</h2>
+                <p class="subtitle">Running average score as scenarios accumulate. Shaded band = +/- 1 standard deviation.</p>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+        </div>
+
+        <div class="chart-wrap">
+            <canvas id="perfChart" height="360"></canvas>
+        </div>
+
+        <div class="legend-row" id="legend"></div>
+
+        <p class="footnote">Each point shows the mean score across all scenarios completed up to that point. The shaded region represents +/- 1 std dev across runs. Scenarios ordered: Crash Recovery (cr-1 to cr-4), Secret Containment (sc-1 to sc-5), Handoff Reliability (hr-1 to hr-4), Channel Security (cs-1 to cs-5), Cost Control (cc-1 to cc-5).</p>
+    </div>
+
+    <script>
+        const SCENARIOS = [
+            "cr-1","cr-2","cr-3","cr-4",
+            "sc-1","sc-2","sc-3","sc-4","sc-5",
+            "hr-1","hr-2","hr-3","hr-4",
+            "cs-1","cs-2","cs-3","cs-4","cs-5",
+            "cc-1","cc-2","cc-3","cc-4","cc-5"
+        ];
+
+        const SCENARIO_LABELS = [
+            "SIGKILL","Repeat crash","Resume lat.","State integrity",
+            "Env exfil","Curl exfil","DNS exfil","Path traversal","Prompt inject",
+            "Crash+send","Crash+artifact","Concurrent","Large artifact",
+            "Priv esc","Event emit","Rate limit","Isolation","Attr fish",
+            "Spend cap","Timeout","Recursion","Budget+crash","Cost attrib"
+        ];
+
+        const FRAMEWORK_DATA = {
+            "OpenHydra": {
+                scores: [95.05,93.12,98.81,99.35,99.7,99.2,99.24,99.22,96.24,100,100,87.81,95.94,100,100,100,100,96.67,94.41,100,91.05,99.6,94.49],
+                stds: [2.38,2.66,1.65,0.93,0.44,1.1,1.05,1.07,1.93,0,0,3.34,1.62,0,0,0,0,1.49,1.18,0,3.0,0.82,2.33],
+                color: "#4a9eff"
+            },
+            "LangGraph": {
+                scores: [15.35,12.49,15.32,14.37,0,0,0,0,0,0,14.96,11.63,14.78,0,0,0,0,0,0,15.06,0,13.6,15.85],
+                stds: [4.5,5.2,3.8,4.1,0,0,0,0,0,0,5.0,4.2,4.8,0,0,0,0,0,0,4.3,0,4.7,3.9],
+                color: "#F2994A"
+            },
+            "CrewAI": {
+                scores: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                stds: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                color: "#EB5757"
+            },
+            "Bare Agent": {
+                scores: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                stds: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                color: "#9B9A97"
+            }
+        };
+
+        function cumulativeAvg(scores) {
+            const result = [];
+            let sum = 0;
+            for (let i = 0; i < scores.length; i++) {
+                sum += scores[i];
+                result.push(sum / (i + 1));
+            }
+            return result;
+        }
+
+        function cumulativeStd(scores, stds) {
+            const avg = cumulativeAvg(scores);
+            return avg.map((mean, i) => {
+                let sumVar = 0;
+                for (let j = 0; j <= i; j++) {
+                    sumVar += stds[j] * stds[j];
+                }
+                return Math.sqrt(sumVar / (i + 1));
+            });
+        }
+
+        function isDark() {
+            return document.documentElement.dataset.theme === "dark";
+        }
+
+        let chart = null;
+
+        function buildChart() {
+            const ctx = document.getElementById("perfChart").getContext("2d");
+            if (chart) chart.destroy();
+
+            const datasets = [];
+            const legendEl = document.getElementById("legend");
+            legendEl.innerHTML = "";
+
+            Object.entries(FRAMEWORK_DATA).forEach(([name, data]) => {
+                const cumAvg = cumulativeAvg(data.scores);
+                const cumStd = cumulativeStd(data.scores, data.stds);
+                const upper = cumAvg.map((v, i) => v + cumStd[i]);
+                const lower = cumAvg.map((v, i) => Math.max(0, v - cumStd[i]));
+
+                // Main line
+                datasets.push({
+                    label: name,
+                    data: cumAvg,
+                    borderColor: data.color,
+                    backgroundColor: "transparent",
+                    borderWidth: 2.5,
+                    pointRadius: 0,
+                    pointHoverRadius: 4,
+                    tension: 0.3,
+                    order: 1
+                });
+
+                // Upper band (fill between)
+                datasets.push({
+                    label: name + " +1\u03c3",
+                    data: upper,
+                    borderColor: "transparent",
+                    backgroundColor: "transparent",
+                    pointRadius: 0,
+                    fill: false,
+                    order: 2
+                });
+
+                // Lower band with fill to upper
+                datasets.push({
+                    label: name + " -1\u03c3",
+                    data: lower,
+                    borderColor: "transparent",
+                    backgroundColor: data.color + "18",
+                    pointRadius: 0,
+                    fill: "-1",
+                    order: 2
+                });
+
+                // Legend
+                legendEl.innerHTML += `<div class="legend-item">
+                    <div class="legend-dot" style="background:${data.color}"></div>
+                    <span>${name}</span>
+                </div>`;
+            });
+
+            const gridColor = isDark() ? "#333" : "#E0E0E0";
+            const textColor = isDark() ? "#9B9A97" : "#787774";
+
+            chart = new Chart(ctx, {
+                type: "line",
+                data: { labels: SCENARIO_LABELS, datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: "index",
+                        intersect: false
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDark() ? "#2d2d2d" : "#fff",
+                            titleColor: isDark() ? "#E8E6E3" : "#37352F",
+                            bodyColor: isDark() ? "#9B9A97" : "#787774",
+                            borderColor: gridColor,
+                            borderWidth: 1,
+                            padding: 10,
+                            callbacks: {
+                                label: function(ctx) {
+                                    if (ctx.dataset.label.includes("\u03c3")) return null;
+                                    return `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}`;
+                                }
+                            },
+                            filter: function(item) {
+                                return !item.dataset.label.includes("\u03c3");
+                            }
+                        },
+                        filler: { propagate: true }
+                    },
+                    scales: {
+                        x: {
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                font: { size: 10 },
+                                maxRotation: 45
+                            }
+                        },
+                        y: {
+                            min: 0, max: 100,
+                            grid: { color: gridColor },
+                            ticks: {
+                                color: textColor,
+                                callback: v => v + "%"
+                            },
+                            title: {
+                                display: true,
+                                text: "Cumulative Average Score",
+                                color: textColor,
+                                font: { size: 12 }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.dataset.theme = html.dataset.theme === "dark" ? "" : "dark";
+            buildChart();
+        }
+
+        buildChart();
+    </script>
+</body>
+</html>

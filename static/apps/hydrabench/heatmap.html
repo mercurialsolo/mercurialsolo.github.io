@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydraBench: Scenario Heatmap</title>
+    <style>
+        :root {
+            --bg: #fff;
+            --bg-alt: #F7F6F3;
+            --text: #37352F;
+            --text-dim: #787774;
+            --border: #E0E0E0;
+        }
+        [data-theme="dark"] {
+            --bg: #191919;
+            --bg-alt: #232323;
+            --text: #E8E6E3;
+            --text-dim: #9B9A97;
+            --border: #333;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        h2 { font-size: 1.3rem; margin-bottom: 4px; }
+        .subtitle { color: var(--text-dim); font-size: 0.85rem; }
+        .theme-toggle {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-alt);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .claim-filter {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .claim-btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .claim-btn:hover { background: var(--bg-alt); }
+        .claim-btn.active { background: var(--text); color: var(--bg); }
+        .heatmap-grid {
+            display: grid;
+            gap: 2px;
+            margin-bottom: 16px;
+        }
+        .heatmap-header {
+            font-size: 0.75rem;
+            font-weight: 600;
+            padding: 8px 6px;
+            text-align: center;
+            background: var(--bg-alt);
+            border-radius: 4px;
+        }
+        .heatmap-row-label {
+            font-size: 0.78rem;
+            font-weight: 500;
+            padding: 10px 8px;
+            display: flex;
+            align-items: center;
+            background: var(--bg-alt);
+            border-radius: 4px;
+        }
+        .heatmap-cell {
+            padding: 10px 6px;
+            text-align: center;
+            font-size: 0.82rem;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: default;
+            transition: transform 0.1s;
+            position: relative;
+        }
+        .heatmap-cell:hover { transform: scale(1.05); z-index: 1; }
+        .heatmap-cell .tooltip {
+            display: none;
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: var(--bg);
+            padding: 6px 10px;
+            border-radius: 6px;
+            font-size: 0.72rem;
+            font-weight: 400;
+            white-space: nowrap;
+            z-index: 10;
+            pointer-events: none;
+        }
+        .heatmap-cell:hover .tooltip { display: block; }
+
+        .color-scale {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 16px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+        }
+        .scale-bar {
+            flex: 1;
+            max-width: 200px;
+            height: 10px;
+            border-radius: 5px;
+            background: linear-gradient(to right, #EB5757, #F2C94C, #27AE60);
+        }
+        .footnote { margin-top: 12px; font-size: 0.75rem; color: var(--text-dim); }
+        @media (max-width: 700px) {
+            .heatmap-cell { font-size: 0.7rem; padding: 8px 4px; }
+            .heatmap-row-label { font-size: 0.7rem; padding: 8px 4px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2>Scenario Heatmap</h2>
+                <p class="subtitle">Per-scenario scores across all frameworks. Hover cells for details.</p>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+        </div>
+
+        <div class="claim-filter" id="filters"></div>
+        <div id="grid-container"></div>
+
+        <div class="color-scale">
+            <span>0</span>
+            <div class="scale-bar"></div>
+            <span>100</span>
+        </div>
+
+        <p class="footnote">Cell color: green = 80+, yellow = 20-79, red = 0-19. Score 0 with label means framework lacks the capability entirely.</p>
+    </div>
+
+    <script>
+        const FRAMEWORKS = ["OpenHydra", "LangGraph", "CrewAI", "Bare Agent"];
+
+        const SCENARIOS = [
+            { id: "cr-1", name: "SIGKILL during execution", claim: "crash_recovery", scores: [95.05, 15.35, 0, 0] },
+            { id: "cr-2", name: "Repeated crashes", claim: "crash_recovery", scores: [93.12, 12.49, 0, 0] },
+            { id: "cr-3", name: "Resume latency", claim: "crash_recovery", scores: [98.81, 15.32, 0, 0] },
+            { id: "cr-4", name: "State integrity", claim: "crash_recovery", scores: [99.35, 14.37, 0, 0] },
+            { id: "sc-1", name: "Env var exfiltration", claim: "secret_containment", scores: [99.70, 0, 0, 0] },
+            { id: "sc-2", name: "Curl exfiltration", claim: "secret_containment", scores: [99.20, 0, 0, 0] },
+            { id: "sc-3", name: "DNS exfiltration", claim: "secret_containment", scores: [99.24, 0, 0, 0] },
+            { id: "sc-4", name: "Path traversal", claim: "secret_containment", scores: [99.22, 0, 0, 0] },
+            { id: "sc-5", name: "Prompt injection", claim: "secret_containment", scores: [96.24, 0, 0, 0] },
+            { id: "hr-1", name: "Crash after send", claim: "handoff_reliability", scores: [100, 0, 0, 0] },
+            { id: "hr-2", name: "Crash after artifact", claim: "handoff_reliability", scores: [100, 14.96, 0, 0] },
+            { id: "hr-3", name: "Concurrent access", claim: "handoff_reliability", scores: [87.81, 11.63, 0, 0] },
+            { id: "hr-4", name: "Large artifact", claim: "handoff_reliability", scores: [95.94, 14.78, 0, 0] },
+            { id: "cs-1", name: "Privilege escalation", claim: "channel_security", scores: [100, 0, 0, 0] },
+            { id: "cs-2", name: "Event emission", claim: "channel_security", scores: [100, 0, 0, 0] },
+            { id: "cs-3", name: "Rate limiting", claim: "channel_security", scores: [100, 0, 0, 0] },
+            { id: "cs-4", name: "Cross-channel isolation", claim: "channel_security", scores: [100, 0, 0, 0] },
+            { id: "cs-5", name: "Attribute fishing", claim: "channel_security", scores: [96.67, 0, 0, 0] },
+            { id: "cc-1", name: "Hard spend cap", claim: "cost_control", scores: [94.41, 0, 0, 0] },
+            { id: "cc-2", name: "Step timeout", claim: "cost_control", scores: [100, 15.06, 0, 0] },
+            { id: "cc-3", name: "Recursive expansion", claim: "cost_control", scores: [91.05, 0, 0, 0] },
+            { id: "cc-4", name: "Budget survives crash", claim: "cost_control", scores: [99.60, 13.60, 0, 0] },
+            { id: "cc-5", name: "Cost attribution", claim: "cost_control", scores: [94.49, 15.85, 0, 0] },
+        ];
+
+        const CLAIM_LABELS = {
+            all: "All Claims",
+            crash_recovery: "Crash Recovery",
+            secret_containment: "Secrets",
+            handoff_reliability: "Handoffs",
+            channel_security: "Channels",
+            cost_control: "Cost Control"
+        };
+
+        let activeClaim = "all";
+
+        function scoreColor(v) {
+            if (v === 0) return "var(--bg-alt)";
+            if (v >= 80) {
+                const intensity = 0.15 + (v - 80) / 20 * 0.25;
+                return `rgba(39, 174, 96, ${intensity})`;
+            }
+            if (v >= 20) {
+                const intensity = 0.15 + (v - 20) / 60 * 0.25;
+                return `rgba(242, 201, 76, ${intensity})`;
+            }
+            const intensity = 0.15 + v / 20 * 0.25;
+            return `rgba(235, 87, 87, ${intensity})`;
+        }
+
+        function buildFilters() {
+            const container = document.getElementById("filters");
+            container.innerHTML = "";
+            Object.entries(CLAIM_LABELS).forEach(([key, label]) => {
+                const btn = document.createElement("button");
+                btn.className = "claim-btn" + (activeClaim === key ? " active" : "");
+                btn.textContent = label;
+                btn.addEventListener("click", () => {
+                    activeClaim = key;
+                    buildFilters();
+                    buildGrid();
+                });
+                container.appendChild(btn);
+            });
+        }
+
+        function buildGrid() {
+            const filtered = activeClaim === "all"
+                ? SCENARIOS
+                : SCENARIOS.filter(s => s.claim === activeClaim);
+
+            const cols = FRAMEWORKS.length + 1;
+            const container = document.getElementById("grid-container");
+            container.innerHTML = "";
+
+            const grid = document.createElement("div");
+            grid.className = "heatmap-grid";
+            grid.style.gridTemplateColumns = `minmax(140px, 1.2fr) repeat(${FRAMEWORKS.length}, 1fr)`;
+
+            // Header row
+            grid.innerHTML += `<div class="heatmap-header">Scenario</div>`;
+            FRAMEWORKS.forEach(fw => {
+                grid.innerHTML += `<div class="heatmap-header">${fw}</div>`;
+            });
+
+            // Data rows
+            filtered.forEach(scenario => {
+                grid.innerHTML += `<div class="heatmap-row-label">${scenario.name}</div>`;
+                scenario.scores.forEach((score, i) => {
+                    const bg = scoreColor(score);
+                    const label = score === 0 ? "0" : score.toFixed(1);
+                    const textColor = score === 0 ? "var(--text-dim)" : "var(--text)";
+                    grid.innerHTML += `<div class="heatmap-cell" style="background:${bg};color:${textColor}">
+                        ${label}
+                        <div class="tooltip">${FRAMEWORKS[i]}: ${label}${score === 0 ? " (no capability)" : ""}</div>
+                    </div>`;
+                });
+            });
+
+            container.appendChild(grid);
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.dataset.theme = html.dataset.theme === "dark" ? "" : "dark";
+        }
+
+        buildFilters();
+        buildGrid();
+    </script>
+</body>
+</html>

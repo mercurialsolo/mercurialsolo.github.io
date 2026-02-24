@@ -175,6 +175,18 @@ The circuit breaker is the one that matters most in practice. Recursive loops ar
 
 Cost control also depends on crash recovery. A crashed agent that restarts without budget state resets its spending counter to zero. The $47 session could have been a $470 session if the agent had crashed and restarted with a fresh budget.
 
+## The evidence
+
+We built [HydraBench](/projects/hydrabench/) to back these claims with numbers. 23 scenarios across the 5 claims above, run 5 times each against 4 frameworks: OpenHydra, LangGraph, CrewAI, and a bare agent baseline.
+
+{{< app src="/apps/hydrabench/leaderboard.html" height="520px" title="HydraBench Results" >}}
+
+OpenHydra scores 97.3 across all claims. LangGraph picks up partial credit on crash recovery (StateGraph checkpoints), workspace (file I/O), and step timeout (asyncio); it scores 0 on everything else. CrewAI and bare agents score 0 across the board: the capabilities don't exist.
+
+The gap isn't about intelligence. All four frameworks can run the same agent logic. The gap is infrastructure: which ones survive a `kill -9`, strip secrets before exfiltration, persist handoff state across crashes, enforce per-channel permissions, and stop runaway spending.
+
+Full methodology, interactive charts, and the open source harness: [HydraBench results](/projects/hydrabench/).
+
 ## What we're working on next?
 
 All of the above gave us the foundation: agents that survive crashes, keep secrets contained, hand off work reliably, respect channel boundaries, and don't burn money unsupervised. Reliability is the starting point for any autonomous agent. Without it the consequences is what we end up facing - wrong messages, leaked secrets, $100k overnight bills. 

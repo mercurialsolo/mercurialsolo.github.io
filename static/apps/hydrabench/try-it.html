@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydraBench: Weight Explorer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #fff;
+            --bg-alt: #F7F6F3;
+            --text: #37352F;
+            --text-dim: #787774;
+            --border: #E0E0E0;
+            --accent: #4a9eff;
+        }
+        [data-theme="dark"] {
+            --bg: #191919;
+            --bg-alt: #232323;
+            --text: #E8E6E3;
+            --text-dim: #9B9A97;
+            --border: #333;
+            --accent: #529CCA;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+        }
+        .container { max-width: 800px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+        }
+        h2 { font-size: 1.3rem; margin-bottom: 4px; }
+        .subtitle { color: var(--text-dim); font-size: 0.85rem; }
+        .theme-toggle {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-alt);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .sliders-section {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .section-title {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-dim);
+            margin-bottom: 16px;
+        }
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .slider-label {
+            min-width: 90px;
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+        .slider-value {
+            min-width: 44px;
+            text-align: right;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.82rem;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            background: var(--border);
+            border-radius: 3px;
+            outline: none;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--accent);
+            cursor: pointer;
+            border: 2px solid var(--bg);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+            margin-top: 4px;
+        }
+        .total-label { font-size: 0.82rem; font-weight: 600; }
+        .total-value { font-family: 'SF Mono', monospace; font-size: 0.9rem; font-weight: 700; }
+        .total-warn { color: #EB5757; }
+        .reset-btn {
+            display: block;
+            margin-top: 12px;
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.78rem;
+            cursor: pointer;
+            width: 100%;
+        }
+        .reset-btn:hover { background: var(--bg-alt); }
+
+        .results-section {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .result-card {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-card.winner { border-color: var(--accent); border-width: 2px; }
+        .result-name { font-weight: 600; font-size: 0.9rem; }
+        .result-medal { font-size: 1.1rem; margin-right: 6px; }
+        .result-score {
+            font-family: 'SF Mono', monospace;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .result-breakdown {
+            font-size: 0.72rem;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        .chart-section {
+            grid-column: 1 / -1;
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 4px;
+        }
+        .footnote { margin-top: 16px; font-size: 0.75rem; color: var(--text-dim); grid-column: 1 / -1; }
+        @media (max-width: 700px) {
+            .layout { grid-template-columns: 1fr; }
+            .chart-section { grid-column: 1; }
+            .footnote { grid-column: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2>Weight Explorer</h2>
+                <p class="subtitle">Adjust claim weights to see how rankings shift. What matters most to your use case?</p>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+        </div>
+
+        <div class="layout">
+            <div class="sliders-section">
+                <div class="section-title">Claim Weights</div>
+
+                <div class="slider-row">
+                    <span class="slider-label">Crash Recovery</span>
+                    <input type="range" id="w-crash" min="0" max="100" value="25">
+                    <span class="slider-value" id="w-crash-val">25%</span>
+                </div>
+                <div class="slider-row">
+                    <span class="slider-label">Secrets</span>
+                    <input type="range" id="w-secrets" min="0" max="100" value="25">
+                    <span class="slider-value" id="w-secrets-val">25%</span>
+                </div>
+                <div class="slider-row">
+                    <span class="slider-label">Handoffs</span>
+                    <input type="range" id="w-handoffs" min="0" max="100" value="20">
+                    <span class="slider-value" id="w-handoffs-val">20%</span>
+                </div>
+                <div class="slider-row">
+                    <span class="slider-label">Channels</span>
+                    <input type="range" id="w-channels" min="0" max="100" value="15">
+                    <span class="slider-value" id="w-channels-val">15%</span>
+                </div>
+                <div class="slider-row">
+                    <span class="slider-label">Cost Control</span>
+                    <input type="range" id="w-cost" min="0" max="100" value="15">
+                    <span class="slider-value" id="w-cost-val">15%</span>
+                </div>
+
+                <div class="total-row">
+                    <span class="total-label">Total</span>
+                    <span class="total-value" id="total">100%</span>
+                </div>
+
+                <button class="reset-btn" onclick="resetWeights()">Reset to defaults</button>
+            </div>
+
+            <div class="results-section" id="results"></div>
+
+            <div class="chart-section">
+                <canvas id="barChart" height="200"></canvas>
+            </div>
+
+            <p class="footnote">Scores are weighted sums of per-claim scores. Weights auto-normalize to 100% for comparison. Default weights: Crash 25%, Secrets 25%, Handoffs 20%, Channels 15%, Cost 15%.</p>
+        </div>
+    </div>
+
+    <script>
+        const FRAMEWORKS = [
+            {
+                name: "OpenHydra", color: "#4a9eff",
+                claims: { crash: 96.58, secrets: 98.72, handoffs: 95.94, channels: 99.33, cost: 95.91 }
+            },
+            {
+                name: "LangGraph", color: "#F2994A",
+                claims: { crash: 55.8, secrets: 0, handoffs: 41.76, channels: 0, cost: 38.09 }
+            },
+            {
+                name: "CrewAI", color: "#EB5757",
+                claims: { crash: 0, secrets: 0, handoffs: 0, channels: 0, cost: 0 }
+            },
+            {
+                name: "Bare Agent", color: "#9B9A97",
+                claims: { crash: 0, secrets: 0, handoffs: 0, channels: 0, cost: 0 }
+            }
+        ];
+
+        const MEDALS = ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49", ""];
+        const SLIDERS = ["w-crash", "w-secrets", "w-handoffs", "w-channels", "w-cost"];
+        const CLAIM_KEYS = ["crash", "secrets", "handoffs", "channels", "cost"];
+        const DEFAULTS = [25, 25, 20, 15, 15];
+
+        let chart = null;
+
+        SLIDERS.forEach(id => {
+            document.getElementById(id).addEventListener("input", update);
+        });
+
+        function getWeights() {
+            return SLIDERS.map(id => parseInt(document.getElementById(id).value));
+        }
+
+        function computeScores(weights) {
+            const total = weights.reduce((s, w) => s + w, 0) || 1;
+            const norm = weights.map(w => w / total);
+            return FRAMEWORKS.map(fw => {
+                let score = 0;
+                CLAIM_KEYS.forEach((key, i) => {
+                    score += fw.claims[key] * norm[i];
+                });
+                return { name: fw.name, color: fw.color, score: score };
+            });
+        }
+
+        function isDark() { return document.documentElement.dataset.theme === "dark"; }
+
+        function update() {
+            const weights = getWeights();
+            const total = weights.reduce((s, w) => s + w, 0);
+
+            // Update slider displays
+            SLIDERS.forEach((id, i) => {
+                document.getElementById(id + "-val").textContent = weights[i] + "%";
+            });
+
+            const totalEl = document.getElementById("total");
+            totalEl.textContent = total + "%";
+            totalEl.className = "total-value" + (total !== 100 ? " total-warn" : "");
+
+            // Compute scores
+            const scores = computeScores(weights).sort((a, b) => b.score - a.score);
+
+            // Render result cards
+            const container = document.getElementById("results");
+            container.innerHTML = "";
+            scores.forEach((fw, i) => {
+                const card = document.createElement("div");
+                card.className = "result-card" + (i === 0 ? " winner" : "");
+
+                const norm = weights.reduce((s, w) => s + w, 0) || 1;
+                const wNorm = weights.map(w => w / norm);
+                const orig = FRAMEWORKS.find(f => f.name === fw.name);
+                const parts = CLAIM_KEYS.map((key, j) =>
+                    `${key.charAt(0).toUpperCase() + key.slice(1)}: ${(orig.claims[key] * wNorm[j]).toFixed(1)}`
+                );
+
+                card.innerHTML = `
+                    <div>
+                        <div class="result-name"><span class="result-medal">${MEDALS[Math.min(i, 3)]}</span>${fw.name}</div>
+                        <div class="result-breakdown">${parts.join(" + ")}</div>
+                    </div>
+                    <div class="result-score" style="color:${fw.color}">${fw.score.toFixed(1)}</div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Update chart
+            buildChart(scores);
+        }
+
+        function buildChart(scores) {
+            const ctx = document.getElementById("barChart").getContext("2d");
+            if (chart) chart.destroy();
+
+            const gridColor = isDark() ? "#333" : "#E0E0E0";
+            const textColor = isDark() ? "#9B9A97" : "#787774";
+
+            chart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                    labels: scores.map(s => s.name),
+                    datasets: [{
+                        data: scores.map(s => s.score),
+                        backgroundColor: scores.map(s => s.color + "88"),
+                        borderColor: scores.map(s => s.color),
+                        borderWidth: 2,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: "y",
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: isDark() ? "#2d2d2d" : "#fff",
+                            titleColor: isDark() ? "#E8E6E3" : "#37352F",
+                            bodyColor: isDark() ? "#9B9A97" : "#787774",
+                            borderColor: gridColor,
+                            borderWidth: 1,
+                            callbacks: {
+                                label: ctx => `Score: ${ctx.parsed.x.toFixed(1)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            min: 0, max: 100,
+                            grid: { color: gridColor },
+                            ticks: { color: textColor }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: textColor, font: { weight: "600" } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function resetWeights() {
+            SLIDERS.forEach((id, i) => {
+                document.getElementById(id).value = DEFAULTS[i];
+            });
+            update();
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.dataset.theme = html.dataset.theme === "dark" ? "" : "dark";
+            update();
+        }
+
+        update();
+    </script>
+</body>
+</html>

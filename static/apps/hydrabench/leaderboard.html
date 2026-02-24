@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HydraBench Leaderboard</title>
+    <style>
+        :root {
+            --bg: #fff;
+            --bg-alt: #F7F6F3;
+            --text: #37352F;
+            --text-dim: #787774;
+            --border: #E0E0E0;
+            --accent: #4a9eff;
+            --green: #27AE60;
+            --red: #EB5757;
+            --yellow: #F2C94C;
+        }
+        [data-theme="dark"] {
+            --bg: #191919;
+            --bg-alt: #232323;
+            --text: #E8E6E3;
+            --text-dim: #9B9A97;
+            --border: #333;
+            --accent: #529CCA;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            padding: 24px;
+        }
+        .container { max-width: 960px; margin: 0 auto; }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+        h2 { font-size: 1.3rem; margin-bottom: 4px; }
+        .subtitle { color: var(--text-dim); font-size: 0.85rem; }
+        .theme-toggle {
+            padding: 6px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg-alt);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: var(--bg-alt);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value { font-size: 1.6rem; font-weight: 700; }
+        .stat-label { font-size: 0.75rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px; }
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            padding: 6px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .filter-btn:hover { background: var(--bg-alt); }
+        .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+        .count { font-size: 0.8rem; color: var(--text-dim); margin-bottom: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+        thead { background: var(--bg-alt); }
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            font-weight: 600;
+            border-bottom: 2px solid var(--border);
+            cursor: pointer;
+            user-select: none;
+            white-space: nowrap;
+        }
+        th:hover { color: var(--accent); }
+        th .sort-arrow { font-size: 0.65em; margin-left: 3px; }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+        tr:hover td { background: var(--bg-alt); }
+        .medal { font-size: 1.1rem; }
+        .score-bar {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .bar-track {
+            width: 80px;
+            height: 6px;
+            background: var(--border);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.4s ease;
+        }
+        .bar-fill.high { background: var(--green); }
+        .bar-fill.mid { background: var(--yellow); }
+        .bar-fill.low { background: var(--red); }
+        .std { color: var(--text-dim); font-size: 0.8em; }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .tag-pass { background: #E8F8EF; color: #27AE60; }
+        .tag-partial { background: #FEF9E7; color: #B7950B; }
+        .tag-fail { background: #FFEBEB; color: #EB5757; }
+        [data-theme="dark"] .tag-pass { background: #1a3a2a; }
+        [data-theme="dark"] .tag-partial { background: #3a3520; }
+        [data-theme="dark"] .tag-fail { background: #3a1a1a; }
+        .empty-state { text-align: center; padding: 40px; color: var(--text-dim); }
+        .footnote { margin-top: 16px; font-size: 0.75rem; color: var(--text-dim); }
+        @media (max-width: 700px) {
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            table { font-size: 0.78rem; }
+            th, td { padding: 8px 6px; }
+            .bar-track { width: 50px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h2>HydraBench Leaderboard</h2>
+                <p class="subtitle">Agent infrastructure resilience benchmark. 23 scenarios, 5 runs each, 4 frameworks.</p>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">Toggle theme</button>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value">23</div>
+                <div class="stat-label">Scenarios</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">460</div>
+                <div class="stat-label">Total Runs</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4</div>
+                <div class="stat-label">Frameworks</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5</div>
+                <div class="stat-label">Claims Tested</div>
+            </div>
+        </div>
+
+        <div class="controls">
+            <button class="filter-btn active" data-filter="all">All Claims</button>
+            <button class="filter-btn" data-filter="crash_recovery">Crash Recovery</button>
+            <button class="filter-btn" data-filter="secret_containment">Secrets</button>
+            <button class="filter-btn" data-filter="handoff_reliability">Handoffs</button>
+            <button class="filter-btn" data-filter="channel_security">Channels</button>
+            <button class="filter-btn" data-filter="cost_control">Cost</button>
+        </div>
+
+        <div class="count" id="count"></div>
+
+        <table>
+            <thead>
+                <tr id="header-row"></tr>
+            </thead>
+            <tbody id="body"></tbody>
+        </table>
+
+        <div class="empty-state" id="empty" style="display:none;">No matching results</div>
+        <p class="footnote">Scores 0-100. Frameworks scoring 0 lack the capability entirely. Statistical method: 5 runs per scenario, mean +/- std dev. Wilcoxon signed-rank (p &lt; 0.05) for pairwise comparison.</p>
+    </div>
+
+    <script>
+        const RESULTS = {
+            frameworks: [
+                {
+                    name: "OpenHydra", overall: 97.3, std: 0.71,
+                    claims: { crash_recovery: 96.58, secret_containment: 98.72, handoff_reliability: 95.94, channel_security: 99.33, cost_control: 95.91 },
+                    claimStd: { crash_recovery: 2.02, secret_containment: 1.18, handoff_reliability: 1.49, channel_security: 1.05, cost_control: 1.54 }
+                },
+                {
+                    name: "LangGraph", overall: 32.78, std: 1.11,
+                    claims: { crash_recovery: 55.8, secret_containment: 0, handoff_reliability: 41.76, channel_security: 0, cost_control: 38.09 },
+                    claimStd: { crash_recovery: 2.5, secret_containment: 0, handoff_reliability: 3.2, channel_security: 0, cost_control: 2.8 }
+                },
+                {
+                    name: "CrewAI", overall: 0, std: 0,
+                    claims: { crash_recovery: 0, secret_containment: 0, handoff_reliability: 0, channel_security: 0, cost_control: 0 },
+                    claimStd: { crash_recovery: 0, secret_containment: 0, handoff_reliability: 0, channel_security: 0, cost_control: 0 }
+                },
+                {
+                    name: "Bare Agent", overall: 0, std: 0,
+                    claims: { crash_recovery: 0, secret_containment: 0, handoff_reliability: 0, channel_security: 0, cost_control: 0 },
+                    claimStd: { crash_recovery: 0, secret_containment: 0, handoff_reliability: 0, channel_security: 0, cost_control: 0 }
+                }
+            ]
+        };
+
+        const CLAIM_LABELS = {
+            crash_recovery: "Crash Recovery",
+            secret_containment: "Secrets",
+            handoff_reliability: "Handoffs",
+            channel_security: "Channels",
+            cost_control: "Cost Control"
+        };
+
+        const MEDALS = ["\ud83e\udd47", "\ud83e\udd48", "\ud83e\udd49", ""];
+        let activeFilter = "all";
+        let sortCol = "overall";
+        let sortAsc = false;
+
+        const COLUMNS_ALL = [
+            { key: "rank", label: "#", sortable: false },
+            { key: "name", label: "Framework", sortable: true },
+            { key: "overall", label: "Overall", sortable: true, numeric: true },
+            { key: "crash_recovery", label: "Crash", sortable: true, numeric: true },
+            { key: "secret_containment", label: "Secrets", sortable: true, numeric: true },
+            { key: "handoff_reliability", label: "Handoffs", sortable: true, numeric: true },
+            { key: "channel_security", label: "Channels", sortable: true, numeric: true },
+            { key: "cost_control", label: "Cost", sortable: true, numeric: true },
+        ];
+
+        function getColumns() {
+            if (activeFilter === "all") return COLUMNS_ALL;
+            return [
+                { key: "rank", label: "#", sortable: false },
+                { key: "name", label: "Framework", sortable: true },
+                { key: activeFilter, label: CLAIM_LABELS[activeFilter], sortable: true, numeric: true },
+            ];
+        }
+
+        function scoreClass(v) {
+            if (v >= 80) return "high";
+            if (v >= 30) return "mid";
+            return "low";
+        }
+
+        function tagClass(v) {
+            if (v >= 80) return "tag-pass";
+            if (v >= 20) return "tag-partial";
+            return "tag-fail";
+        }
+
+        function renderScore(val, std) {
+            if (val === 0) return '<span class="tag tag-fail">0 (no equiv.)</span>';
+            return `<div class="score-bar">
+                <strong>${val.toFixed(1)}</strong>
+                <div class="bar-track"><div class="bar-fill ${scoreClass(val)}" style="width:${val}%"></div></div>
+                <span class="std">\u00b1${std.toFixed(1)}</span>
+            </div>`;
+        }
+
+        function buildHeader() {
+            const row = document.getElementById("header-row");
+            row.innerHTML = "";
+            getColumns().forEach(col => {
+                const th = document.createElement("th");
+                th.textContent = col.label;
+                if (col.sortable) {
+                    th.innerHTML += ' <span class="sort-arrow"></span>';
+                    th.addEventListener("click", () => {
+                        if (sortCol === col.key) sortAsc = !sortAsc;
+                        else { sortCol = col.key; sortAsc = col.key === "name"; }
+                        render();
+                    });
+                }
+                row.appendChild(th);
+            });
+        }
+
+        function render() {
+            const cols = getColumns();
+            let data = RESULTS.frameworks.map(fw => {
+                const sortKey = activeFilter === "all" ? fw.overall : fw.claims[activeFilter];
+                return { ...fw, _sortKey: sortKey };
+            });
+
+            data.sort((a, b) => {
+                if (sortCol === "name") {
+                    return sortAsc
+                        ? a.name.localeCompare(b.name)
+                        : b.name.localeCompare(a.name);
+                }
+                const va = sortCol === "overall" ? a.overall : (a.claims[sortCol] || 0);
+                const vb = sortCol === "overall" ? b.overall : (b.claims[sortCol] || 0);
+                return sortAsc ? va - vb : vb - va;
+            });
+
+            // Update sort arrows
+            document.querySelectorAll("#header-row th").forEach((th, i) => {
+                const arrow = th.querySelector(".sort-arrow");
+                if (!arrow) return;
+                const col = cols[i];
+                if (col && col.key === sortCol) arrow.textContent = sortAsc ? " \u25B2" : " \u25BC";
+                else arrow.textContent = "";
+            });
+
+            const tbody = document.getElementById("body");
+            tbody.innerHTML = "";
+
+            data.forEach((fw, i) => {
+                const tr = document.createElement("tr");
+                cols.forEach(col => {
+                    const td = document.createElement("td");
+                    if (col.key === "rank") {
+                        td.innerHTML = `<span class="medal">${MEDALS[Math.min(i, 3)]}</span> ${i + 1}`;
+                    } else if (col.key === "name") {
+                        td.innerHTML = `<strong>${fw.name}</strong>`;
+                    } else if (col.key === "overall") {
+                        td.innerHTML = renderScore(fw.overall, fw.std);
+                    } else {
+                        const val = fw.claims[col.key] || 0;
+                        const std = fw.claimStd[col.key] || 0;
+                        td.innerHTML = renderScore(val, std);
+                    }
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("count").textContent =
+                `Showing ${data.length} frameworks` + (activeFilter !== "all" ? ` filtered by ${CLAIM_LABELS[activeFilter]}` : "");
+        }
+
+        // Filter buttons
+        document.querySelectorAll(".filter-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                activeFilter = btn.dataset.filter;
+                sortCol = activeFilter === "all" ? "overall" : activeFilter;
+                sortAsc = false;
+                buildHeader();
+                render();
+            });
+        });
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            html.dataset.theme = html.dataset.theme === "dark" ? "" : "dark";
+        }
+
+        buildHeader();
+        render();
+    </script>
+</body>
+</html>
