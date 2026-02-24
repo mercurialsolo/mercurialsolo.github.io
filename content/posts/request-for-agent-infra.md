@@ -58,4 +58,4 @@ You'd build a budget-aware runtime layer: hard spend caps per session, circuit b
 
 ---
 
-Identity, memory, and money: the same three primitives that defined enterprise SaaS (Okta, Confluence, Ramp) rebuilt for non-human users.
+Identity, memory, and money: the same three primitives that defined enterprise SaaS (Okta, Confluence, Ramp) rebuilt for agents. It's 2026, the year of building for agents
