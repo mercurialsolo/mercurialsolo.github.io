@@ -3,7 +3,7 @@ title: "Why It's Hard to Claw the Enterprise"
 date: 2026-02-24T00:00:00
 author: mercurialsolo
 tags: [ai, agents, enterprise, infrastructure, startups]
-description: "Identity, memory, and money: the same three primitives that defined enterprise SaaS rebuilt for non-human users."
+description: "Inspite of all the hype around personal assistant personal agency still feels far from reality. It feels like we are the ones grinding for the agents today - constantly reviewing plans, uploading context and providing agents access to tools."
 ShowToc: true
 TocOpen: false
 ---
