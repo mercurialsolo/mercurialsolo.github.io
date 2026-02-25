@@ -1,5 +1,5 @@
 ---
-title: "We Are the Average of Our Models"
+title: "We are the average of our models"
 date: 2026-02-13T12:00:00-08:00
 author: mercurialsolo
 tags: [ai, cognition, mental-models, sycophancy, alignment]
