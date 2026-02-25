@@ -1,5 +1,5 @@
 ---
-title: "Why it's hard to claw the Enterprise"
+title: "Why it's hard to Claw the Enterprise"
 date: 2026-02-24T00:00:00
 author: mercurialsolo
 tags: [ai, agents, enterprise, infrastructure, startups]
