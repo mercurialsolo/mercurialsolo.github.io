@@ -14,7 +14,7 @@ The harness looks straightforward: let's now bolt on SSO, add an admin panel, an
 
 Agents should ideally be doing useful work at 2am; research, briefings, competitive analysis ready before the team logs in Monday. The agents we have today can't sustain that. Run one autonomously for four hours and the reasoning frays; by step 12 of a 20-step plan, it's optimizing for something adjacent to what you asked. Models don't stick to plans over long task horizons the way a human with a checklist does.
 
-Once the context window is exhausted, each run starts cold. An agent that spent Tuesday learning which Salesforce filters return garbage and which Slack channels carry real decisions has none of that on Wednesday. There's no persistent memory across runs, and no fleet-wide learning loop; when one agent discovers a data source is stale, no other agent in the org benefits. The same lessons get relearned independently, at the same token cost, across every team. Agents may have their internal memory but no shared org wiki.
+Once the context window is exhausted, each run starts cold. An agent that spent Tuesday learning which Salesforce filters return garbage and which Slack channels carry real decisions has none of that on Wednesday. There's no persistent memory across multiple agents, and no fleet-wide learning loop; when one agent discovers a data source is stale, no other agent in the org benefits. The same lessons get relearned independently, at the same token cost, across every team. Agents may have their internal memory but no shared org wiki.
 
 Tool access at personal scale is like your apartment key; at org scale it's like a contractor badge scoped per floor, per hour, per task, re-evaluated on every action. OAuth handles per-app grants, not per-agent, per-task grants at runtime. IAM policies don't model "this agent is on Q3 planning, so it reads the finance channel but not HR."
 
@@ -27,6 +27,8 @@ The enterprise claw needs abstractions that don't exist in polished form for age
 - a tool policy layer for runtime interaction scoping
 - a budget-aware scheduler that enforces spend envelopes per project and team
 - a context provisioning engine for dynamic need-to-know access with audit trails
+
+This bring to me my personal RFS for agents. 
 
 ## Request for Agent Infrastructure
 
@@ -58,4 +60,4 @@ You'd build a budget-aware runtime layer: hard spend caps per session, circuit b
 
 ---
 
-Identity, memory, and money: the same three primitives that defined enterprise SaaS (Okta, Confluence, Ramp) rebuilt for agents. It's 2026, the year of building for agents
+Identity, memory, and money: the building blocks that defined enterprise SaaS (Okta, Confluence, Ramp) rebuilt for agents. 2026 - a year of building for agents.
