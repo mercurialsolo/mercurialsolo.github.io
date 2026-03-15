@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kernel Discovery Loop</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 24px;
+    background: transparent;
+    color: #1a1a1a;
+  }
+  .diagram {
+    width: 100%;
+    max-width: 560px;
+  }
+  svg {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  .node rect, .node polygon {
+    stroke: #1a1a1a;
+    stroke-width: 1.5;
+  }
+  .node-fill { fill: #1a1a1a; }
+  .decision-fill { fill: #faf8f3; stroke: #1a1a1a; stroke-width: 1.5; }
+
+  .label { font-size: 13px; fill: #faf8f3; font-weight: 500; }
+  .label-dark { font-size: 13px; fill: #1a1a1a; font-weight: 600; }
+  .label-sub { font-size: 11px; fill: #999; font-weight: 400; }
+  .edge-label { font-size: 11px; fill: #888; font-weight: 600; }
+
+  .edge { stroke: #999; stroke-width: 1.5; fill: none; }
+  .arrow { fill: #999; }
+  .loop-edge { stroke: #999; stroke-width: 1.5; fill: none; stroke-dasharray: 6 3; }
+
+  @media (prefers-color-scheme: dark) {
+    body { color: #e8e6e1; }
+    .node-fill { fill: #e8e6e1; }
+    .decision-fill { fill: #2a2a2e; stroke: #e8e6e1; }
+    .label { fill: #141413; }
+    .label-dark { fill: #e8e6e1; }
+    .label-sub { fill: #777; }
+    .edge-label { fill: #888; }
+    .edge { stroke: #666; }
+    .arrow { fill: #666; }
+    .loop-edge { stroke: #666; }
+    .node rect, .node polygon { stroke: #e8e6e1; }
+  }
+</style>
+</head>
+<body>
+<div class="diagram">
+  <svg viewBox="0 0 560 440" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+        <polygon points="0 0, 8 3, 0 6" class="arrow"/>
+      </marker>
+    </defs>
+
+    <!-- Node 1: Performance Model -->
+    <g class="node" transform="translate(140, 16)">
+      <rect x="0" y="0" width="200" height="52" rx="4" class="node-fill"/>
+      <text x="100" y="23" text-anchor="middle" class="label">Performance Model</text>
+      <text x="100" y="38" text-anchor="middle" class="label-sub">(theoretical peak)</text>
+    </g>
+
+    <!-- Arrow 1→2 -->
+    <line x1="240" y1="68" x2="240" y2="104" class="edge" marker-end="url(#arrowhead)"/>
+
+    <!-- Node 2: Write Kernel -->
+    <g class="node" transform="translate(140, 106)">
+      <rect x="0" y="0" width="200" height="52" rx="4" class="node-fill"/>
+      <text x="100" y="23" text-anchor="middle" class="label">Write Kernel</text>
+      <text x="100" y="38" text-anchor="middle" class="label-sub">(Triton / CUDA)</text>
+    </g>
+
+    <!-- Arrow 2→3 -->
+    <line x1="240" y1="158" x2="240" y2="194" class="edge" marker-end="url(#arrowhead)"/>
+
+    <!-- Node 3: Profile -->
+    <g class="node" transform="translate(140, 196)">
+      <rect x="0" y="0" width="200" height="52" rx="4" class="node-fill"/>
+      <text x="100" y="23" text-anchor="middle" class="label">Profile</text>
+      <text x="100" y="38" text-anchor="middle" class="label-sub">(Nsight Compute)</text>
+    </g>
+
+    <!-- Arrow 3→4 -->
+    <line x1="240" y1="248" x2="240" y2="282" class="edge" marker-end="url(#arrowhead)"/>
+
+    <!-- Node 4: Decision diamond -->
+    <g class="node" transform="translate(240, 324)">
+      <polygon points="0,-40 80,0 0,40 -80,0" class="decision-fill"/>
+      <text x="0" y="-5" text-anchor="middle" class="label-dark">Gap from</text>
+      <text x="0" y="12" text-anchor="middle" class="label-dark">peak?</text>
+    </g>
+
+    <!-- Arrow: Small → Ship It (left) -->
+    <line x1="160" y1="324" x2="108" y2="324" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="134" y="314" text-anchor="middle" class="edge-label">Small</text>
+
+    <!-- Node 6: Ship It -->
+    <g class="node" transform="translate(8, 298)">
+      <rect x="0" y="0" width="98" height="52" rx="4" class="node-fill"/>
+      <text x="49" y="22" text-anchor="middle" class="label" font-size="12">Ship It</text>
+      <text x="49" y="38" text-anchor="middle" class="label-sub" font-size="10">(benchmark locked)</text>
+    </g>
+
+    <!-- Arrow: Large → Optimize (right) -->
+    <line x1="320" y1="324" x2="420" y2="324" class="edge" marker-end="url(#arrowhead)"/>
+    <text x="370" y="314" text-anchor="middle" class="edge-label">Large</text>
+
+    <!-- Node 5: Optimize -->
+    <g class="node" transform="translate(422, 298)">
+      <rect x="0" y="0" width="110" height="52" rx="4" class="node-fill"/>
+      <text x="55" y="22" text-anchor="middle" class="label" font-size="12">Optimize</text>
+      <text x="55" y="38" text-anchor="middle" class="label-sub" font-size="10">(tiles, memory, fusion)</text>
+    </g>
+
+    <!-- Loop arrow: Optimize → back up to Write Kernel -->
+    <path d="M 532,318 Q 548,318 548,212 Q 548,132 342,132" class="loop-edge" marker-end="url(#arrowhead)"/>
+  </svg>
+</div>
+</body>
+</html>
