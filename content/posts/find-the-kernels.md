@@ -21,7 +21,7 @@ glossary:
 
 In the software era, applications did wildly diverse things (auth, payments, search, analytics) so the only common abstraction was the process itself. The container became the basic unit of cloud computing. The infra to power it produced a $300B+ cloud infrastructure market.
 
-{{< highlight-box title="The unit has moved down the stack" >}}
+{{< highlight-box title="The unit has shifted down the stack" >}}
 Transformers have reduced the base unit of computation to a small set of operations: matrix multiplication, attention, softmax, layer normalization, expert routing. The unit of optimization has moved lower down the stack. You no longer abstract at the process level; you optimize at the operation level. In the models era, the unit of computation is closer to the silicon.
 {{< /highlight-box >}}
 
@@ -49,7 +49,7 @@ They map directly to which kernel optimizations matter:
 
 Kernel improvements now happen in months, not years. As AI apps move into the consumer and enterprise landscape, the workload also keeps shifting (longer contexts, multimodal inputs, reasoning chains, MoE routing) and each shift demands a brand new set of kernel specializations.
 
-{{< highlight-box title="For horizontal application builders" >}}
+{{< highlight-box title="For app builders" >}}
 Your workload profile is your kernel strategy. A coding assistant (long prefill, short decode, low concurrency) needs entirely different kernel trade-offs than a customer support bot (short prefill, long decode, high concurrency). Most teams run generic inference and leave 2-5x performance on the table. Profile your actual traffic: what's your prefill/decode ratio? Your p50 vs p99 sequence length? Your batch size distribution by hour? Those numbers determine whether you should optimize for FlashAttention-style memory reduction, PagedAttention-style batching, speculative decoding, or quantization. At scale, this becomes defensibility: a company that understands its workload shape well enough to select (or commission) the right kernel configuration has structurally lower cost-per-token than a competitor running defaults on the same hardware.
 {{< /highlight-box >}}
 
@@ -75,7 +75,7 @@ The creative work here is restructuring tile sizes, memory access patterns, inst
 
 The domain has **perfect verifiability**: TFLOPs/s against theoretical hardware peak. That verifiability makes kernel optimization tractable for AI agents. Karpathy's **autoresearch** pattern (edit code, run experiment, evaluate, keep or revert, repeat) was immediately adapted for kernels. **AutoKernel** takes any PyTorch model, profiles it, extracts bottleneck operations, then runs 300+ automated experiments on Triton or CUDA C++ kernels overnight. NVIDIA demonstrated a closed-loop workflow using DeepSeek-R1 with a hardware verifier to auto-generate optimized attention kernels, achieving **100% numerical correctness on Stanford's KernelBench Level-1 problems** and 96% on Level-2 in just 15 minutes of inference-time compute per problem.
 
-{{< highlight-box title="AI writing kernels for AI" >}}
+{{< highlight-box title="Self-improving kernels" >}}
 AI models are now writing the kernels that make AI models run faster.
 
 But the humans behind them still define the search space, set the objective function, and architect the verification infrastructure. The autoresearch loop accelerates kernel discovery; it hasn't yet replaced the insight that decides the operations to fuse or which memory access pattern to rethink about.
