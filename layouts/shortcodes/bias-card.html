@@ -1,0 +1,51 @@
+{{- /*
+  Expandable bias taxonomy card. Shows summary; click reveals full text.
+
+  Usage:
+    {{< bias-card
+      name="Popularity"
+      color="#58a6ff"
+      human="Follow the crowd"
+      agent="Follow the corpus"
+      stat="48% unnecessary NumPy"
+      example="Express always. npm over bun." >}}
+    Full paragraph of text about this bias goes here as inner content.
+    {{< /bias-card >}}
+
+  If no inner content, card is static (no expand).
+*/ -}}
+
+{{- $name := .Get "name" -}}
+{{- $color := .Get "color" | default "#58a6ff" -}}
+{{- $human := .Get "human" -}}
+{{- $agent := .Get "agent" -}}
+{{- $stat := .Get "stat" -}}
+{{- $example := .Get "example" -}}
+{{- $inner := .Inner | strings.TrimSpace -}}
+{{- $hasInner := ne $inner "" -}}
+{{- $id := printf "bias-%s" ($name | urlize) -}}
+
+<div class="bias-card{{ if $hasInner }} bias-card--expandable{{ end }}" style="border-color: {{ $color }}"{{ if $hasInner }} onclick="document.getElementById('{{ $id }}').classList.toggle('bias-card__detail--open')"{{ end }}>
+  <div class="bias-card__name" style="color: {{ $color }}">
+    {{ $name | upper }}
+    {{- if $hasInner }}
+    <span class="bias-card__toggle" style="color: {{ $color }}">+</span>
+    {{- end }}
+  </div>
+  <div class="bias-card__row">
+    <span class="bias-card__label">HUMAN</span>
+    <span class="bias-card__text">{{ $human }}</span>
+  </div>
+  <div class="bias-card__row">
+    <span class="bias-card__label" style="color: {{ $color }}">AGENT</span>
+    <span class="bias-card__text">{{ $agent }}</span>
+  </div>
+  <div class="bias-card__divider" style="border-color: {{ $color }}"></div>
+  <div class="bias-card__stat" style="color: {{ $color }}">{{ $stat }}</div>
+  <div class="bias-card__example">{{ $example }}</div>
+  {{- if $hasInner }}
+  <div class="bias-card__detail" id="{{ $id }}">
+    {{ $inner | markdownify }}
+  </div>
+  {{- end }}
+</div>

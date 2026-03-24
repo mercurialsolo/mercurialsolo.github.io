@@ -656,3 +656,161 @@
     height: 100%;
     border: none;
 }
+
+/* Bias taxonomy grid */
+.bias-grid-wrapper {
+    margin: 2em 0;
+}
+
+.bias-grid__header {
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+
+.bias-grid__title {
+    font-family: 'Courier New', monospace;
+    font-size: 1.4em;
+    font-weight: 700;
+    margin: 0 0 0.25em 0;
+    color: var(--primary);
+}
+
+.bias-grid__subtitle {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    color: var(--secondary);
+    margin: 0;
+}
+
+.bias-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1em;
+}
+
+@media (max-width: 768px) {
+    .bias-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .bias-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+.bias-card {
+    border: 1.5px solid;
+    border-radius: 8px;
+    padding: 1.25em;
+    background: var(--code-bg);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6em;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bias-card:hover {
+    box-shadow: 0 0 12px -4px var(--border);
+}
+
+.bias-card__name {
+    font-family: 'Courier New', monospace;
+    font-size: 1.05em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+}
+
+.bias-card__row {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6em;
+    font-size: 0.88em;
+    line-height: 1.4;
+}
+
+.bias-card__label {
+    font-family: 'Courier New', monospace;
+    font-size: 0.7em;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--secondary);
+    flex-shrink: 0;
+    min-width: 3.5em;
+}
+
+.bias-card__text {
+    color: var(--primary);
+}
+
+.bias-card__divider {
+    border-top: 1px dotted;
+    opacity: 0.3;
+}
+
+.bias-card__stat {
+    font-family: 'Courier New', monospace;
+    font-size: 0.85em;
+    font-weight: 700;
+}
+
+.bias-card__example {
+    font-family: 'Courier New', monospace;
+    font-size: 0.78em;
+    color: var(--secondary);
+    opacity: 0.75;
+}
+
+.bias-card--expandable {
+    cursor: pointer;
+}
+
+.bias-card--expandable:hover {
+    box-shadow: 0 0 16px -4px var(--border);
+}
+
+.bias-card__name {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.bias-card__toggle {
+    font-size: 1.2em;
+    font-weight: 300;
+    transition: transform 0.2s ease;
+}
+
+.bias-card__detail--open ~ .bias-card__toggle,
+.bias-card:has(.bias-card__detail--open) .bias-card__toggle {
+    transform: rotate(45deg);
+}
+
+.bias-card__detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease;
+    opacity: 0;
+    font-size: 0.88em;
+    line-height: 1.55;
+    color: var(--primary);
+    border-top: 1px solid var(--border);
+    padding-top: 0;
+    margin-top: 0;
+}
+
+.bias-card__detail--open {
+    max-height: 500px;
+    opacity: 1;
+    padding-top: 0.75em;
+    margin-top: 0.6em;
+}
+
+.bias-card__detail p {
+    margin: 0 0 0.5em 0;
+}
+
+.bias-card__detail p:last-child {
+    margin-bottom: 0;
+}

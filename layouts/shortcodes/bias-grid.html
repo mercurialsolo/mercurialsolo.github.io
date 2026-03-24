@@ -1,0 +1,26 @@
+{{- /*
+  Wrapper for bias-card shortcodes. Creates a responsive 3-column grid.
+
+  Usage:
+    {{< bias-grid title="Agent Selection Biases" subtitle="Human cognitive biases → Agent failure modes" >}}
+      {{< bias-card name="Popularity" ... >}}
+      {{< bias-card name="Temporal" ... >}}
+    {{< /bias-grid >}}
+*/ -}}
+
+{{- $title := .Get "title" -}}
+{{- $subtitle := .Get "subtitle" -}}
+
+<div class="bias-grid-wrapper">
+  {{- if $title }}
+  <div class="bias-grid__header">
+    <h3 class="bias-grid__title">{{ $title }}</h3>
+    {{- if $subtitle }}
+    <p class="bias-grid__subtitle">{{ $subtitle }}</p>
+    {{- end }}
+  </div>
+  {{- end }}
+  <div class="bias-grid">
+    {{ .Inner }}
+  </div>
+</div>
