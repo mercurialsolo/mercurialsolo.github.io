@@ -4,7 +4,7 @@ date: 2026-03-24T10:00:00
 author: mercurialsolo
 tags: [ai, agents, open-source, cognitive-biases, libraries, developer-tools]
 summary: "Coding agents now choose most of the libraries. And they choose badly, in predictable ways. 48% unnecessary library usage across eight models. 30 out of 30 cognitive biases confirmed across 20 LLMs. Open source is becoming agent source."
-description: "AI coding agents don't choose libraries rationally. They exhibit similar cognitive biases as humans do, but from a different source: training data instead of evolution. We discuss agent selection biases in software libraries and how they are mapped to human cognition and trace the feedback loop that reinforces them. Does open source need rebuilding for machines?"
+description: "AI coding agents don't choose libraries rationally. They exhibit similar cognitive biases as humans do, but from a different source: training data instead of evolution. We discuss agent selection biases in software libraries and trace the feedback loop that reinforces them. Does open source need rebuilding for machines?"
 ShowToc: true
 TocOpen: false
 glossary:
