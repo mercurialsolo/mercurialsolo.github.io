@@ -92,7 +92,7 @@ If the primary consumer is now an agent whose selection biases are well-document
 
 The blast radius is still evolving but we are already in the middle-game of the coding agent era.
 
-Model harnesses are quickly waking up and adjusting; Opus 4.6 already picks zustand over redux where earlier versions didn't, and dropped Redis for caching in cases where it was over-engineered. But model-level correction and corpus-level bias operate on different timescales, and the corpus moves slower. 30 out of 30 cognitive biases confirmed across 20 models isn't noise. And the 48% unneeded library usage across all models is a pattern, not just an edge case anymore.
+Model harnesses are quickly waking up and adapting; Opus 4.6's defaults to zustand over redux where earlier versions didn't, and dropped Redis for caching in cases where it was over-engineered. But model-level correction and corpus-level bias operate on different timescales, and the corpus moves slower. 30 biases across 20 models -> not just noise anymore + the 48% unneeded library usage across models is a pattern, not just an edge case anymore.
 
 {{< highlight-box >}}
 Open source is rapidly evolving into the agent source era. Getting preferred by agents is how you find distribution for your next software library.
