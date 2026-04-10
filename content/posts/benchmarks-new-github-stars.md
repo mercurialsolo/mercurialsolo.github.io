@@ -4,7 +4,7 @@ date: 2026-04-10T00:00:00+05:30
 author: mercurialsolo
 tags: [ai, benchmarks, credibility, signals, evaluation, gaming]
 summary: "GitHub stars broke as a credibility signal because clicks cost nothing to fake. Frontier labs replaced them with benchmark scores. But benchmarks are already being gamed. The market is climbing from stars to benchmarks to verified outputs — each rung costs more to fabricate than the last."
-description: "4.5 million fake GitHub stars. A 47-point contamination delta on SWE-bench. ARC-AGI-3 scores under 0.4% for every frontier model. The credibility signal for AI is migrating from social proof to computation proof to revenue proof, and the economics of faking each rung tell the whole story."
+description: "4.5 million fake GitHub stars. A 47-point contamination delta on SWE-bench. The credibility signal for AI is migrating from social proof to computation proof to revenue proof, and the economics of faking each rung tells the whole story."
 ShowToc: true
 TocOpen: false
 images:
