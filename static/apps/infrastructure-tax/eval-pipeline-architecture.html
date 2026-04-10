@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>From KPIs to Continuous Evaluation: The Internal Benchmark Pipeline</title>
+<script>
+// Detect theme from parent page or system preference
+function getTheme() {
+  try {
+    const parentTheme = window.parent.document.body.getAttribute('data-theme')
+      || window.parent.document.documentElement.getAttribute('data-theme');
+    if (parentTheme === 'light') return 'light';
+    if (parentTheme === 'dark') return 'dark';
+  } catch(e) {}
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return 'dark';
+}
+
+const THEME = getTheme();
+document.documentElement.setAttribute('data-theme', THEME);
+
+try {
+  const observer = new MutationObserver(() => {
+    const newTheme = getTheme();
+    document.documentElement.setAttribute('data-theme', newTheme);
+    if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+  });
+  observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['data-theme'] });
+} catch(e) {}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+  const newTheme = e.matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+});
+</script>
+<style>
+  :root {
+    --bg-body: #1a1a2e;
+    --bg-container: #16213e;
+    --bg-card: #0f1b38;
+    --text-primary: #f0f0f0;
+    --text-secondary: #c0d0e0;
+    --text-muted: #8899aa;
+    --text-subtle: #5a6a7a;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-card: rgba(255,255,255,0.05);
+    --accent-teal: #4ecdc4;
+    --accent-coral: #ff6b6b;
+    --accent-gold: #ffd93d;
+    --accent-purple: #a855f7;
+    --accent-gray: #6c757d;
+    --teal-bg: rgba(78, 205, 196, 0.12);
+    --coral-bg: rgba(255, 107, 107, 0.1);
+    --gold-bg: rgba(255, 217, 61, 0.1);
+    --teal-border: rgba(78, 205, 196, 0.5);
+    --coral-border: rgba(255, 107, 107, 0.45);
+    --gold-border: rgba(255, 217, 61, 0.5);
+    --arrow-line: rgba(255,255,255,0.15);
+    --arrow-head: rgba(255,255,255,0.2);
+    --teal-detail: #80c0bb;
+    --coral-detail: #cc9090;
+    --gold-detail: #c0a850;
+    --ci-border: rgba(255, 107, 107, 0.3);
+    --ci-bg: rgba(255, 107, 107, 0.06);
+    --ci-label: #8090a0;
+    --teal-sub-bg: rgba(78,205,196,0.08);
+    --teal-sub-border: rgba(78,205,196,0.2);
+    --teal-sub-bg-alt: rgba(78,205,196,0.06);
+    --teal-sub-border-alt: rgba(78,205,196,0.15);
+    --coral-sub-bg: rgba(255,107,107,0.06);
+    --coral-sub-border: rgba(255,107,107,0.2);
+    --legend-teal-bg: rgba(78,205,196,0.3);
+    --legend-teal-border: rgba(78,205,196,0.6);
+    --legend-coral-bg: rgba(255,107,107,0.2);
+    --legend-coral-border: rgba(255,107,107,0.5);
+    --legend-gold-border: rgba(255,217,61,0.6);
+    --legend-gold-bg: rgba(255,217,61,0.1);
+    --feedback-arrow: rgba(255,217,61,0.5);
+    --feedback-arrow-head: rgba(255,217,61,0.6);
+    --border-axis: #2a3a5a;
+  }
+
+  [data-theme="light"] {
+    --bg-body: #f8f9fa;
+    --bg-container: #ffffff;
+    --bg-card: #f1f3f5;
+    --text-primary: #1a1a2e;
+    --text-secondary: #2d3748;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-card: rgba(0,0,0,0.06);
+    --accent-teal: #0d9488;
+    --accent-coral: #dc2626;
+    --accent-gold: #b45309;
+    --accent-purple: #7c3aed;
+    --accent-gray: #64748b;
+    --teal-bg: rgba(13, 148, 136, 0.08);
+    --coral-bg: rgba(220, 38, 38, 0.06);
+    --gold-bg: rgba(180, 83, 9, 0.06);
+    --teal-border: rgba(13, 148, 136, 0.4);
+    --coral-border: rgba(220, 38, 38, 0.35);
+    --gold-border: rgba(180, 83, 9, 0.4);
+    --arrow-line: rgba(0,0,0,0.15);
+    --arrow-head: rgba(0,0,0,0.2);
+    --teal-detail: #0f766e;
+    --coral-detail: #991b1b;
+    --gold-detail: #92400e;
+    --ci-border: rgba(220, 38, 38, 0.3);
+    --ci-bg: rgba(220, 38, 38, 0.04);
+    --ci-label: #64748b;
+    --teal-sub-bg: rgba(13,148,136,0.06);
+    --teal-sub-border: rgba(13,148,136,0.2);
+    --teal-sub-bg-alt: rgba(13,148,136,0.04);
+    --teal-sub-border-alt: rgba(13,148,136,0.12);
+    --coral-sub-bg: rgba(220,38,38,0.04);
+    --coral-sub-border: rgba(220,38,38,0.15);
+    --legend-teal-bg: rgba(13,148,136,0.15);
+    --legend-teal-border: rgba(13,148,136,0.5);
+    --legend-coral-bg: rgba(220,38,38,0.1);
+    --legend-coral-border: rgba(220,38,38,0.4);
+    --legend-gold-border: rgba(180,83,9,0.5);
+    --legend-gold-bg: rgba(180,83,9,0.08);
+    --feedback-arrow: rgba(180,83,9,0.5);
+    --feedback-arrow-head: rgba(180,83,9,0.6);
+    --border-axis: #cbd5e1;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-body);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: auto;
+    padding: 12px;
+    margin: 0;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    max-width: 100%;
+    background: var(--bg-container);
+    border-radius: 8px;
+    padding: 20px 24px 16px;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .source {
+    font-size: 11px;
+    color: var(--text-subtle);
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .pipeline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    position: relative;
+  }
+
+  .node {
+    border-radius: 8px;
+    padding: 12px 18px;
+    text-align: center;
+    position: relative;
+    min-width: 200px;
+    max-width: 100%;
+    z-index: 1;
+  }
+  .node-title {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .node-detail {
+    font-size: 11px;
+    opacity: 0.75;
+    line-height: 1.4;
+  }
+
+  .node-kpi {
+    background: var(--teal-bg);
+    border: 1.5px solid var(--teal-border);
+  }
+  .node-kpi .node-title { color: var(--accent-teal); }
+  .node-kpi .node-detail { color: var(--teal-detail); }
+
+  .node-process {
+    background: var(--coral-bg);
+    border: 1.5px solid var(--coral-border);
+  }
+  .node-process .node-title { color: var(--accent-coral); }
+  .node-process .node-detail { color: var(--coral-detail); }
+
+  .node-data {
+    background: var(--teal-bg);
+    border: 1.5px solid var(--teal-border);
+  }
+  .node-data .node-title { color: var(--accent-teal); }
+  .node-data .node-detail { color: var(--teal-detail); }
+
+  .node-feedback {
+    background: var(--gold-bg);
+    border: 1.5px solid var(--gold-border);
+    border-style: dashed;
+  }
+  .node-feedback .node-title { color: var(--accent-gold); }
+  .node-feedback .node-detail { color: var(--gold-detail); }
+
+  .arrow {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 24px;
+    position: relative;
+    z-index: 0;
+  }
+  .arrow::before {
+    content: '';
+    width: 2px;
+    height: 16px;
+    background: var(--arrow-line);
+  }
+  .arrow::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid var(--arrow-head);
+  }
+
+  .split-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    flex-wrap: wrap;
+  }
+  .split-row .node {
+    min-width: 0;
+    flex: 1;
+    max-width: 200px;
+  }
+
+  .sub-box-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  .sub-box {
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 11px;
+    line-height: 1.35;
+    flex: 1;
+    min-width: 120px;
+    max-width: 180px;
+    text-align: center;
+  }
+
+  .ci-strip {
+    display: flex;
+    gap: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+  .ci-stage {
+    flex: 1;
+    padding: 8px 4px;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    border: 1px solid var(--ci-border);
+    background: var(--ci-bg);
+    position: relative;
+  }
+  .ci-stage:first-child {
+    border-radius: 6px 0 0 6px;
+  }
+  .ci-stage:last-child {
+    border-radius: 0 6px 6px 0;
+  }
+  .ci-stage::after {
+    content: '';
+    position: absolute;
+    right: -6px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-top: 8px solid transparent;
+    border-bottom: 8px solid transparent;
+    border-left: 6px solid var(--ci-border);
+    z-index: 2;
+  }
+  .ci-stage:last-child::after {
+    display: none;
+  }
+  .ci-label {
+    display: block;
+    font-size: 9px;
+    font-weight: 400;
+    color: var(--ci-label);
+    margin-top: 2px;
+  }
+
+  .feedback-loop {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+    display: flex;
+    align-items: flex-start;
+    justify-content: flex-end;
+    padding-right: 0;
+  }
+
+  .feedback-connector {
+    position: absolute;
+    right: -30px;
+    top: -540px;
+    width: 30px;
+    height: 560px;
+    pointer-events: none;
+  }
+
+  .legend-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 16px;
+    font-size: 11px;
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    width: 20px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-swatch-dashed {
+    width: 20px;
+    height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    border: 1.5px dashed;
+  }
+
+  .ci-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--accent-coral);
+    margin-bottom: 8px;
+    text-align: center;
+  }
+  .eval-yaml-label {
+    font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+    font-size: 12px;
+    color: var(--accent-teal);
+    margin-top: 4px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>From KPIs to Continuous Evaluation: The Internal Benchmark Pipeline</h1>
+  <div class="subtitle">A practical architecture for teams building domain-specific AI evaluation systems</div>
+
+  <div class="legend-row">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--legend-teal-bg); border: 1px solid var(--legend-teal-border);"></div>
+      <span style="color:var(--text-muted);">Data / artifact</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--legend-coral-bg); border: 1px solid var(--legend-coral-border);"></div>
+      <span style="color:var(--text-muted);">Process / transform</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch-dashed" style="border-color: var(--legend-gold-border); background: var(--legend-gold-bg);"></div>
+      <span style="color:var(--text-muted);">Feedback loop</span>
+    </div>
+  </div>
+
+  <div class="pipeline">
+    <div class="node node-kpi">
+      <div class="node-title">Product KPIs &amp; SLAs</div>
+      <div class="node-detail">Business outcomes: accuracy targets, latency P99, safety thresholds</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="node node-process">
+      <div class="node-title">Translate to Eval Dimensions</div>
+      <div class="node-detail">Groundedness, safety, helpfulness, coherence, tool-use accuracy</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="node node-process" style="width: 100%;">
+      <div class="node-title">Design Concrete Tasks</div>
+      <div class="sub-box-row">
+        <div class="sub-box" style="background: var(--teal-sub-bg); color: var(--teal-detail); border: 1px solid var(--teal-sub-border);">
+          <strong style="color:var(--accent-teal);">Reference-based</strong><br>QA with gold answers
+        </div>
+        <div class="sub-box" style="background: var(--teal-sub-bg); color: var(--teal-detail); border: 1px solid var(--teal-sub-border);">
+          <strong style="color:var(--accent-teal);">Reference-free</strong><br>Rubric-based judging
+        </div>
+        <div class="sub-box" style="background: var(--teal-sub-bg); color: var(--teal-detail); border: 1px solid var(--teal-sub-border);">
+          <strong style="color:var(--accent-teal);">Trace-based</strong><br>Agent tool-call sequences
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="node node-data" style="width: 100%;">
+      <div class="node-title">Hybrid Data Strategy</div>
+      <div class="sub-box-row">
+        <div class="sub-box" style="background: var(--teal-sub-bg-alt); color: var(--teal-detail); border: 1px solid var(--teal-sub-border-alt);">
+          Production Holdouts
+        </div>
+        <div class="sub-box" style="background: var(--teal-sub-bg-alt); color: var(--teal-detail); border: 1px solid var(--teal-sub-border-alt);">
+          SME-Curated Sets
+        </div>
+        <div class="sub-box" style="background: var(--teal-sub-bg-alt); color: var(--teal-detail); border: 1px solid var(--teal-sub-border-alt);">
+          Synthetic / Adversarial
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="node node-process" style="width: 100%;">
+      <div class="node-title">Scorer Design</div>
+      <div class="sub-box-row">
+        <div class="sub-box" style="background: var(--coral-sub-bg); color: var(--coral-detail); border: 1px solid var(--coral-sub-border);">
+          <strong style="color:var(--accent-coral);">Exact Match</strong><br>ROUGE, F1
+        </div>
+        <div class="sub-box" style="background: var(--coral-sub-bg); color: var(--coral-detail); border: 1px solid var(--coral-sub-border);">
+          <strong style="color:var(--accent-coral);">LLM-as-Judge</strong><br>Calibrated rubrics
+        </div>
+        <div class="sub-box" style="background: var(--coral-sub-bg); color: var(--coral-detail); border: 1px solid var(--coral-sub-border);">
+          <strong style="color:var(--accent-coral);">Human Review</strong><br>Periodic calibration
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="node node-data">
+      <div class="node-title">Reproducible Harness</div>
+      <div class="eval-yaml-label">eval.yaml</div>
+      <div class="node-detail">Versioned spec: tasks, scorers, aggregation rules, owner, changelog</div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div style="width: 100%; max-width: 100%;">
+      <div class="ci-title">CI/CD Integration</div>
+      <div class="ci-strip">
+        <div class="ci-stage">
+          Pre-merge
+          <span class="ci-label">Smoke tests</span>
+        </div>
+        <div class="ci-stage">
+          Merge Gate
+          <span class="ci-label">Full eval suite</span>
+        </div>
+        <div class="ci-stage">
+          Canary
+          <span class="ci-label">Shadow traffic</span>
+        </div>
+        <div class="ci-stage">
+          A/B Test
+          <span class="ci-label">User-facing</span>
+        </div>
+        <div class="ci-stage">
+          Monitor
+          <span class="ci-label">Continuous</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arrow"></div>
+
+    <div class="node node-feedback" style="width: 100%;">
+      <div class="node-title">Feedback Loop</div>
+      <div class="node-detail">Production failures become new regression tests. Eval sets grow from real incidents, not imagination.</div>
+      <div style="margin-top: 8px;">
+        <svg width="100%" height="24" viewBox="0 0 700 24" fill="none" preserveAspectRatio="xMidYMid meet">
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="var(--feedback-arrow-head)"/>
+            </marker>
+          </defs>
+          <path d="M 350 20 Q 350 8 200 8 L 50 8" stroke="var(--feedback-arrow)" stroke-width="1.5" stroke-dasharray="5,4" fill="none" marker-end="url(#arrowhead)"/>
+          <text x="380" y="14" fill="var(--feedback-arrow-head)" font-size="10" font-family="-apple-system, sans-serif">Feeds back to Task Design &amp; Data Strategy</text>
+        </svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="source">Pipeline adapted from Anthropic, "Demystifying evals for AI agents" (2026); Databricks, "Best Practices for LLM Evaluation" (2026); arXiv 2506.13023, "A Practical Guide for Evaluating LLM-Reliant Systems."</div>
+</div>
+</body>
+</html>

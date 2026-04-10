@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Leaderboard Gaps vs. Infrastructure Noise</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+// Detect theme from parent page or system preference
+function getTheme() {
+  try {
+    const parentTheme = window.parent.document.body.getAttribute('data-theme')
+      || window.parent.document.documentElement.getAttribute('data-theme');
+    if (parentTheme === 'light') return 'light';
+    if (parentTheme === 'dark') return 'dark';
+  } catch(e) {}
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return 'dark';
+}
+
+const THEME = getTheme();
+document.documentElement.setAttribute('data-theme', THEME);
+
+try {
+  const observer = new MutationObserver(() => {
+    const newTheme = getTheme();
+    document.documentElement.setAttribute('data-theme', newTheme);
+    if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+  });
+  observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['data-theme'] });
+} catch(e) {}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+  const newTheme = e.matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+});
+</script>
+<style>
+  :root {
+    --bg-body: #1a1a2e;
+    --bg-container: #16213e;
+    --bg-card: #0f1b38;
+    --text-primary: #f0f0f0;
+    --text-secondary: #c0d0e0;
+    --text-muted: #8899aa;
+    --text-subtle: #5a6a7a;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-card: rgba(255,255,255,0.05);
+    --accent-teal: #4ecdc4;
+    --accent-coral: #ff6b6b;
+    --accent-gold: #ffd93d;
+    --accent-purple: #a855f7;
+    --accent-gray: #6c757d;
+    --teal-bg: rgba(78, 205, 196, 0.12);
+    --coral-bg: rgba(255, 107, 107, 0.1);
+    --gold-bg: rgba(255, 217, 61, 0.1);
+    --teal-border: rgba(78, 205, 196, 0.5);
+    --coral-border: rgba(255, 107, 107, 0.45);
+    --gold-border: rgba(255, 217, 61, 0.5);
+    --callout-bg: rgba(255, 107, 107, 0.1);
+    --callout-border: #ff6b6b;
+    --callout-text: #cc9090;
+    --callout-strong: #ff6b6b;
+  }
+
+  [data-theme="light"] {
+    --bg-body: #f8f9fa;
+    --bg-container: #ffffff;
+    --bg-card: #f1f3f5;
+    --text-primary: #1a1a2e;
+    --text-secondary: #2d3748;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-card: rgba(0,0,0,0.06);
+    --accent-teal: #0d9488;
+    --accent-coral: #dc2626;
+    --accent-gold: #b45309;
+    --accent-purple: #7c3aed;
+    --accent-gray: #64748b;
+    --teal-bg: rgba(13, 148, 136, 0.08);
+    --coral-bg: rgba(220, 38, 38, 0.06);
+    --gold-bg: rgba(180, 83, 9, 0.06);
+    --teal-border: rgba(13, 148, 136, 0.4);
+    --coral-border: rgba(220, 38, 38, 0.35);
+    --gold-border: rgba(180, 83, 9, 0.4);
+    --callout-bg: rgba(220, 38, 38, 0.05);
+    --callout-border: #dc2626;
+    --callout-text: #991b1b;
+    --callout-strong: #dc2626;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-body);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: auto;
+    padding: 12px;
+    margin: 0;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    max-width: 100%;
+    background: var(--bg-container);
+    border-radius: 8px;
+    padding: 20px 24px 16px;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .legend-custom {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    flex-wrap: wrap;
+    color: var(--text-secondary);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+  .callout {
+    background: var(--callout-bg);
+    border-left: 3px solid var(--callout-border);
+    padding: 10px 14px;
+    margin-top: 14px;
+    border-radius: 0 6px 6px 0;
+    font-size: 12px;
+    color: var(--callout-text);
+    line-height: 1.5;
+  }
+  .callout strong {
+    color: var(--callout-strong);
+  }
+  .source {
+    font-size: 11px;
+    color: var(--text-subtle);
+    margin-top: 12px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Leaderboard Gaps vs. Infrastructure Noise</h1>
+  <div class="subtitle">When noise exceeds the gap between top models, the ranking is partially an infrastructure ranking</div>
+  <div class="legend-custom">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--accent-teal)"></div>
+      <span>Leaderboard gap (#1 to #5)</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--accent-coral)"></div>
+      <span>Measured / estimated noise floor</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" id="hatch-swatch"></div>
+      <span>Saturated (noise unmeasurable)</span>
+    </div>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="gaps"></canvas>
+  </div>
+  <div class="callout">
+    <strong>Key insight:</strong> On Terminal-Bench 2.0, infrastructure noise alone (6 pts) is 2x the gap between #1 and #5 on the leaderboard (~3 pts). The ranking partially reflects who has more compute, not which model is smarter.
+  </div>
+  <div class="source">Leaderboard data from Artificial Analysis and LXT (March 2026). Infrastructure noise from Anthropic Engineering, "Quantifying infrastructure noise in agentic coding evals." Contamination assessments from LXT, Stanford HAI, and community research.</div>
+</div>
+
+<script>
+const colors = THEME === 'light' ? {
+  teal: 'rgba(13, 148, 136, 0.8)',
+  tealBorder: 'rgba(13, 148, 136, 1)',
+  tealLabel: '#0d9488',
+  coral: 'rgba(220, 38, 38, 0.8)',
+  coralSaturated: 'rgba(220, 38, 38, 0.25)',
+  coralBorder: 'rgba(220, 38, 38, 1)',
+  coralLabel: '#dc2626',
+  coralHatch: 'rgba(220, 38, 38, 0.5)',
+  gridColor: 'rgba(0,0,0,0.06)',
+  tickColor: '#64748b',
+  labelColor: '#2d3748',
+  tooltipBg: '#ffffff',
+  tooltipTitle: '#1a1a2e',
+  tooltipBody: '#2d3748',
+  tooltipBorder: '#0d9488',
+  borderAxis: '#cbd5e1',
+} : {
+  teal: 'rgba(78, 205, 196, 0.8)',
+  tealBorder: 'rgba(78, 205, 196, 1)',
+  tealLabel: '#4ecdc4',
+  coral: 'rgba(255, 107, 107, 0.8)',
+  coralSaturated: 'rgba(255, 107, 107, 0.25)',
+  coralBorder: 'rgba(255, 107, 107, 1)',
+  coralLabel: '#ff8a8a',
+  coralHatch: 'rgba(255, 107, 107, 0.5)',
+  gridColor: 'rgba(255,255,255,0.06)',
+  tickColor: '#8899aa',
+  labelColor: '#c0d0e0',
+  tooltipBg: '#0f3460',
+  tooltipTitle: '#e0e0e0',
+  tooltipBody: '#c0c0c0',
+  tooltipBorder: '#4ecdc4',
+  borderAxis: '#2a3a5a',
+};
+
+// Style the hatched legend swatch
+function styleHatchSwatch() {
+  const swatch = document.getElementById('hatch-swatch');
+  if (swatch) {
+    const coralColor = THEME === 'light' ? '#dc2626' : '#ff6b6b';
+    swatch.style.background = `repeating-linear-gradient(45deg, ${coralColor}, ${coralColor} 2px, transparent 2px, transparent 5px)`;
+  }
+}
+styleHatchSwatch();
+
+const benchmarks = [
+  'Terminal-Bench 2.0',
+  'SWE-bench Verified',
+  'GPQA Diamond',
+  'MMLU',
+  'HumanEval'
+];
+
+const leaderboardGaps = [3, 4, 5, 2, 1];
+const noiseFloors =     [6, 3, 2, 8, 5];
+const isSaturated =     [false, false, false, true, true];
+
+const ctx = document.getElementById('gaps').getContext('2d');
+let gapsChart;
+
+function createChart() {
+  const hatchPlugin = {
+    id: 'hatchAndLabels',
+    afterDatasetsDraw(chart) {
+      const ctx = chart.ctx;
+      const meta = chart.getDatasetMeta(1);
+
+      ctx.save();
+
+      meta.data.forEach((bar, i) => {
+        if (isSaturated[i]) {
+          const barLeft = Math.min(bar.x, bar.base);
+          const barTop = bar.y - bar.height / 2;
+          const barW = Math.abs(bar.x - bar.base);
+          const barH = bar.height;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.rect(barLeft, barTop, barW, barH);
+          ctx.clip();
+
+          ctx.strokeStyle = colors.coralHatch;
+          ctx.lineWidth = 1.5;
+          const diag = barW + barH;
+          for (let j = -barH; j < diag; j += 6) {
+            ctx.beginPath();
+            ctx.moveTo(barLeft + j, barTop + barH);
+            ctx.lineTo(barLeft + j + barH, barTop);
+            ctx.stroke();
+          }
+          ctx.restore();
+        }
+      });
+
+      const meta0 = chart.getDatasetMeta(0);
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textBaseline = 'middle';
+
+      meta0.data.forEach((bar, i) => {
+        const val = leaderboardGaps[i];
+        ctx.fillStyle = colors.tealLabel;
+        ctx.textAlign = 'left';
+        ctx.fillText(val + ' pts', bar.x + 6, bar.y);
+      });
+
+      meta.data.forEach((bar, i) => {
+        const val = noiseFloors[i];
+        const label = isSaturated[i] ? 'saturated' : val + ' pts';
+        ctx.fillStyle = colors.coralLabel;
+        ctx.textAlign = 'left';
+        ctx.fillText(label, bar.x + 6, bar.y);
+      });
+
+      ctx.restore();
+    }
+  };
+
+  gapsChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: benchmarks,
+      datasets: [
+        {
+          label: 'Leaderboard gap (#1 to #5)',
+          data: leaderboardGaps,
+          backgroundColor: colors.teal,
+          borderColor: colors.tealBorder,
+          borderWidth: 1,
+          borderRadius: 4,
+          barPercentage: 0.45,
+          categoryPercentage: 0.75
+        },
+        {
+          label: 'Noise floor',
+          data: noiseFloors,
+          backgroundColor: function(context) {
+            return isSaturated[context.dataIndex]
+              ? colors.coralSaturated
+              : colors.coral;
+          },
+          borderColor: colors.coralBorder,
+          borderWidth: 1,
+          borderRadius: 4,
+          barPercentage: 0.45,
+          categoryPercentage: 0.75
+        }
+      ]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 1.6,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: colors.tooltipBg,
+          titleColor: colors.tooltipTitle,
+          bodyColor: colors.tooltipBody,
+          borderColor: colors.tooltipBorder,
+          borderWidth: 1,
+          callbacks: {
+            label: function(context) {
+              const idx = context.dataIndex;
+              if (context.datasetIndex === 1 && isSaturated[idx]) {
+                return 'Noise: saturated (contamination documented)';
+              }
+              return context.dataset.label + ': ' + context.parsed.x + ' pts';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 0,
+          max: 10,
+          grid: {
+            color: colors.gridColor,
+            drawBorder: false
+          },
+          ticks: {
+            color: colors.tickColor,
+            font: { size: 11 },
+            callback: function(v) { return v + ' pts'; },
+            stepSize: 2
+          },
+          border: { display: false },
+          title: {
+            display: true,
+            text: 'Points (percentage points)',
+            color: colors.tickColor,
+            font: { size: 12 }
+          }
+        },
+        y: {
+          grid: { display: false },
+          ticks: {
+            color: colors.labelColor,
+            font: { size: 12, weight: '600' },
+            padding: 8
+          },
+          border: { color: colors.borderAxis }
+        }
+      },
+      animation: {
+        duration: 1000,
+        easing: 'easeOutQuart'
+      }
+    },
+    plugins: [hatchPlugin]
+  });
+}
+
+createChart();
+
+function onThemeChange(newTheme) {
+  const c = newTheme === 'light' ? {
+    teal: 'rgba(13, 148, 136, 0.8)',
+    tealBorder: 'rgba(13, 148, 136, 1)',
+    tealLabel: '#0d9488',
+    coral: 'rgba(220, 38, 38, 0.8)',
+    coralSaturated: 'rgba(220, 38, 38, 0.25)',
+    coralBorder: 'rgba(220, 38, 38, 1)',
+    coralLabel: '#dc2626',
+    coralHatch: 'rgba(220, 38, 38, 0.5)',
+    gridColor: 'rgba(0,0,0,0.06)',
+    tickColor: '#64748b',
+    labelColor: '#2d3748',
+    tooltipBg: '#ffffff',
+    tooltipTitle: '#1a1a2e',
+    tooltipBody: '#2d3748',
+    tooltipBorder: '#0d9488',
+    borderAxis: '#cbd5e1',
+  } : {
+    teal: 'rgba(78, 205, 196, 0.8)',
+    tealBorder: 'rgba(78, 205, 196, 1)',
+    tealLabel: '#4ecdc4',
+    coral: 'rgba(255, 107, 107, 0.8)',
+    coralSaturated: 'rgba(255, 107, 107, 0.25)',
+    coralBorder: 'rgba(255, 107, 107, 1)',
+    coralLabel: '#ff8a8a',
+    coralHatch: 'rgba(255, 107, 107, 0.5)',
+    gridColor: 'rgba(255,255,255,0.06)',
+    tickColor: '#8899aa',
+    labelColor: '#c0d0e0',
+    tooltipBg: '#0f3460',
+    tooltipTitle: '#e0e0e0',
+    tooltipBody: '#c0c0c0',
+    tooltipBorder: '#4ecdc4',
+    borderAxis: '#2a3a5a',
+  };
+  Object.assign(colors, c);
+  styleHatchSwatch();
+  if (gapsChart) {
+    gapsChart.destroy();
+  }
+  createChart();
+}
+</script>
+</body>
+</html>

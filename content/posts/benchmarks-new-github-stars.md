@@ -1,5 +1,5 @@
 ---
-title: "Benchmarks are the new GitHub Stars"
+title: "Benchmarks are the new stars"
 date: 2026-04-10T00:00:00+05:30
 author: mercurialsolo
 tags: [ai, benchmarks, credibility, signals, evaluation, gaming]

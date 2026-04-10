@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Four Layers of Noise Between Model Capability and Benchmark Score</title>
+<script>
+// Detect theme from parent page or system preference
+function getTheme() {
+  try {
+    const parentTheme = window.parent.document.body.getAttribute('data-theme')
+      || window.parent.document.documentElement.getAttribute('data-theme');
+    if (parentTheme === 'light') return 'light';
+    if (parentTheme === 'dark') return 'dark';
+  } catch(e) {}
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return 'dark';
+}
+
+const THEME = getTheme();
+document.documentElement.setAttribute('data-theme', THEME);
+
+try {
+  const observer = new MutationObserver(() => {
+    const newTheme = getTheme();
+    document.documentElement.setAttribute('data-theme', newTheme);
+    if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+  });
+  observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['data-theme'] });
+} catch(e) {}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+  const newTheme = e.matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+});
+</script>
+<style>
+  :root {
+    --bg-body: #1a1a2e;
+    --bg-container: #16213e;
+    --bg-card: #0f1b38;
+    --text-primary: #f0f0f0;
+    --text-secondary: #c0d0e0;
+    --text-muted: #8899aa;
+    --text-subtle: #5a6a7a;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-card: rgba(255,255,255,0.05);
+    --accent-teal: #4ecdc4;
+    --accent-coral: #ff6b6b;
+    --accent-gold: #ffd93d;
+    --accent-purple: #a855f7;
+    --accent-gray: #6c757d;
+    --teal-bg: rgba(78, 205, 196, 0.12);
+    --coral-bg: rgba(255, 107, 107, 0.1);
+    --gold-bg: rgba(255, 217, 61, 0.1);
+    --teal-border: rgba(78, 205, 196, 0.5);
+    --coral-border: rgba(255, 107, 107, 0.45);
+    --gold-border: rgba(255, 217, 61, 0.5);
+    /* Bullseye-specific */
+    --ring-outer-border: rgba(108, 117, 125, 0.4);
+    --ring-outer-fill: rgba(108, 117, 125, 0.15);
+    --ring-3-border: rgba(168, 85, 247, 0.45);
+    --ring-3-fill: rgba(168, 85, 247, 0.15);
+    --ring-2-border: rgba(255, 217, 61, 0.45);
+    --ring-2-fill: rgba(255, 217, 61, 0.15);
+    --ring-1-border: rgba(255, 107, 107, 0.5);
+    --ring-1-fill: rgba(255, 107, 107, 0.15);
+    --ring-core-border: rgba(78, 205, 196, 0.8);
+    --ring-core-grad-start: rgba(78, 205, 196, 0.35);
+    --ring-core-grad-end: rgba(78, 205, 196, 0.12);
+    --label-layer1-data: #cc8080;
+    --label-layer2-data: #b0a060;
+    --label-layer3-data: #9070b0;
+    --label-layer4-data: #7a8090;
+  }
+
+  [data-theme="light"] {
+    --bg-body: #f8f9fa;
+    --bg-container: #ffffff;
+    --bg-card: #f1f3f5;
+    --text-primary: #1a1a2e;
+    --text-secondary: #2d3748;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-card: rgba(0,0,0,0.06);
+    --accent-teal: #0d9488;
+    --accent-coral: #dc2626;
+    --accent-gold: #b45309;
+    --accent-purple: #7c3aed;
+    --accent-gray: #64748b;
+    --teal-bg: rgba(13, 148, 136, 0.08);
+    --coral-bg: rgba(220, 38, 38, 0.06);
+    --gold-bg: rgba(180, 83, 9, 0.06);
+    --teal-border: rgba(13, 148, 136, 0.4);
+    --coral-border: rgba(220, 38, 38, 0.35);
+    --gold-border: rgba(180, 83, 9, 0.4);
+    --ring-outer-border: rgba(100, 116, 139, 0.4);
+    --ring-outer-fill: rgba(100, 116, 139, 0.1);
+    --ring-3-border: rgba(124, 58, 237, 0.4);
+    --ring-3-fill: rgba(124, 58, 237, 0.08);
+    --ring-2-border: rgba(180, 83, 9, 0.4);
+    --ring-2-fill: rgba(180, 83, 9, 0.08);
+    --ring-1-border: rgba(220, 38, 38, 0.45);
+    --ring-1-fill: rgba(220, 38, 38, 0.08);
+    --ring-core-border: rgba(13, 148, 136, 0.7);
+    --ring-core-grad-start: rgba(13, 148, 136, 0.25);
+    --ring-core-grad-end: rgba(13, 148, 136, 0.08);
+    --label-layer1-data: #991b1b;
+    --label-layer2-data: #92400e;
+    --label-layer3-data: #5b21b6;
+    --label-layer4-data: #475569;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-body);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: auto;
+    padding: 12px;
+    margin: 0;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    max-width: 100%;
+    background: var(--bg-container);
+    border-radius: 8px;
+    padding: 20px 24px 16px;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .diagram-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 500px;
+    aspect-ratio: 1;
+    position: relative;
+    margin: 0 auto;
+  }
+  .source {
+    font-size: 11px;
+    color: var(--text-subtle);
+    margin-top: 16px;
+    line-height: 1.5;
+  }
+
+  .ring {
+    position: absolute;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ring-outer {
+    width: 88%;
+    height: 88%;
+    background: radial-gradient(circle, transparent 92%, var(--ring-outer-fill) 92%, var(--ring-outer-fill) 100%);
+    border: 2px solid var(--ring-outer-border);
+  }
+  .ring-3 {
+    width: 80%;
+    height: 80%;
+    background: radial-gradient(circle, transparent 91%, var(--ring-3-fill) 91%, var(--ring-3-fill) 100%);
+    border: 2px solid var(--ring-3-border);
+  }
+  .ring-2 {
+    width: 75%;
+    height: 75%;
+    background: radial-gradient(circle, transparent 90%, var(--ring-2-fill) 90%, var(--ring-2-fill) 100%);
+    border: 2px solid var(--ring-2-border);
+  }
+  .ring-1 {
+    width: 68%;
+    height: 68%;
+    background: radial-gradient(circle, transparent 88%, var(--ring-1-fill) 88%, var(--ring-1-fill) 100%);
+    border: 2px solid var(--ring-1-border);
+  }
+  .ring-core {
+    width: 58%;
+    height: 58%;
+    background: radial-gradient(circle at 40% 40%, var(--ring-core-grad-start), var(--ring-core-grad-end));
+    border: 2.5px solid var(--ring-core-border);
+  }
+
+  .core-label {
+    text-align: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-teal);
+    line-height: 1.3;
+    padding: 8px;
+  }
+
+  .annotation {
+    position: absolute;
+    font-size: 11px;
+    line-height: 1.45;
+    max-width: 150px;
+  }
+  .annotation .label-title {
+    font-weight: 700;
+    margin-bottom: 2px;
+  }
+  .annotation .label-data {
+    font-size: 10px;
+    opacity: 0.7;
+  }
+
+  .label-layer1 {
+    top: 10%;
+    right: 2%;
+    text-align: left;
+  }
+  .label-layer1 .label-title { color: var(--accent-coral); }
+  .label-layer1 .label-data { color: var(--label-layer1-data); }
+
+  .label-layer2 {
+    bottom: 10%;
+    right: 2%;
+    text-align: left;
+  }
+  .label-layer2 .label-title { color: var(--accent-gold); }
+  .label-layer2 .label-data { color: var(--label-layer2-data); }
+
+  .label-layer3 {
+    bottom: 6%;
+    left: 2%;
+    text-align: right;
+  }
+  .label-layer3 .label-title { color: var(--accent-purple); }
+  .label-layer3 .label-data { color: var(--label-layer3-data); }
+
+  .label-layer4 {
+    top: 6%;
+    left: 2%;
+    text-align: right;
+  }
+  .label-layer4 .label-title { color: var(--accent-gray); }
+  .label-layer4 .label-data { color: var(--label-layer4-data); }
+
+  .label-outer {
+    top: 1%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    max-width: 260px;
+  }
+  .label-outer .label-title {
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+
+  .connectors {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Four Layers of Noise Between Model Capability and Benchmark Score</h1>
+  <div class="subtitle">Each layer adds distortion; the published score is a noisy proxy at best</div>
+  <div class="diagram-area">
+    <svg class="connectors" viewBox="0 0 500 500">
+      <line x1="310" y1="140" x2="380" y2="80" stroke="var(--accent-coral)" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+      <line x1="320" y1="360" x2="380" y2="410" stroke="var(--accent-gold)" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+      <line x1="180" y1="370" x2="120" y2="420" stroke="var(--accent-purple)" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+      <line x1="180" y1="140" x2="120" y2="80" stroke="var(--accent-gray)" stroke-width="1" stroke-dasharray="4,3" opacity="0.6"/>
+    </svg>
+
+    <div class="ring ring-outer">
+      <div class="ring ring-3">
+        <div class="ring ring-2">
+          <div class="ring ring-1">
+            <div class="ring ring-core">
+              <div class="core-label">True Model Capability</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="annotation label-outer">
+      <div class="label-title">Published Benchmark Score</div>
+    </div>
+
+    <div class="annotation label-layer1">
+      <div class="label-title">Layer 1: Infrastructure Noise</div>
+      <div class="label-data">~6 pt swing from CPU, RAM,<br>time limits, API latency</div>
+    </div>
+
+    <div class="annotation label-layer2">
+      <div class="label-title">Layer 2: Contamination Noise</div>
+      <div class="label-data">Variable; can saturate entire<br>benchmarks (MMLU, HumanEval)</div>
+    </div>
+
+    <div class="annotation label-layer3">
+      <div class="label-title">Layer 3: Methodology Noise</div>
+      <div class="label-data">Prompt format, scoring rubric,<br>temperature, judge variance</div>
+    </div>
+
+    <div class="annotation label-layer4">
+      <div class="label-title">Layer 4: Awareness Noise</div>
+      <div class="label-data">Model detects testing context;<br>behavior shifts under observation</div>
+    </div>
+  </div>
+  <div class="source">Synthesized from Anthropic Engineering (infrastructure noise, eval awareness), Stanford HAI (benchmark quality), Nature (benchmark flaws), arXiv 2502.06559 (systematic review of benchmark issues).</div>
+</div>
+</body>
+</html>

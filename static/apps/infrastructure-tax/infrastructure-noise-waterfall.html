@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How Infrastructure Variables Compound Into Benchmark Noise</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script>
+// Detect theme from parent page or system preference
+function getTheme() {
+  try {
+    const parentTheme = window.parent.document.body.getAttribute('data-theme')
+      || window.parent.document.documentElement.getAttribute('data-theme');
+    if (parentTheme === 'light') return 'light';
+    if (parentTheme === 'dark') return 'dark';
+  } catch(e) {}
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return 'dark';
+}
+
+const THEME = getTheme();
+document.documentElement.setAttribute('data-theme', THEME);
+
+try {
+  const observer = new MutationObserver(() => {
+    const newTheme = getTheme();
+    document.documentElement.setAttribute('data-theme', newTheme);
+    if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+  });
+  observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['data-theme'] });
+} catch(e) {}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+  const newTheme = e.matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+});
+</script>
+<style>
+  :root {
+    --bg-body: #1a1a2e;
+    --bg-container: #16213e;
+    --bg-card: #0f1b38;
+    --text-primary: #f0f0f0;
+    --text-secondary: #c0d0e0;
+    --text-muted: #8899aa;
+    --text-subtle: #5a6a7a;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-card: rgba(255,255,255,0.05);
+    --accent-teal: #4ecdc4;
+    --accent-coral: #ff6b6b;
+    --accent-gold: #ffd93d;
+    --accent-purple: #a855f7;
+    --accent-gray: #6c757d;
+    --teal-bg: rgba(78, 205, 196, 0.12);
+    --coral-bg: rgba(255, 107, 107, 0.1);
+    --gold-bg: rgba(255, 217, 61, 0.1);
+    --teal-border: rgba(78, 205, 196, 0.5);
+    --coral-border: rgba(255, 107, 107, 0.45);
+    --gold-border: rgba(255, 217, 61, 0.5);
+  }
+
+  [data-theme="light"] {
+    --bg-body: #f8f9fa;
+    --bg-container: #ffffff;
+    --bg-card: #f1f3f5;
+    --text-primary: #1a1a2e;
+    --text-secondary: #2d3748;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-card: rgba(0,0,0,0.06);
+    --accent-teal: #0d9488;
+    --accent-coral: #dc2626;
+    --accent-gold: #b45309;
+    --accent-purple: #7c3aed;
+    --accent-gray: #64748b;
+    --teal-bg: rgba(13, 148, 136, 0.08);
+    --coral-bg: rgba(220, 38, 38, 0.06);
+    --gold-bg: rgba(180, 83, 9, 0.06);
+    --teal-border: rgba(13, 148, 136, 0.4);
+    --coral-border: rgba(220, 38, 38, 0.35);
+    --gold-border: rgba(180, 83, 9, 0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-body);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: auto;
+    padding: 12px;
+    margin: 0;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    max-width: 100%;
+    background: var(--bg-container);
+    border-radius: 8px;
+    padding: 20px 24px 16px;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+  }
+  .chart-wrap {
+    position: relative;
+    width: 100%;
+    max-width: 100%;
+  }
+  .source {
+    font-size: 11px;
+    color: var(--text-subtle);
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+  .legend-custom {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+    font-size: 11px;
+    flex-wrap: wrap;
+    color: var(--text-secondary);
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    width: 14px;
+    height: 14px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>How Infrastructure Variables Compound Into Benchmark Noise</h1>
+  <div class="subtitle">Terminal-Bench 2.0 pass-rate swing from minimal to maximum resource allocation</div>
+  <div class="legend-custom">
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--accent-teal)"></div>
+      <span>Baseline / Final Score</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--accent-coral)"></div>
+      <span>Infrastructure Uplift</span>
+    </div>
+    <div class="legend-item">
+      <div class="legend-swatch" style="background:var(--accent-gold)"></div>
+      <span>Total Infrastructure Delta</span>
+    </div>
+  </div>
+  <div class="chart-wrap">
+    <canvas id="waterfall"></canvas>
+  </div>
+  <div class="source">Data derived from Anthropic Engineering, "Quantifying infrastructure noise in agentic coding evals," Terminal-Bench 2.0 (2026). Leaderboard gap reference from Artificial Analysis (March 2026).</div>
+</div>
+
+<script>
+const colors = THEME === 'light' ? {
+  teal: 'rgba(13, 148, 136, 0.85)',
+  tealBorder: 'rgba(13, 148, 136, 1)',
+  coral: 'rgba(220, 38, 38, 0.8)',
+  coralBorder: 'rgba(220, 38, 38, 1)',
+  coralLabel: '#dc2626',
+  gold: '#b45309',
+  goldSecondary: '#92400e',
+  gridColor: 'rgba(0,0,0,0.06)',
+  tickColor: '#64748b',
+  tooltipBg: '#ffffff',
+  tooltipTitle: '#1a1a2e',
+  tooltipBody: '#2d3748',
+  tooltipBorder: '#0d9488',
+  labelColor: '#2d3748',
+  dashLine: 'rgba(180, 83, 9, 0.5)',
+  dashLineLabel: 'rgba(180, 83, 9, 0.7)',
+  connectorLine: 'rgba(220, 38, 38, 0.3)',
+  borderAxis: '#cbd5e1',
+} : {
+  teal: 'rgba(78, 205, 196, 0.85)',
+  tealBorder: 'rgba(78, 205, 196, 1)',
+  coral: 'rgba(255, 107, 107, 0.85)',
+  coralBorder: 'rgba(255, 107, 107, 1)',
+  coralLabel: '#ff8a8a',
+  gold: '#ffd93d',
+  goldSecondary: '#b0a060',
+  gridColor: 'rgba(255,255,255,0.06)',
+  tickColor: '#8899aa',
+  tooltipBg: '#0f3460',
+  tooltipTitle: '#e0e0e0',
+  tooltipBody: '#c0c0c0',
+  tooltipBorder: '#4ecdc4',
+  labelColor: '#c0d0e0',
+  dashLine: 'rgba(255, 217, 61, 0.5)',
+  dashLineLabel: 'rgba(255, 217, 61, 0.7)',
+  connectorLine: 'rgba(255, 107, 107, 0.3)',
+  borderAxis: '#2a3a5a',
+};
+
+const labels = [
+  'Baseline\n(min resources)',
+  '+CPU\n(4\u219216 cores)',
+  '+RAM\n(8\u219232 GB)',
+  '+Time limit\n(30m\u21922h)',
+  '+Concurrency\n(1\u21924)',
+  '+API latency\n(peak\u2192off-peak)',
+  'Final Score\n(max resources)'
+];
+
+const increments = [45, 1.8, 1.2, 1.5, 0.8, 0.7, 0];
+const cumulative = [];
+let running = 0;
+for (let i = 0; i < increments.length; i++) {
+  if (i === 0) {
+    cumulative.push(0);
+    running = increments[i];
+  } else if (i === increments.length - 1) {
+    cumulative.push(0);
+  } else {
+    cumulative.push(running);
+    running += increments[i];
+  }
+}
+
+const baseData = [];
+const incrementData = [];
+const finalData = [];
+
+for (let i = 0; i < labels.length; i++) {
+  if (i === 0) {
+    baseData.push(0);
+    incrementData.push(0);
+    finalData.push(45);
+  } else if (i === labels.length - 1) {
+    baseData.push(0);
+    incrementData.push(0);
+    finalData.push(51);
+  } else {
+    baseData.push(cumulative[i]);
+    incrementData.push(increments[i]);
+    finalData.push(0);
+  }
+}
+
+const ctx = document.getElementById('waterfall').getContext('2d');
+
+let waterfallChart;
+
+function createChart() {
+  const drawLeaderboardLine = {
+    id: 'leaderboardLine',
+    afterDatasetsDraw(chart) {
+      const { ctx, chartArea, scales } = chart;
+      const yScale = scales.y;
+      const xScale = scales.x;
+
+      const x0 = xScale.getPixelForValue(0);
+      const xLast = xScale.getPixelForValue(labels.length - 1);
+      const y45 = yScale.getPixelForValue(45);
+      const y51 = yScale.getPixelForValue(51);
+
+      const bracketX = Math.min(xLast + 30, chartArea.right - 40);
+      ctx.save();
+      ctx.strokeStyle = colors.gold;
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([]);
+      ctx.beginPath();
+      ctx.moveTo(bracketX - 6, y45);
+      ctx.lineTo(bracketX, y45);
+      ctx.lineTo(bracketX, y51);
+      ctx.lineTo(bracketX - 6, y51);
+      ctx.stroke();
+
+      ctx.fillStyle = colors.gold;
+      ctx.font = 'bold 11px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('6 pts', bracketX + 4, (y45 + y51) / 2);
+      ctx.font = '10px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.fillStyle = colors.goldSecondary;
+      ctx.fillText('infra delta', bracketX + 4, (y45 + y51) / 2 + 14);
+
+      const gapY = yScale.getPixelForValue(48);
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = colors.dashLine;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(chartArea.left, gapY);
+      ctx.lineTo(chartArea.right, gapY);
+      ctx.stroke();
+
+      ctx.setLineDash([]);
+      ctx.fillStyle = colors.dashLineLabel;
+      ctx.font = '10px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'right';
+      ctx.fillText('Leaderboard gap #1\u2013#5: ~3 pts', chartArea.right - 4, gapY - 8);
+
+      ctx.strokeStyle = colors.connectorLine;
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      let runHeight = 45;
+      for (let i = 1; i < labels.length - 1; i++) {
+        const topOfBar = runHeight + increments[i];
+        const xCurr = xScale.getPixelForValue(i);
+        const xNext = xScale.getPixelForValue(i + 1);
+        const yTop = yScale.getPixelForValue(topOfBar);
+        ctx.beginPath();
+        ctx.moveTo(xCurr + 20, yTop);
+        ctx.lineTo(xNext - 20, yTop);
+        ctx.stroke();
+        runHeight = topOfBar;
+      }
+
+      ctx.restore();
+    }
+  };
+
+  const valueLabels = {
+    id: 'valueLabels',
+    afterDatasetsDraw(chart) {
+      const { ctx, scales } = chart;
+      const meta1 = chart.getDatasetMeta(1);
+      const meta2 = chart.getDatasetMeta(2);
+
+      ctx.save();
+      ctx.font = 'bold 10px -apple-system, BlinkMacSystemFont, sans-serif';
+      ctx.textAlign = 'center';
+
+      for (let i = 1; i < labels.length - 1; i++) {
+        const bar = meta1.data[i];
+        if (incrementData[i] > 0) {
+          ctx.fillStyle = colors.coralLabel;
+          ctx.fillText('+' + increments[i].toFixed(1) + '%', bar.x, bar.y - 6);
+        }
+      }
+
+      meta2.data.forEach((bar, i) => {
+        if (finalData[i] > 0) {
+          ctx.fillStyle = colors.tealBorder;
+          ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
+          ctx.fillText(finalData[i] + '%', bar.x, bar.y - 8);
+        }
+      });
+
+      ctx.restore();
+    }
+  };
+
+  waterfallChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Base (invisible)',
+          data: baseData,
+          backgroundColor: 'transparent',
+          borderWidth: 0,
+          barPercentage: 0.6,
+          categoryPercentage: 0.7
+        },
+        {
+          label: 'Increment',
+          data: incrementData,
+          backgroundColor: colors.coral,
+          borderColor: colors.coralBorder,
+          borderWidth: 1,
+          borderRadius: { topLeft: 4, topRight: 4 },
+          barPercentage: 0.6,
+          categoryPercentage: 0.7
+        },
+        {
+          label: 'Total',
+          data: finalData,
+          backgroundColor: function(context) {
+            if (context.dataIndex === 0) return colors.teal;
+            if (context.dataIndex === labels.length - 1) return colors.teal;
+            return 'transparent';
+          },
+          borderColor: function(context) {
+            if (context.dataIndex === 0) return colors.tealBorder;
+            if (context.dataIndex === labels.length - 1) return colors.tealBorder;
+            return 'transparent';
+          },
+          borderWidth: 1,
+          borderRadius: 4,
+          barPercentage: 0.6,
+          categoryPercentage: 0.7
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      aspectRatio: 1.3,
+      layout: {
+        padding: {
+          right: 70
+        }
+      },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: colors.tooltipBg,
+          titleColor: colors.tooltipTitle,
+          bodyColor: colors.tooltipBody,
+          borderColor: colors.tooltipBorder,
+          borderWidth: 1,
+          callbacks: {
+            label: function(context) {
+              if (context.datasetIndex === 0) return null;
+              if (context.datasetIndex === 1 && context.parsed.y > 0) {
+                return `+${context.parsed.y} pts`;
+              }
+              if (context.datasetIndex === 2 && context.parsed.y > 0) {
+                return `${context.parsed.y}% pass rate`;
+              }
+              return null;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          grid: { display: false },
+          ticks: {
+            color: colors.tickColor,
+            font: { size: 9.5 },
+            maxRotation: 0,
+            autoSkip: false
+          },
+          border: { color: colors.borderAxis }
+        },
+        y: {
+          stacked: true,
+          min: 40,
+          max: 55,
+          grid: {
+            color: colors.gridColor,
+            drawBorder: false
+          },
+          ticks: {
+            color: colors.tickColor,
+            font: { size: 11 },
+            callback: function(v) { return v + '%'; },
+            stepSize: 2
+          },
+          border: { display: false },
+          title: {
+            display: true,
+            text: 'Pass Rate (%)',
+            color: colors.tickColor,
+            font: { size: 11 }
+          }
+        }
+      },
+      animation: {
+        duration: 1200,
+        easing: 'easeOutQuart'
+      }
+    },
+    plugins: [drawLeaderboardLine, valueLabels]
+  });
+}
+
+createChart();
+
+function onThemeChange(newTheme) {
+  const c = newTheme === 'light' ? {
+    teal: 'rgba(13, 148, 136, 0.85)',
+    tealBorder: 'rgba(13, 148, 136, 1)',
+    coral: 'rgba(220, 38, 38, 0.8)',
+    coralBorder: 'rgba(220, 38, 38, 1)',
+    coralLabel: '#dc2626',
+    gold: '#b45309',
+    goldSecondary: '#92400e',
+    gridColor: 'rgba(0,0,0,0.06)',
+    tickColor: '#64748b',
+    tooltipBg: '#ffffff',
+    tooltipTitle: '#1a1a2e',
+    tooltipBody: '#2d3748',
+    tooltipBorder: '#0d9488',
+    labelColor: '#2d3748',
+    dashLine: 'rgba(180, 83, 9, 0.5)',
+    dashLineLabel: 'rgba(180, 83, 9, 0.7)',
+    connectorLine: 'rgba(220, 38, 38, 0.3)',
+    borderAxis: '#cbd5e1',
+  } : {
+    teal: 'rgba(78, 205, 196, 0.85)',
+    tealBorder: 'rgba(78, 205, 196, 1)',
+    coral: 'rgba(255, 107, 107, 0.85)',
+    coralBorder: 'rgba(255, 107, 107, 1)',
+    coralLabel: '#ff8a8a',
+    gold: '#ffd93d',
+    goldSecondary: '#b0a060',
+    gridColor: 'rgba(255,255,255,0.06)',
+    tickColor: '#8899aa',
+    tooltipBg: '#0f3460',
+    tooltipTitle: '#e0e0e0',
+    tooltipBody: '#c0c0c0',
+    tooltipBorder: '#4ecdc4',
+    labelColor: '#c0d0e0',
+    dashLine: 'rgba(255, 217, 61, 0.5)',
+    dashLineLabel: 'rgba(255, 217, 61, 0.7)',
+    connectorLine: 'rgba(255, 107, 107, 0.3)',
+    borderAxis: '#2a3a5a',
+  };
+  Object.assign(colors, c);
+  if (waterfallChart) {
+    waterfallChart.destroy();
+  }
+  createChart();
+}
+</script>
+</body>
+</html>

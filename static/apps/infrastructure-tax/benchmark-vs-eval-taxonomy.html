@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benchmarks vs. Evals vs. Tests: Three Different Instruments</title>
+<script>
+// Detect theme from parent page or system preference
+function getTheme() {
+  try {
+    const parentTheme = window.parent.document.body.getAttribute('data-theme')
+      || window.parent.document.documentElement.getAttribute('data-theme');
+    if (parentTheme === 'light') return 'light';
+    if (parentTheme === 'dark') return 'dark';
+  } catch(e) {}
+  if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) return 'light';
+  return 'dark';
+}
+
+const THEME = getTheme();
+document.documentElement.setAttribute('data-theme', THEME);
+
+try {
+  const observer = new MutationObserver(() => {
+    const newTheme = getTheme();
+    document.documentElement.setAttribute('data-theme', newTheme);
+    if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+  });
+  observer.observe(window.parent.document.body, { attributes: true, attributeFilter: ['data-theme'] });
+} catch(e) {}
+window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+  const newTheme = e.matches ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', newTheme);
+  if (typeof onThemeChange === 'function') onThemeChange(newTheme);
+});
+</script>
+<style>
+  :root {
+    --bg-body: #1a1a2e;
+    --bg-container: #16213e;
+    --bg-card: #0f1b38;
+    --text-primary: #f0f0f0;
+    --text-secondary: #c0d0e0;
+    --text-muted: #8899aa;
+    --text-subtle: #5a6a7a;
+    --border-subtle: rgba(255,255,255,0.06);
+    --border-card: rgba(255,255,255,0.05);
+    --accent-teal: #4ecdc4;
+    --accent-coral: #ff6b6b;
+    --accent-gold: #ffd93d;
+    --accent-purple: #a855f7;
+    --accent-gray: #6c757d;
+    --teal-bg: rgba(78, 205, 196, 0.12);
+    --coral-bg: rgba(255, 107, 107, 0.1);
+    --gold-bg: rgba(255, 217, 61, 0.1);
+    --teal-border: rgba(78, 205, 196, 0.5);
+    --coral-border: rgba(255, 107, 107, 0.45);
+    --gold-border: rgba(255, 217, 61, 0.5);
+  }
+
+  [data-theme="light"] {
+    --bg-body: #f8f9fa;
+    --bg-container: #ffffff;
+    --bg-card: #f1f3f5;
+    --text-primary: #1a1a2e;
+    --text-secondary: #2d3748;
+    --text-muted: #64748b;
+    --text-subtle: #94a3b8;
+    --border-subtle: rgba(0,0,0,0.08);
+    --border-card: rgba(0,0,0,0.06);
+    --accent-teal: #0d9488;
+    --accent-coral: #dc2626;
+    --accent-gold: #b45309;
+    --accent-purple: #7c3aed;
+    --accent-gray: #64748b;
+    --teal-bg: rgba(13, 148, 136, 0.08);
+    --coral-bg: rgba(220, 38, 38, 0.06);
+    --gold-bg: rgba(180, 83, 9, 0.06);
+    --teal-border: rgba(13, 148, 136, 0.4);
+    --coral-border: rgba(220, 38, 38, 0.35);
+    --gold-border: rgba(180, 83, 9, 0.4);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--bg-body);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text-secondary);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: auto;
+    padding: 12px;
+    margin: 0;
+    overflow: hidden;
+  }
+  .container {
+    width: 100%;
+    max-width: 100%;
+    background: var(--bg-container);
+    border-radius: 8px;
+    padding: 20px 24px 16px;
+    box-shadow: none;
+    overflow: hidden;
+  }
+  h1 {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+    letter-spacing: -0.3px;
+  }
+  .subtitle {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .card {
+    background: var(--bg-card);
+    border-radius: 8px;
+    padding: 16px 14px 14px;
+    border-top: 3px solid;
+    position: relative;
+    transition: transform 0.2s ease;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  .card-benchmark { border-top-color: var(--accent-teal); }
+  .card-eval { border-top-color: var(--accent-coral); }
+  .card-test { border-top-color: var(--accent-gold); }
+
+  .card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 10px;
+    font-size: 18px;
+  }
+  .card-benchmark .card-icon { background: var(--teal-bg); }
+  .card-eval .card-icon { background: var(--coral-bg); }
+  .card-test .card-icon { background: var(--gold-bg); }
+
+  .card-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 12px;
+  }
+  .card-benchmark .card-title { color: var(--accent-teal); }
+  .card-eval .card-title { color: var(--accent-coral); }
+  .card-test .card-title { color: var(--accent-gold); }
+
+  .card-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-row {
+    border-bottom: 1px solid var(--border-card);
+    padding-bottom: 7px;
+  }
+  .card-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .row-label {
+    font-size: 9px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-subtle);
+    margin-bottom: 2px;
+  }
+
+  .row-value {
+    font-size: 11.5px;
+    color: var(--text-secondary);
+    line-height: 1.4;
+  }
+
+  .analogy-row {
+    margin-top: 4px;
+    padding-top: 8px;
+    border-top: 1px dashed var(--border-subtle);
+  }
+  .analogy-row .row-value {
+    font-style: italic;
+    opacity: 0.85;
+  }
+
+  .source {
+    font-size: 11px;
+    color: var(--text-subtle);
+    margin-top: 8px;
+    line-height: 1.5;
+  }
+
+  .icon-svg {
+    width: 20px;
+    height: 20px;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Benchmarks vs. Evals vs. Tests: Three Different Instruments</h1>
+  <div class="subtitle">Using the wrong instrument for the job is the most common mistake in AI evaluation</div>
+
+  <div class="cards">
+    <!-- Benchmark Card -->
+    <div class="card card-benchmark">
+      <div class="card-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-teal)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 20V10"/>
+          <path d="M12 20V4"/>
+          <path d="M6 20v-6"/>
+        </svg>
+      </div>
+      <div class="card-title">Benchmark</div>
+      <div class="card-rows">
+        <div class="card-row">
+          <div class="row-label">Purpose</div>
+          <div class="row-value">Cross-model comparison on standardized tasks</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Data</div>
+          <div class="row-value">Fixed, public or semi-public dataset</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Scope</div>
+          <div class="row-value">Model capabilities in isolation</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Frequency</div>
+          <div class="row-value">Point-in-time, periodic</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Ownership</div>
+          <div class="row-value">Research community, academic labs</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Lifecycle</div>
+          <div class="row-value">Long; infrequent versioned updates</div>
+        </div>
+        <div class="card-row analogy-row">
+          <div class="row-label">Analogy</div>
+          <div class="row-value">Blood pressure screening</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Eval Set Card -->
+    <div class="card card-eval">
+      <div class="card-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-coral)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9 11l3 3L22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+      </div>
+      <div class="card-title">Eval Set</div>
+      <div class="card-rows">
+        <div class="card-row">
+          <div class="row-label">Purpose</div>
+          <div class="row-value">Validate production behavior for your use case</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Data</div>
+          <div class="row-value">Domain-specific, often proprietary</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Scope</div>
+          <div class="row-value">System-level (RAG, tools, multi-turn)</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Frequency</div>
+          <div class="row-value">Continuous, in CI/CD</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Ownership</div>
+          <div class="row-value">Product / engineering team</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Lifecycle</div>
+          <div class="row-value">Short; frequently refreshed</div>
+        </div>
+        <div class="card-row analogy-row">
+          <div class="row-label">Analogy</div>
+          <div class="row-value">Diagnostic workup</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Test Card -->
+    <div class="card card-test">
+      <div class="card-icon">
+        <svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="var(--accent-gold)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div class="card-title">Test</div>
+      <div class="card-rows">
+        <div class="card-row">
+          <div class="row-label">Purpose</div>
+          <div class="row-value">Guard against regressions in deployed systems</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Data</div>
+          <div class="row-value">Golden datasets from production failures</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Scope</div>
+          <div class="row-value">Specific behaviors, edge cases, safety</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Frequency</div>
+          <div class="row-value">On every code change</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Ownership</div>
+          <div class="row-value">QA / engineering team</div>
+        </div>
+        <div class="card-row">
+          <div class="row-label">Lifecycle</div>
+          <div class="row-value">Continuous; grows from production failures</div>
+        </div>
+        <div class="card-row analogy-row">
+          <div class="row-label">Analogy</div>
+          <div class="row-value">Daily vital signs</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="source">Taxonomy adapted from Thoughtworks, "LLM benchmarks, evals and tests" (2024); Anthropic, "Demystifying evals for AI agents" (2026); Hamel Husain, "Your AI Product Needs Evals" (2024).</div>
+</div>
+</body>
+</html>
