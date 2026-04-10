@@ -1,0 +1,153 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0f1a"/>
+      <stop offset="100%" stop-color="#1a1a2e"/>
+    </linearGradient>
+    <linearGradient id="starGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#fbbf24"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="benchGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#60a5fa"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
+    </linearGradient>
+    <linearGradient id="revenueGlow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.04" stroke="#fff" stroke-width="0.5">
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(60,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(120,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(180,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(240,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(300,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(360,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(420,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(480,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(540,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(600,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(660,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(720,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(780,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(840,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(900,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(960,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(1020,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(1080,0)" />
+    <line x1="0" y1="0" x2="0" y2="630" transform="translate(1140,0)" />
+  </g>
+
+  <!-- STEP 1: GitHub Stars (left, faded/crossed out) -->
+  <g transform="translate(150, 280)">
+    <!-- Star icon -->
+    <text font-size="72" text-anchor="middle" y="-30" opacity="0.5" filter="url(#softGlow)">⭐</text>
+    <text font-size="28" font-weight="700" fill="#fbbf24" text-anchor="middle" y="30" opacity="0.4">GitHub Stars</text>
+    <text font-size="16" fill="#94a3b8" text-anchor="middle" y="56" opacity="0.5">$0.05 / star</text>
+    <!-- Strike-through -->
+    <line x1="-80" y1="10" x2="80" y2="10" stroke="#ef4444" stroke-width="3" opacity="0.7"/>
+    <!-- Status badge -->
+    <rect x="-36" y="68" width="72" height="24" rx="12" fill="#7f1d1d" opacity="0.8"/>
+    <text font-size="11" font-weight="600" fill="#fca5a5" text-anchor="middle" y="85">GAMED</text>
+  </g>
+
+  <!-- Arrow 1 -->
+  <g transform="translate(310, 270)" opacity="0.5">
+    <line x1="0" y1="0" x2="60" y2="0" stroke="#475569" stroke-width="2" stroke-dasharray="6,4"/>
+    <polygon points="60,-6 72,0 60,6" fill="#475569"/>
+  </g>
+
+  <!-- STEP 2: Benchmarks (center, current/glowing) -->
+  <g transform="translate(500, 280)">
+    <!-- Chart icon -->
+    <text font-size="72" text-anchor="middle" y="-30" filter="url(#softGlow)">📊</text>
+    <text font-size="28" font-weight="700" fill="#60a5fa" text-anchor="middle" y="30">Benchmarks</text>
+    <text font-size="16" fill="#94a3b8" text-anchor="middle" y="56">47-point contamination gap</text>
+    <!-- Status badge -->
+    <rect x="-46" y="68" width="92" height="24" rx="12" fill="#78350f" opacity="0.8"/>
+    <text font-size="11" font-weight="600" fill="#fcd34d" text-anchor="middle" y="85">GAMING...</text>
+    <!-- Pulsing ring -->
+    <circle cx="0" cy="-10" r="90" fill="none" stroke="#3b82f6" stroke-width="1" opacity="0.15">
+      <animate attributeName="r" values="85;100;85" dur="3s" repeatCount="indefinite"/>
+      <animate attributeName="opacity" values="0.15;0.05;0.15" dur="3s" repeatCount="indefinite"/>
+    </circle>
+  </g>
+
+  <!-- Arrow 2 -->
+  <g transform="translate(660, 270)" opacity="0.7">
+    <line x1="0" y1="0" x2="60" y2="0" stroke="#475569" stroke-width="2" stroke-dasharray="6,4"/>
+    <polygon points="60,-6 72,0 60,6" fill="#475569"/>
+  </g>
+
+  <!-- STEP 3: Verified Revenue (right, bright/emerging) -->
+  <g transform="translate(850, 280)">
+    <!-- Money icon -->
+    <text font-size="72" text-anchor="middle" y="-30" filter="url(#softGlow)">💰</text>
+    <text font-size="28" font-weight="700" fill="#34d399" text-anchor="middle" y="30">Revenue</text>
+    <text font-size="16" fill="#94a3b8" text-anchor="middle" y="56">"what shipped &amp; who paid"</text>
+    <!-- Status badge -->
+    <rect x="-28" y="68" width="56" height="24" rx="12" fill="#064e3b" opacity="0.8"/>
+    <text font-size="11" font-weight="600" fill="#6ee7b7" text-anchor="middle" y="85">NEXT</text>
+  </g>
+
+  <!-- Title -->
+  <text font-size="42" font-weight="800" fill="#f8fafc" text-anchor="middle" x="500" y="80" letter-spacing="-0.5">
+    Benchmarks are the new
+  </text>
+  <text font-size="42" font-weight="800" fill="#fbbf24" text-anchor="middle" x="880" y="80" letter-spacing="-0.5" text-decoration="line-through" opacity="0.6">
+    GitHub Stars
+  </text>
+
+  <!-- Subtitle / punchline -->
+  <text font-size="18" fill="#94a3b8" text-anchor="middle" x="600" y="118" font-style="italic">
+    Each credibility signal costs more to fake than the last
+  </text>
+
+  <!-- Bottom bar with key stats -->
+  <rect x="0" y="530" width="1200" height="100" fill="#0a0a14" opacity="0.6"/>
+  <line x1="0" y1="530" x2="1200" y2="530" stroke="#1e293b" stroke-width="1"/>
+
+  <g transform="translate(150, 575)">
+    <text font-size="32" font-weight="800" fill="#fbbf24" text-anchor="middle">4.5M</text>
+    <text font-size="12" fill="#64748b" text-anchor="middle" y="20">fake stars found</text>
+  </g>
+
+  <g transform="translate(400, 575)">
+    <text font-size="32" font-weight="800" fill="#60a5fa" text-anchor="middle">47 pts</text>
+    <text font-size="12" fill="#64748b" text-anchor="middle" y="20">contamination delta</text>
+  </g>
+
+  <g transform="translate(650, 575)">
+    <text font-size="32" font-weight="800" fill="#f87171" text-anchor="middle">0.37%</text>
+    <text font-size="12" fill="#64748b" text-anchor="middle" y="20">best ARC-AGI-3 score</text>
+  </g>
+
+  <g transform="translate(900, 575)">
+    <text font-size="32" font-weight="800" fill="#34d399" text-anchor="middle">$100B</text>
+    <text font-size="12" fill="#64748b" text-anchor="middle" y="20">OpenAI's real benchmark</text>
+  </g>
+
+  <!-- Corner accent -->
+  <rect x="0" y="0" width="4" height="630" fill="url(#starGlow)" opacity="0.3"/>
+  <rect x="1196" y="0" width="4" height="630" fill="url(#revenueGlow)" opacity="0.3"/>
+</svg>
