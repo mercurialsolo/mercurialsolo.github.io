@@ -1,5 +1,5 @@
 ---
-title: "claudectl: Building a TUI Dashboard for AI Coding Agents in Rust"
+title: "claudectl: stop tab-hunting your AI agents"
 date: 2026-04-15T00:00:00+05:30
 author: mercurialsolo
 tags: [rust, tui, claude, ai-agents, ratatui, monitoring]
