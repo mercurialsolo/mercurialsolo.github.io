@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 400" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0f0f1a"/>
+      <stop offset="100%" stop-color="#1a1a2e"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="3" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <marker id="arrowRed" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#f87171"/>
+    </marker>
+    <marker id="arrowGreen" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#34d399"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#8b5cf6"/>
+    </marker>
+  </defs>
+
+  <rect width="900" height="400" fill="url(#bg)" rx="8"/>
+
+  <!-- ===== CLOUD PATH (top) ===== -->
+  <g transform="translate(0, 40)">
+    <!-- Label -->
+    <rect x="30" y="15" width="120" height="28" rx="14" fill="#7f1d1d" opacity="0.6"/>
+    <text x="90" y="34" font-size="13" font-weight="700" fill="#fca5a5" text-anchor="middle">CLOUD</text>
+
+    <!-- You -->
+    <circle cx="90" cy="100" r="28" fill="none" stroke="#8b5cf6" stroke-width="2" opacity="0.7"/>
+    <text x="90" y="105" font-size="14" font-weight="600" fill="#c4b5fd" text-anchor="middle">You</text>
+
+    <!-- Arrow: You -> Cloud API -->
+    <line x1="122" y1="100" x2="225" y2="100" stroke="#f87171" stroke-width="1.5" stroke-dasharray="6,3" opacity="0.5" marker-end="url(#arrowRed)"/>
+    <text x="174" y="90" font-size="10" fill="#94a3b8" text-anchor="middle" opacity="0.6">corrections</text>
+
+    <!-- Cloud API box -->
+    <rect x="235" y="75" width="130" height="50" rx="6" fill="none" stroke="#f87171" stroke-width="1.5" opacity="0.5"/>
+    <text x="300" y="100" font-size="13" font-weight="600" fill="#f87171" text-anchor="middle" opacity="0.7">Cloud API</text>
+    <text x="300" y="114" font-size="10" fill="#94a3b8" text-anchor="middle" opacity="0.4">frontier model</text>
+
+    <!-- Arrow: Cloud -> Training Corpus (dispersing) -->
+    <line x1="370" y1="100" x2="470" y2="70" stroke="#f87171" stroke-width="1" stroke-dasharray="4,4" opacity="0.3" marker-end="url(#arrowRed)"/>
+    <line x1="370" y1="100" x2="470" y2="100" stroke="#f87171" stroke-width="1" stroke-dasharray="4,4" opacity="0.3" marker-end="url(#arrowRed)"/>
+    <line x1="370" y1="100" x2="470" y2="130" stroke="#f87171" stroke-width="1" stroke-dasharray="4,4" opacity="0.3" marker-end="url(#arrowRed)"/>
+
+    <!-- Dispersing labels -->
+    <text x="510" y="73" font-size="10" fill="#f87171" opacity="0.4">other users' training</text>
+    <text x="510" y="103" font-size="10" fill="#f87171" opacity="0.4">aggregate improvements</text>
+    <text x="510" y="133" font-size="10" fill="#f87171" opacity="0.4">provider's corpus</text>
+
+    <!-- Result label -->
+    <rect x="700" y="82" width="160" height="36" rx="6" fill="#7f1d1d" opacity="0.3"/>
+    <text x="780" y="105" font-size="12" fill="#fca5a5" text-anchor="middle" opacity="0.7">exhaust belongs to landlord</text>
+  </g>
+
+  <!-- Divider -->
+  <line x1="40" y1="200" x2="860" y2="200" stroke="#1e293b" stroke-width="1" stroke-dasharray="8,6"/>
+
+  <!-- ===== LOCAL PATH (bottom) ===== -->
+  <g transform="translate(0, 210)">
+    <!-- Label -->
+    <rect x="30" y="15" width="120" height="28" rx="14" fill="#064e3b" opacity="0.6"/>
+    <text x="90" y="34" font-size="13" font-weight="700" fill="#6ee7b7" text-anchor="middle">LOCAL</text>
+
+    <!-- You -->
+    <circle cx="90" cy="100" r="28" fill="none" stroke="#8b5cf6" stroke-width="2" opacity="0.9" filter="url(#glow)"/>
+    <text x="90" y="105" font-size="14" font-weight="600" fill="#c4b5fd" text-anchor="middle">You</text>
+
+    <!-- Arrow: You -> Local Model -->
+    <line x1="122" y1="100" x2="225" y2="100" stroke="#34d399" stroke-width="2" opacity="0.7" marker-end="url(#arrowGreen)"/>
+    <text x="174" y="90" font-size="10" fill="#94a3b8" text-anchor="middle" opacity="0.7">corrections</text>
+
+    <!-- Local Model box -->
+    <rect x="235" y="75" width="130" height="50" rx="6" fill="none" stroke="#34d399" stroke-width="1.5" opacity="0.7"/>
+    <text x="300" y="97" font-size="13" font-weight="600" fill="#34d399" text-anchor="middle">Local Model</text>
+    <text x="300" y="114" font-size="10" fill="#94a3b8" text-anchor="middle" opacity="0.5">your weights</text>
+
+    <!-- Arrow: Local Model -> JSONL log -->
+    <line x1="370" y1="100" x2="470" y2="100" stroke="#34d399" stroke-width="2" opacity="0.7" marker-end="url(#arrowGreen)"/>
+
+    <!-- JSONL log -->
+    <rect x="480" y="75" width="130" height="50" rx="6" fill="none" stroke="#34d399" stroke-width="1.5" opacity="0.7"/>
+    <text x="545" y="97" font-size="13" font-weight="600" fill="#34d399" text-anchor="middle">JSONL Log</text>
+    <text x="545" y="114" font-size="10" fill="#94a3b8" text-anchor="middle" opacity="0.5">judgment traces</text>
+
+    <!-- Feedback loop arrow (back from JSONL to Local Model) -->
+    <path d="M480,130 Q410,155 365,130" fill="none" stroke="#34d399" stroke-width="1.5" stroke-dasharray="4,3" opacity="0.5" marker-end="url(#arrowGreen)"/>
+    <text x="420" y="152" font-size="10" fill="#34d399" text-anchor="middle" opacity="0.5">few-shot / fine-tune</text>
+
+    <!-- Result label -->
+    <rect x="670" y="82" width="190" height="36" rx="6" fill="#064e3b" opacity="0.3"/>
+    <text x="765" y="105" font-size="12" fill="#6ee7b7" text-anchor="middle" opacity="0.8">compounds with your experience</text>
+  </g>
+</svg>
