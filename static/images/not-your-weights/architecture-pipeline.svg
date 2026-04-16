@@ -33,7 +33,7 @@
   <!-- Stage 1: Corrections -->
   <g transform="translate(75, 130)">
     <rect x="-55" y="-40" width="110" height="80" rx="8" fill="#1e1e30" stroke="#8b5cf6" stroke-width="1.5" opacity="0.8"/>
-    <text x="0" y="-10" font-size="22" text-anchor="middle">corrections</text>
+    <text x="0" y="-10" font-size="22" text-anchor="middle" fill="#e2e8f0">corrections</text>
     <text x="0" y="10" font-size="13" font-weight="600" fill="#c4b5fd" text-anchor="middle">Your</text>
     <text x="0" y="25" font-size="13" font-weight="600" fill="#c4b5fd" text-anchor="middle">Corrections</text>
     <text x="0" y="58" font-size="10" fill="#64748b" text-anchor="middle">approve / deny / edit</text>
