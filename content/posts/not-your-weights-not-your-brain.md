@@ -125,5 +125,9 @@ Karpathy's original framing was about open source as a safeguard against cogniti
 **Your weights. Your copilot. Your brain.**
 
 {{< highlight-box >}}
-Start capturing traces now. The format matters more than the model: structured JSONL with full context, not just approve/deny labels. The richer the trace, the more learning signal it carries, and the more options you have when personal fine-tuning pipelines become accessible.
+Start capturing traces now. The format matters more than the model: structured JSONL with full context, not just approve/deny labels. The richer the trace, the more learning signal it carries, and the more options you have when personal fine-tuning becomes accessible.
+
+claudectl is an open source brain to help you auto-capture traces from your coding agent. 
+
+https://github.com/mercurialsolo/claudectl
 {{< /highlight-box >}}
