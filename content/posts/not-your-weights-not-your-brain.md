@@ -4,7 +4,7 @@ date: 2026-04-16T00:00:00+05:30
 author: mercurialsolo
 tags: [ai, local-models, knowledge-distillation, copilots, personal-ai, agency]
 summary: "Your corrections to AI carry 'dark knowledge' about your expertise. Teaching on-device models your reasoning traces, not renting cognition from cloud APIs, is the real unlock for AI copilots."
-description: "Every time I correct my AI copilot, I'm leaking expertise — dark knowledge about how I think, what trade-offs I accept, where I draw the line. That signal is either compounding on my machine or vanishing into someone else's training run. I chose to keep it."
+description: "Every time I correct my AI copilot, I'm leaking expertise - dark knowledge about how I think, what trade-offs I accept, where I draw the line. That signal is either compounding me or vanishing into someone else's training run. I chose to keep it."
 series: ["Coding Agents"]
 ShowToc: true
 TocOpen: false
