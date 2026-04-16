@@ -112,7 +112,7 @@ General models provide the substrate: raw reasoning capability, broad knowledge,
 
 The human judgment in human-AI loops isn't overhead; it's the product. And when this judgment's captured in a local model, our copilot compounds without needing a human babysitter for every decision.
 
-The claudectl numbers bear this out. At 500+ decisions, roughly **80% of tool calls route automatically**. The remaining 20% are the frontier — novel situations, ambiguous trade-offs, edge cases where context outweighs pattern. That frontier is where both the model and the human learn. Every correction pushes the autonomy boundary further out.
+With `claudectl` these numbers bear out. At 500+ decisions, roughly **80% of tool calls route automatically**. The rest ~20% are the frontier — novel situations, ambiguous trade-offs, edge cases where context outweighs pattern. That frontier is where both the model and the human learn. Every correction helps push the autonomy boundary further out.
 
 ## Your copilot - Your skills - Your brain
 
