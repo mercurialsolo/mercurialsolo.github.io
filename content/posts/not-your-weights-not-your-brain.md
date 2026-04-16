@@ -22,7 +22,7 @@ images:
 
 > "As we expand our brains into an exocortex on a computing substrate, we will be renting our brains and open source will become more important because 'not your weights, not your brain.'" — Karpathy
 
-Persistent memory, preferences, workflows, and artifacts that extend your cognition beyond what fits in your head — that's our {{< term "exocortex" >}}. And with agents handling research, synthesis, code generation, and document drafting, the compounding asset is no longer the model itself but the judgment layer we accumulate around it — traces, evals, policies, and knowledge artifacts. This transforms general intelligence to personal intelligence.
+Persistent memory, preferences, workflows, and artifacts that extend our cognition beyond what fits in your head — our {{< term "exocortex" >}}. And with agents handling research, synthesis, code generation, and document drafting, the compounding asset is no longer the model itself but the judgment layer we accumulate around it — traces, evals, policies, and knowledge artifacts. These transform general intelligence to personal intelligence.
 
 Where inference runs, what the provider retains, and who owns the persistent state — these define who extracts value from this exocortex. And just running local inference doesn't automatically mean you are able to use this. The future: **own the control plane, keep the state portable** and rent the compute plane when it's economically better. The more of this loop you own, the more of the value you can extract from your own knowledge.
 
