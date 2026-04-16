@@ -1,5 +1,5 @@
 ---
-title: "Not Your Weights, Not Your Brain"
+title: "Not your Weights, Not your Brain"
 date: 2026-04-16T00:00:00+05:30
 author: mercurialsolo
 tags: [ai, local-models, knowledge-distillation, copilots, personal-ai, agency]
