@@ -24,7 +24,7 @@ images:
 
 Persistent memory, preferences, workflows, and artifacts that extend our cognition beyond what fits in your head — our {{< term "exocortex" >}}. And with agents handling research, synthesis, code generation, and document drafting, the compounding asset is no longer the model itself but the judgment layer we accumulate around it — traces, evals, policies, and knowledge artifacts. These transform general intelligence to personal intelligence.
 
-Where inference runs, what the provider retains, and who owns the persistent state — these define who extracts value from this exocortex. And just running local inference doesn't automatically mean you are able to use this. The future: **own the control plane, keep the state portable** and rent the compute plane when it's economically better. The more of this loop you own, the more of the value you can extract from your own knowledge.
+Where inference runs, what the provider retains, and who owns the persistent state — these define who extracts value from this exocortex. And just running local inference doesn't automatically mean we are able to use this. The future: **own the control plane, keep the state portable** and rent the compute plane when it'scheaper. The more of this loop we own, the more of the value we can extract from your own knowledge.
 
 ![Cloud inference disperses your correction traces to the provider. Local inference compounds them on your device.](/images/not-your-weights/cloud-vs-local.svg)
 
