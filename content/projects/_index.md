@@ -30,7 +30,7 @@ description: "Things I'm building and have built"
 
 | Project | Details | Stack | Launch | Links |
 |---------|---------|-------|--------|-------|
-| **claudectl** | Auto-pilot for Claude Code — fully local model that learns what to approve, no cloud API or telemetry | Rust · ⭐ 43 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) |
+| **claudectl** | Auto-pilot for Claude Code — fully local model that learns what to approve, no cloud API or telemetry | Rust · ⭐ 92 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) |
 | **openhydra** | Open source world engine for agents | ⭐ 2 | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
 | **pitch-timer** | macOS menu bar timer with overlay display, global hotkeys, and network sync | Swift | 2026-01 | [GitHub](https://github.com/mercurialsolo/pitch-timer) |
 | **counsel-mcp** | MCP server for counsel | JavaScript · ⭐ 3 | 2026-01 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
