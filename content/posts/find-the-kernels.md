@@ -2,6 +2,7 @@
 title: "Find the Kernels"
 date: 2026-03-15T00:00:00
 lastmod: 2026-03-15T12:00:00
+weight: 1
 author: mercurialsolo
 tags: [inference, kernels, GPU, systems-engineering, AI-infrastructure, moats, scale]
 summary: "Model weights are open. APIs are commodity. The defensible value in the models era lives in the kernel layer, where small efficiency gains compound across GPU fleets and the talent pool is measured in hundreds."

@@ -1,6 +1,7 @@
 ---
 title: "Project Hydra: Designing a world for agents"
 date: 2026-02-21T10:00:00
+weight: 3
 author: mercurialsolo
 tags: [ai, agents, infrastructure, engineering, security]
 summary: "A browser agent tried to exfiltrate our API keys on Tuesday. By Friday we'd also watched a research agent forget 22 sources of work, a pipeline lose an entire handoff to a crash, and a content agent spend $47 unsupervised. The agents were capable. The worlds we'd built for them weren't."

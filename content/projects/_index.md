@@ -3,6 +3,17 @@ title: "Projects"
 description: "Things I'm building and have built"
 ---
 
+## Pinned
+
+| Project | Why it matters | Stack | Links |
+|---------|----------------|-------|-------|
+| **plan-lint** | Static analysis for LLM agent plans — the eval/safety credential | Python · ⭐ 12 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
+| **safeguards** | Agentic safety framework | Python · ⭐ 3 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
+| **claudectl** | Auto-pilot for Claude Code — the shipping/distribution proof | Rust · ⭐ 92 | [GitHub](https://github.com/mercurialsolo/claudectl) |
+| **counsel-mcp** | Production MCP infra | JavaScript · ⭐ 3 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
+
+---
+
 ## Timeline
 
 *Dates reflect GitHub repo creation timestamps.*

@@ -1,6 +1,7 @@
 ---
 title: "Benchmarks are the new stars"
 date: 2026-04-10T00:00:00+05:30
+weight: 2
 author: mercurialsolo
 tags: [ai, benchmarks, credibility, signals, evaluation, gaming]
 summary: "GitHub stars broke as a credibility signal because clicks cost nothing to fake. Frontier labs replaced them with benchmark scores. But benchmarks are already being gamed. The market is climbing from stars to benchmarks to verified outputs — each rung costs more to fabricate than the last."

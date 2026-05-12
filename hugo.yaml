@@ -41,8 +41,11 @@ params:
 
   # Home info mode (like Lilian Weng's site) - shows intro + post list
   homeInfoParams:
-    Title: "Barada's log"
-    Content: "Ideas at the intersection of technology and creativity"
+    Title: "Barada Sahu"
+    Content: |
+      Building generally intelligent systems at [Mason](https://getmason.io) (Counsel, Lamina). Previously founder/CTO at [Kubric](https://kubric.io). IIT Kharagpur.
+
+      Talk to me → barada[at]gmail[dot]com
 
   # Social icons (shown below home info)
   socialIcons:
