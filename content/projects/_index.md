@@ -10,30 +10,7 @@ description: "Things I'm building and have built"
 | **claudectl** | Auto-pilot for Claude Code — the shipping/distribution proof | Rust · ⭐ 162 | [GitHub](https://github.com/mercurialsolo/claudectl) |
 | **plan-lint** | Static analysis for LLM agent plans — the eval/safety credential | Python · ⭐ 13 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
 | **safeguards** | Agentic safety framework | Python · ⭐ 4 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
-| **counsel-mcp** | Production MCP infra | JavaScript · ⭐ 5 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
-
----
-
-## Timeline
-
-*Dates reflect GitHub repo creation timestamps.*
-
-| Date | Project | Notes |
-|------|---------|-------|
-| 2026-04 | [claudectl](https://github.com/mercurialsolo/claudectl) | Auto-pilot for Claude Code with a fully local approval model |
-| 2026-02 | [openhydra](https://github.com/mercurialsolo/openhydra) | Open source world engine for agents |
-| 2026-02 | [writer-engine](https://github.com/mercurialsolo/writer-engine) | Multi-agent writing system |
-| 2026-01 | [hydra](https://github.com/mercurialsolo/hydra) | Local Long-Lived Agent OS |
-| 2026-01 | [pitch-timer](https://github.com/mercurialsolo/pitch-timer) | macOS menu bar timer |
-| 2026-01 | [counsel-mcp](https://github.com/mercurialsolo/counsel-mcp) | MCP server for counsel |
-| 2025-12 | [para-backend](https://github.com/mercurialsolo/para-backend) | Para backend |
-| 2025-11 | [shock-trailer-app](https://github.com/mercurialsolo/shock-trailer-app) | Shock Trailers app & pipeline |
-| 2025-08 | [cabal-sandbox-python](https://github.com/mercurialsolo/cabal-sandbox-python) | Open source project for running Cabal containers |
-| 2025-08 | [cabal-app](https://github.com/mercurialsolo/cabal-app) | Cabal Flutter App |
-| 2025-07 | [helipad-server](https://github.com/mercurialsolo/helipad-server) | Helipad Server |
-| 2025-06 | [never-hallucinate](https://github.com/mercurialsolo/never-hallucinate) | Practices & code for reducing hallucination in coding agents |
-| 2025-04 | [plan-lint](https://github.com/cirbuk/plan-lint) | Static analysis toolkit for LLM agent plans |
-| 2025-04 | [safeguards](https://github.com/cirbuk/safeguards) | Agentic safety framework |
+| **counsel-mcp** | Multi-LLM council as an MCP server — orchestrates debate & synthesis across Claude, GPT, Gemini for deep research | JavaScript · ⭐ 5 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
 
 ---
 
