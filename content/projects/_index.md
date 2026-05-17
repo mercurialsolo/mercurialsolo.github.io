@@ -7,7 +7,7 @@ description: "Things I'm building and have built"
 
 | Project | Why it matters | Stack | Links |
 |---------|----------------|-------|-------|
-| **claudectl** | Auto-pilot for Claude Code — the shipping/distribution proof | Rust · ⭐ 162 | [GitHub](https://github.com/mercurialsolo/claudectl) |
+| **claudectl** | Single-binary TUI to monitor and orchestrate Claude Code sessions — live token/cost/context tracking, multi-session dependency graphs, fully local approval model | Rust · ⭐ 162 | [GitHub](https://github.com/mercurialsolo/claudectl) |
 | **plan-lint** | Static analysis for LLM agent plans — the eval/safety credential | Python · ⭐ 13 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
 | **safeguards** | Agentic safety framework | Python · ⭐ 4 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
 | **counsel-mcp** | Multi-LLM council as an MCP server — orchestrates debate & synthesis across Claude, GPT, Gemini for deep research | JavaScript · ⭐ 5 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
