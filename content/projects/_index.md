@@ -7,10 +7,10 @@ description: "Things I'm building and have built"
 
 | Project | Why it matters | Stack | Links |
 |---------|----------------|-------|-------|
-| **plan-lint** | Static analysis for LLM agent plans — the eval/safety credential | Python · ⭐ 12 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
-| **safeguards** | Agentic safety framework | Python · ⭐ 3 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
-| **claudectl** | Auto-pilot for Claude Code — the shipping/distribution proof | Rust · ⭐ 92 | [GitHub](https://github.com/mercurialsolo/claudectl) |
-| **counsel-mcp** | Production MCP infra | JavaScript · ⭐ 3 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
+| **claudectl** | Auto-pilot for Claude Code — the shipping/distribution proof | Rust · ⭐ 162 | [GitHub](https://github.com/mercurialsolo/claudectl) |
+| **plan-lint** | Static analysis for LLM agent plans — the eval/safety credential | Python · ⭐ 13 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
+| **safeguards** | Agentic safety framework | Python · ⭐ 4 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
+| **counsel-mcp** | Production MCP infra | JavaScript · ⭐ 5 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
 
 ---
 
@@ -41,14 +41,14 @@ description: "Things I'm building and have built"
 
 | Project | Details | Stack | Launch | Links |
 |---------|---------|-------|--------|-------|
-| **claudectl** | Auto-pilot for Claude Code — fully local model that learns what to approve, no cloud API or telemetry | Rust · ⭐ 92 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) |
-| **openhydra** | Open source world engine for agents | ⭐ 2 | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
+| **claudectl** | Auto-pilot for Claude Code — fully local model that learns what to approve, no cloud API or telemetry | Rust · ⭐ 162 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) |
+| **openhydra** | Open source world engine for agents | ⭐ 3 | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
 | **pitch-timer** | macOS menu bar timer with overlay display, global hotkeys, and network sync | Swift | 2026-01 | [GitHub](https://github.com/mercurialsolo/pitch-timer) |
-| **counsel-mcp** | MCP server for counsel | JavaScript · ⭐ 3 | 2026-01 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
+| **counsel-mcp** | MCP server for counsel | JavaScript · ⭐ 5 | 2026-01 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
 | **cabal-sandbox-python** | Open source project for running Cabal containers | — | 2025-08 | [GitHub](https://github.com/mercurialsolo/cabal-sandbox-python) |
 | **never-hallucinate** | Practices & code for reducing hallucination in coding agents | Python | 2025-06 | [GitHub](https://github.com/mercurialsolo/never-hallucinate) |
-| **plan-lint** | Open source static analysis toolkit for LLM agent plans | Python · ⭐ 12 | 2025-04 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
-| **safeguards** | Agentic safety framework | Python · ⭐ 3 | 2025-04 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
+| **plan-lint** | Open source static analysis toolkit for LLM agent plans | Python · ⭐ 13 | 2025-04 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
+| **safeguards** | Agentic safety framework | Python · ⭐ 4 | 2025-04 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
 
 ### Forks
 
