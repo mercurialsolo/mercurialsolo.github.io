@@ -5,9 +5,9 @@ description: "Talks, panels, conference appearances, and publications"
 
 ## Publications
 
-| Date | Venue | Paper |
-|------|-------|-------|
-| July 2026 | arXiv | [A global predicted-fMRI drive signal from TRIBE does not predict YouTube replay heatmaps](https://arxiv.org/abs/2607.01400) — with Shivesh Pandey |
+**[A global predicted-fMRI drive signal from TRIBE does not predict YouTube replay heatmaps](https://arxiv.org/abs/2607.01400)**<br>
+Barada Sahu, Shivesh Pandey · arXiv, July 2026<br>
+[abstract](https://arxiv.org/abs/2607.01400) · [PDF](https://arxiv.org/pdf/2607.01400) · [code](https://github.com/mercurialsolo/tribe-replay-heatmaps)
 
 ## Talks
 
