@@ -1,7 +1,13 @@
 ---
 title: "Conferences & Talks"
-description: "Talks, panels, and conference appearances"
+description: "Talks, panels, conference appearances, and publications"
 ---
+
+## Publications
+
+| Date | Venue | Paper |
+|------|-------|-------|
+| July 2026 | arXiv | [A global predicted-fMRI drive signal from TRIBE does not predict YouTube replay heatmaps](https://arxiv.org/abs/2607.01400) — with Shivesh Pandey |
 
 ## Talks
 
