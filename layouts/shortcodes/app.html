@@ -1,13 +1,28 @@
 {{- $src := .Get "src" -}}
 {{- $height := .Get "height" | default "400px" -}}
 {{- $title := .Get "title" | default "Embedded App" -}}
+{{- $id := printf "appf-%s" (substr (md5 (printf "%s-%s" $src $title)) 0 8) -}}
 
 <div class="embedded-app" style="margin: 1.5rem 0;">
   <iframe
+    id="{{ $id }}"
     src="{{ $src }}"
     title="{{ $title }}"
-    style="width: 100%; height: {{ $height }}; border: 1px solid var(--border); border-radius: 8px; background: var(--code-bg);"
+    scrolling="no"
+    style="width: 100%; height: {{ $height }}; border: 1px solid var(--border); border-radius: 8px; background: var(--code-bg); display: block; overflow: hidden;"
     loading="lazy"
     sandbox="allow-scripts allow-same-origin"
   ></iframe>
 </div>
+<script>
+(function(){
+  var iframe = document.getElementById("{{ $id }}");
+  if (!iframe) return;
+  window.addEventListener('message', function(e){
+    if (!e.data || typeof e.data !== 'object') return;
+    if (e.data.type !== 'voice-sim-resize' || !e.data.height) return;
+    if (e.source && iframe.contentWindow && e.source !== iframe.contentWindow) return;
+    iframe.style.height = (e.data.height + 4) + 'px';
+  });
+})();
+</script>
