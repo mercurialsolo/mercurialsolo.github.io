@@ -55,6 +55,8 @@ params:
       url: "https://x.com/mercurialsolo"
     - name: linkedin
       url: "https://linkedin.com/in/mercurialsolo"
+    - name: googlescholar
+      url: "https://scholar.google.com/citations?hl=en&user=p8bfQRQAAAAJ"
     - name: rss
       url: "index.xml"
 

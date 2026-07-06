@@ -5,7 +5,7 @@ description: "Talks, panels, conference appearances, and publications"
 
 ## Publications
 
-Research profiles: [Google Scholar](https://scholar.google.com/citations?view_op=search_authors&mauthors=Barada%20Sahu&hl=en) · [Semantic Scholar](https://www.semanticscholar.org/author/2446400365)
+Research profiles: [Google Scholar](https://scholar.google.com/citations?hl=en&user=p8bfQRQAAAAJ) · [Semantic Scholar](https://www.semanticscholar.org/author/2446400365)
 
 **[A global predicted-fMRI drive signal from TRIBE does not predict YouTube replay heatmaps](https://arxiv.org/abs/2607.01400)**<br>
 Barada Sahu, Shivesh Pandey · arXiv, July 2026<br>
