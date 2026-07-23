@@ -9,7 +9,7 @@ Research profiles: [Google Scholar](https://scholar.google.com/citations?hl=en&u
 
 **[Teach it to stop, not just to click](https://arxiv.org/abs/2607.17136)**<br>
 Barada Sahu, Shivesh Pandey · arXiv, July 2026<br>
-[abstract](https://arxiv.org/abs/2607.17136) · [PDF](https://arxiv.org/pdf/2607.17136)
+[abstract](https://arxiv.org/abs/2607.17136) · [PDF](https://arxiv.org/pdf/2607.17136) · [code](https://github.com/mercurialsolo/sa-opsd)
 
 **[A global predicted-fMRI drive signal from TRIBE does not predict YouTube replay heatmaps](https://arxiv.org/abs/2607.01400)**<br>
 Barada Sahu, Shivesh Pandey · arXiv, July 2026<br>
