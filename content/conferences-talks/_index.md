@@ -7,6 +7,10 @@ description: "Talks, panels, conference appearances, and publications"
 
 Research profiles: [Google Scholar](https://scholar.google.com/citations?hl=en&user=p8bfQRQAAAAJ) · [Semantic Scholar](https://www.semanticscholar.org/author/2446400365)
 
+**[Teach it to stop, not just to click](https://arxiv.org/abs/2607.17136)**<br>
+Barada Sahu, Shivesh Pandey · arXiv, July 2026<br>
+[abstract](https://arxiv.org/abs/2607.17136) · [PDF](https://arxiv.org/pdf/2607.17136)
+
 **[A global predicted-fMRI drive signal from TRIBE does not predict YouTube replay heatmaps](https://arxiv.org/abs/2607.01400)**<br>
 Barada Sahu, Shivesh Pandey · arXiv, July 2026<br>
 [abstract](https://arxiv.org/abs/2607.01400) · [PDF](https://arxiv.org/pdf/2607.01400) · [Semantic Scholar](https://www.semanticscholar.org/paper/49c7092e95af9aa3a3d7b1e724ff6aba13f5c6b2) · [code](https://github.com/mercurialsolo/tribe-replay-heatmaps)
