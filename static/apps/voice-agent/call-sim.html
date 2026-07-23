@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Hear the Latency · Voice Agent Call Simulator</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a32; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --line-strong:#334155;
+  --human:#22c55e; --good:#22d3ee; --warn:#f59e0b; --bad:#ef4444;
+  --caller:#67e8f9; --agent:#86efac;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:18px}
+h1{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{font-size:12.5px;color:var(--muted);margin-bottom:16px}
+
+/* Pill-row pickers — Stack / Network / Pattern */
+.row{display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.row .lbl{flex:0 0 64px;font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);padding-top:1px}
+.row .pills{display:flex;gap:4px;flex-wrap:wrap;flex:1;min-width:0}
+.pill{cursor:pointer;border-radius:999px;padding:5px 11px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font:600 12px system-ui;white-space:nowrap;transition:background .15s,border-color .15s}
+.pill:hover{background:#1a2547}
+.pill.on{background:var(--good);color:#031018;border-color:var(--good)}
+.pill .ms{opacity:.7;margin-left:4px;font-variant-numeric:tabular-nums}
+.pill.on .ms{opacity:.85}
+
+/* Current selection summary line */
+.summary{margin:14px 0 12px;padding:10px 12px;background:#08111f;border:1px solid var(--line);border-radius:8px;font-size:12.5px}
+.summary .lhs{color:var(--muted)}
+.summary .lhs b{color:var(--ink);font-weight:600}
+
+/* Verdict pill (shown only inside .result after call) */
+.verdict{display:inline-block;padding:3px 10px;border-radius:999px;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;white-space:nowrap}
+.verdict.human{background:rgba(34,197,94,.15);color:#86efac}
+.verdict.good{background:rgba(34,211,238,.15);color:#67e8f9}
+.verdict.warn{background:rgba(245,158,11,.15);color:#fcd34d}
+.verdict.bad{background:rgba(239,68,68,.15);color:#fca5a5}
+
+/* Primary action row */
+.play-row{display:flex;gap:8px;align-items:center;margin:0 0 14px;flex-wrap:wrap}
+.play-btn{font:700 14px system-ui;cursor:pointer;border-radius:10px;padding:11px 20px;border:0;background:var(--good);color:#031018;display:inline-flex;align-items:center;gap:8px;transition:filter .15s}
+.play-btn:hover{filter:brightness(1.05)}
+.play-btn:active{transform:scale(.98)}
+.stop-btn{font:600 12.5px system-ui;cursor:pointer;border-radius:8px;padding:9px 14px;background:transparent;border:1px solid var(--line-strong);color:var(--ink)}
+.stop-btn:hover{background:#1a2547}
+.speed{margin-left:auto;display:inline-flex;gap:3px;align-items:center;font-size:11px;color:var(--muted)}
+.speed .lbl{margin-right:4px;letter-spacing:.5px}
+.speed button{cursor:pointer;padding:4px 9px;font:600 11px system-ui;background:transparent;border:1px solid var(--line-strong);border-radius:999px;color:var(--ink)}
+.speed button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+/* Result stage — hidden until first call */
+.result{display:none;margin-top:6px}
+.result.show{display:block}
+.result .big-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
+.result .big{font-size:38px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+.result .big.human{color:#86efac}
+.result .big.good{color:#67e8f9}
+.result .big.warn{color:#fcd34d}
+.result .big.bad{color:#fca5a5}
+.result .big-lbl{font-size:13px;color:var(--muted)}
+.result .status{font-size:12.5px;color:var(--good);margin-top:6px;min-height:1.2em;font-weight:500}
+.result .status.silent{color:#fca5a5}
+.result .status.warm{color:#86efac}
+.result .status.warn{color:#fcd34d}
+.result .status.muted{color:var(--muted);font-weight:400}
+
+/* Waveform */
+.wave{position:relative;height:120px;background:#070b18;border-radius:8px;overflow:hidden;border:1px solid var(--line);margin:8px 0}
+.wave canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.wave .ph{position:absolute;top:0;bottom:0;width:2px;background:#fde047;pointer-events:none;display:none}
+
+/* Transcript */
+.transcript{font-size:12px;color:var(--muted);line-height:1.5;max-height:90px;overflow-y:auto;padding:8px 10px;background:#08111f;border-radius:6px;border:1px solid var(--line);margin-top:6px}
+.transcript:empty{display:none}
+.transcript .line{margin:2px 0}
+.transcript .line.caller b{color:var(--caller)}
+.transcript .line.agent b{color:var(--agent)}
+.transcript .line.system{color:var(--muted);font-style:italic;font-size:11px}
+.transcript .line b{margin-right:6px}
+
+/* Post-call cross-stack comparison — replaces the separate waterfall embed */
+.compare-stage{margin-top:14px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:12px}
+.compare-stage h3{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.compare-stage .ck-sub{font-size:11px;color:var(--muted);margin-bottom:10px}
+.compare-stage .ck-axis{position:relative;height:18px;margin-left:140px;margin-bottom:4px}
+.compare-stage .ck-axis .tk{position:absolute;top:0;font-size:9.5px;color:var(--muted);font-variant-numeric:tabular-nums;transform:translateX(-50%);white-space:nowrap}
+.compare-stage .ck-axis .gateline{position:absolute;top:14px;bottom:-300px;border-left:1px dashed var(--warn);pointer-events:none;z-index:1}
+.compare-stage .ck-rows{display:flex;flex-direction:column;gap:5px}
+.compare-stage .ck-row{display:flex;align-items:center;gap:6px;font-size:11.5px;padding:4px 6px;border-radius:5px;transition:background .2s}
+.compare-stage .ck-row.is-picked{background:rgba(34,211,238,.08);outline:1px solid rgba(34,211,238,.4)}
+/* desktop: hdr is transparent so name + total flow as direct flex children */
+.compare-stage .ck-row .ck-hdr{display:contents}
+.compare-stage .ck-row .ck-name{flex:0 0 134px;text-align:right;padding-right:6px;font-weight:600;color:var(--ink);line-height:1.2;font-size:11.5px}
+.compare-stage .ck-row .ck-bar{position:relative;flex:1;height:18px;background:#070b18;border-radius:3px;overflow:hidden;border:1px solid var(--line)}
+.compare-stage .ck-row .ck-seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;padding:0 2px;opacity:0;transform:translateX(-3px);transition:opacity .35s ease,transform .35s ease}
+.compare-stage .ck-row .ck-seg.shown{opacity:1;transform:translateX(0)}
+.compare-stage .ck-row .ck-seg.netin{background:#7c3aed}
+.compare-stage .ck-row .ck-seg.stt{background:#0891b2}
+.compare-stage .ck-row .ck-seg.llm{background:#9333ea}
+.compare-stage .ck-row .ck-seg.tts{background:#ea580c}
+.compare-stage .ck-row .ck-seg.netout{background:#a855f7}
+.compare-stage .ck-row .ck-seg.realtime{background:#db2777}
+.compare-stage .ck-row .ck-total{flex:0 0 70px;text-align:right;font-variant-numeric:tabular-nums;font-weight:700;font-size:11.5px}
+.compare-stage .ck-row .ck-total .ck-v{display:block;font-size:9px;font-weight:700;letter-spacing:.3px;text-transform:uppercase}
+.compare-stage .ck-row .ck-total .ck-v.human{color:#86efac}
+.compare-stage .ck-row .ck-total .ck-v.good{color:#67e8f9}
+.compare-stage .ck-row .ck-total .ck-v.warn{color:#fcd34d}
+.compare-stage .ck-row .ck-total .ck-v.bad{color:#fca5a5}
+.compare-stage .ck-row .ck-bar .ck-gateline{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(245,158,11,.45);pointer-events:none}
+.compare-stage .ck-row .ck-bar .ck-humanline{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(34,197,94,.4);pointer-events:none}
+.compare-stage .ck-legend{display:flex;flex-wrap:wrap;gap:8px;font-size:10px;color:var(--muted);margin-top:8px;padding-left:140px}
+.compare-stage .ck-legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.compare-stage .ck-legend .netin::before{background:#7c3aed}
+.compare-stage .ck-legend .stt::before{background:#0891b2}
+.compare-stage .ck-legend .llm::before{background:#9333ea}
+.compare-stage .ck-legend .tts::before{background:#ea580c}
+.compare-stage .ck-legend .netout::before{background:#a855f7}
+.compare-stage .ck-legend .realtime::before{background:#db2777}
+
+@media(max-width:560px){
+  .compare-stage .ck-axis{margin-left:0}
+  .compare-stage .ck-row{display:block;padding:8px 6px;margin-bottom:4px;border:1px solid var(--line);background:#08111f}
+  .compare-stage .ck-row .ck-hdr{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:4px}
+  .compare-stage .ck-row .ck-name{flex:1;text-align:left;padding-right:6px;font-size:12px}
+  .compare-stage .ck-row .ck-total{flex:0 0 auto;text-align:right;font-size:12px;display:flex;gap:6px;align-items:baseline}
+  .compare-stage .ck-row .ck-total .ck-v{display:inline-block;margin:0;font-size:9.5px}
+  .compare-stage .ck-legend{padding-left:0}
+}
+
+/* Collapsible breakdown */
+details.dd{margin-top:12px;border:1px solid var(--line);border-radius:8px;background:var(--panel);overflow:hidden}
+details.dd > summary{cursor:pointer;padding:9px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);list-style:none;display:flex;justify-content:space-between;align-items:center}
+details.dd > summary::-webkit-details-marker{display:none}
+details.dd > summary::after{content:"▸";color:var(--muted);transition:transform .2s}
+details.dd[open] > summary::after{transform:rotate(90deg)}
+details.dd > summary:hover{background:#1a2547}
+details.dd .body{padding:0 12px 12px}
+
+.breakdown{display:flex;height:22px;margin:8px 0;border-radius:4px;overflow:hidden;background:#070b18;border:1px solid var(--line)}
+.breakdown .seg{display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.5);overflow:hidden;white-space:nowrap;padding:0 4px;min-width:0}
+.breakdown .seg.net-in{background:#7c3aed}
+.breakdown .seg.stt{background:#0891b2}
+.breakdown .seg.llm{background:#9333ea}
+.breakdown .seg.tts{background:#ea580c}
+.breakdown .seg.net-out{background:#a855f7}
+
+.legend-row{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--muted);margin-top:6px}
+.legend-row span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend-row .net-in::before{background:#7c3aed}
+.legend-row .stt::before{background:#0891b2}
+.legend-row .llm::before{background:#9333ea}
+.legend-row .tts::before{background:#ea580c}
+.legend-row .net-out::before{background:#a855f7}
+
+.kv{display:grid;grid-template-columns:auto 1fr auto;gap:5px 12px;font-size:11.5px;align-items:center;margin-top:10px}
+.kv .k{color:var(--muted)}
+.kv .v{font-variant-numeric:tabular-nums;font-weight:600;text-align:right}
+.kv .desc{color:var(--muted);font-size:11px}
+
+@media(max-width:560px){
+  .wrap{padding:14px}
+  h1{font-size:18px}
+  .sub{font-size:12px}
+  .row .lbl{flex-basis:54px;font-size:9.5px}
+  .pill{padding:4px 9px;font-size:11.5px}
+  .pill .ms{display:none}
+  .summary{flex-direction:column;align-items:flex-start}
+  .summary .verdict{margin-left:0}
+  .play-btn{padding:10px 16px;font-size:13px}
+  .speed{margin-left:0;flex-basis:100%;flex-wrap:wrap}
+  .result .big{font-size:30px}
+  .wave{height:90px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Hear what each stack sounds like</h1>
+  <div class="sub">Pick three settings. Place the call. The dead air between caller and agent is the latency.</div>
+
+  <div class="row" id="pickProvider">
+    <span class="lbl">Stack</span>
+    <div class="pills">
+      <button class="pill on" data-stack="cerebras">Cerebras</button>
+      <button class="pill"    data-stack="managed">Managed</button>
+      <button class="pill"    data-stack="livekit">LiveKit ref</button>
+      <button class="pill"    data-stack="modal">Self-hosted</button>
+      <button class="pill"    data-stack="industry">Industry median</button>
+      <button class="pill"    data-stack="openai">OpenAI Realtime</button>
+    </div>
+  </div>
+
+  <div class="row" id="pickNetwork">
+    <span class="lbl">Network</span>
+    <div class="pills">
+      <button class="pill on" data-net="wifi">Wi-Fi</button>
+      <button class="pill"    data-net="5g">5G</button>
+      <button class="pill"    data-net="4g">4G LTE</button>
+      <button class="pill"    data-net="pstn">PSTN</button>
+      <button class="pill"    data-net="3g">3G</button>
+    </div>
+  </div>
+
+  <div class="row" id="pickFlow">
+    <span class="lbl">Pattern</span>
+    <div class="pills">
+      <button class="pill on" data-flow="multiturn">Multi-turn</button>
+      <button class="pill"    data-flow="bargein">Barge-in</button>
+      <button class="pill"    data-flow="noise">Cafe background</button>
+    </div>
+  </div>
+
+  <div class="summary">
+    <span class="lhs" id="summaryText"></span>
+  </div>
+
+  <div class="play-row">
+    <button id="play" class="play-btn">▶ Place the call</button>
+    <button id="stop" class="stop-btn">Stop</button>
+    <span class="speed">
+      <span class="lbl">Speed</span>
+      <button data-speed="1" class="on">Real time</button>
+      <button data-speed="0.5">2× faster</button>
+    </span>
+  </div>
+
+  <div class="result" id="result">
+    <div class="big-row">
+      <div><span class="big" id="clock">0</span> <span class="big-lbl">ms of dead air</span></div>
+      <span class="verdict good" id="verdict"></span>
+    </div>
+    <div class="wave" id="wave">
+      <canvas id="cv"></canvas>
+      <div class="ph" id="playhead"></div>
+    </div>
+    <div class="status muted" id="status"></div>
+    <div class="transcript" id="transcript"></div>
+
+    <div class="compare-stage" id="compareStage">
+      <h3>How your pick compares on <span id="ckNetName">Wi-Fi</span></h3>
+      <div class="ck-sub">All six stacks at the selected network. Your pick is outlined.</div>
+      <div class="ck-axis" id="ckAxis"></div>
+      <div class="ck-rows" id="ckRows"></div>
+      <div class="ck-legend">
+        <span class="netin">Inbound</span>
+        <span class="stt">STT</span>
+        <span class="llm">LLM</span>
+        <span class="tts">TTS</span>
+        <span class="netout">Outbound</span>
+        <span class="realtime">Realtime (one-shot)</span>
+      </div>
+    </div>
+
+    <details class="dd" id="breakdownWrap">
+      <summary>Where the time goes (per silence)</summary>
+      <div class="body">
+        <div class="breakdown" id="breakdown"></div>
+        <div class="legend-row">
+          <span class="net-in">Inbound</span>
+          <span class="stt">STT</span>
+          <span class="llm">LLM</span>
+          <span class="tts">TTS</span>
+          <span class="net-out">Outbound</span>
+        </div>
+        <div class="kv" id="kvBreakdown"></div>
+      </div>
+    </details>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  // ============================================================
+  // Real-world latency numbers (median; from published 2025-2026 benchmarks)
+  // ============================================================
+  const STACKS = {
+    cerebras: { name: 'Cerebras + Cartesia', stt: 200, llm: 110, tts: 190, src: 'cerebras.ai · cartesia.ai' },
+    livekit:  { name: 'LiveKit ref (DG + Haiku + Cartesia)', stt: 220, llm: 440, tts: 190, src: 'blog.livekit.io' },
+    managed:  { name: 'Managed (Vapi · Retell · Bland)', stt: 200, llm: 360, tts: 190, src: 'retellai.com · hamming.ai' },
+    modal:    { name: 'Self-hosted (Pipecat + Modal)', stt: 250, llm: 560, tts: 190, src: 'modal.com · daily.co' },
+    openai:   { name: 'OpenAI Realtime (real-world)', stt: 0, llm: 2240, tts: 0, src: 'navtalk.ai measurement', oneShot: true },
+    industry: { name: 'Industry median', stt: 300, llm: 1000, tts: 200, src: 'hamming.ai · millions of calls' },
+  };
+  const NETS = {
+    wifi: { name: 'Wi-Fi / WebRTC',    inbound: 30, outbound: 30 },
+    '5g': { name: '5G',                inbound: 20, outbound: 20 },
+    '4g': { name: '4G LTE',            inbound: 50, outbound: 50 },
+    pstn: { name: 'PSTN telephony',    inbound: 125, outbound: 125 },
+    '3g': { name: '3G',                inbound: 300, outbound: 300 },
+  };
+
+  // Barge-in detection latency varies by stack (published / observed)
+  const BARGE_IN_MS = {
+    cerebras: 120, livekit: 150, managed: 200, modal: 240, openai: 750, industry: 380,
+  };
+
+  // ============================================================
+  // Conversation flows
+  // ============================================================
+  // All flows are multi-turn (real conversations have at least two exchanges).
+  // Total wall-clock kept under ~25 s on the slowest provider+network combo.
+  const FLOWS = {
+    multiturn: {
+      name: 'Clean multi-turn',
+      turns: [
+        { type: 'caller', text: "Hi, I need to reschedule an appointment." },
+        { type: 'pipeline' },
+        { type: 'agent',  text: "Of course. What day works?" },
+        { type: 'gap',    label: 'human gap (~600 ms)', durMs: 600 },
+        { type: 'caller', text: "Thursday afternoon if you have it." },
+        { type: 'pipeline' },
+        { type: 'agent',  text: "I have two thirty or four. Which?" },
+      ],
+    },
+    bargein: {
+      name: 'Barge-in',
+      turns: [
+        { type: 'caller', text: "What insurance do you take?" },
+        { type: 'pipeline' },
+        { type: 'agent',  text: "We accept Aetna, Blue Cross, United, Cigna, Humana, and most major employer plans, including…", interruptAfterMs: 2200 },
+        { type: 'bargein' },
+        { type: 'caller', text: "I just have Aetna." },
+        { type: 'pipeline' },
+        { type: 'agent',  text: "Aetna is fully covered." },
+      ],
+    },
+    noise: {
+      name: 'Cafe background',
+      background: true,
+      extraSttMs: 250, // background noise raises STT TTFT
+      turns: [
+        { type: 'caller', text: "Hi, checking on a prescription refill." },
+        { type: 'pipeline' },
+        { type: 'agent',  text: "Sure. Name on the prescription?" },
+        { type: 'gap',    label: 'human gap (~600 ms)', durMs: 600 },
+        { type: 'caller', text: "Sarah Chen, S-A-R-A-H." },
+        { type: 'pipeline' },
+        { type: 'agent',  text: "Found it. Ready for pickup today." },
+      ],
+    },
+  };
+
+  const HUMAN_FLOOR = 200;
+  const GATE = 1500;
+
+  let stackKey = 'cerebras';
+  let netKey = 'wifi';
+  let flowKey = 'multiturn';
+  let speed = 1;
+  let ac = null;
+  let activeRun = null;
+  let bgNodes = null; // {src, gain}
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  function getStack() { return STACKS[stackKey]; }
+  function getNet() { return NETS[netKey]; }
+  function getFlow() { return FLOWS[flowKey]; }
+  function pipelineMs(turnExtraSttMs = 0) {
+    const s = getStack(), n = getNet();
+    const stt = s.stt + (turnExtraSttMs || 0);
+    return n.inbound + stt + s.llm + s.tts + n.outbound;
+  }
+  function verdictOf(ms) {
+    if (ms <= HUMAN_FLOOR + 50) return { cls: 'human', txt: 'Human-natural' };
+    if (ms <= 800)               return { cls: 'good',  txt: 'Responsive' };
+    if (ms <= GATE)              return { cls: 'warn',  txt: 'Noticeable' };
+    if (ms <= 2500)              return { cls: 'bad',   txt: 'Broken-feeling' };
+    return { cls: 'bad', txt: 'Caller hangs up' };
+  }
+
+  // ============================================================
+  // Pre-compute timeline (turns -> [{kind, durMs, ...}])
+  // ============================================================
+  function buildTimeline() {
+    const flow = getFlow();
+    const segs = [];
+    let total = 0;
+    const sttExtra = flow.extraSttMs || 0;
+    for (let i = 0; i < flow.turns.length; i++) {
+      const t = flow.turns[i];
+      if (t.type === 'caller') {
+        const ms = estimateSpeechMs(t.text, 'caller');
+        const truncMs = t.interruptAfterMs && t.interruptAfterMs < ms ? t.interruptAfterMs : ms;
+        segs.push({ kind: 'caller', durMs: truncMs, text: t.text, interrupted: !!t.interruptAfterMs });
+        total += truncMs;
+      } else if (t.type === 'agent') {
+        const ms = estimateSpeechMs(t.text, 'agent');
+        const truncMs = t.interruptAfterMs && t.interruptAfterMs < ms ? t.interruptAfterMs : ms;
+        segs.push({ kind: 'agent', durMs: truncMs, text: t.text, interrupted: !!t.interruptAfterMs });
+        total += truncMs;
+      } else if (t.type === 'pipeline') {
+        const p = pipelineMs(sttExtra);
+        segs.push({ kind: 'silence', durMs: p, label: 'pipeline ' + p + ' ms' });
+        total += p;
+      } else if (t.type === 'gap') {
+        segs.push({ kind: 'gap', durMs: t.durMs, label: t.label || 'gap' });
+        total += t.durMs;
+      } else if (t.type === 'bargein') {
+        const lat = BARGE_IN_MS[stackKey] || 200;
+        segs.push({ kind: 'bargein', durMs: lat, label: 'barge-in detect ' + lat + ' ms' });
+        total += lat;
+      }
+    }
+    return { segs, total };
+  }
+
+  // TTS duration estimate: matches Web Speech at rate=1.0 (~15 chars/sec).
+  // Min 1000 ms keeps short replies from feeling rushed; no upper cap so longer
+  // lines stay in sync with the audio.
+  function estimateSpeechMs(text, who) {
+    const charRate = who === 'agent' ? 14 : 15;
+    return Math.max(1000, Math.round((text.length / charRate) * 1000));
+  }
+
+  // ============================================================
+  // Canvas waveform — multi-turn timeline
+  // ============================================================
+  const cv = $('#cv');
+  const ctx = cv.getContext('2d');
+  function resizeCanvas() {
+    const r = cv.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    cv.width = r.width * dpr;
+    cv.height = r.height * dpr;
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.scale(dpr, dpr);
+    draw();
+  }
+  window.addEventListener('resize', resizeCanvas);
+
+  function draw() {
+    const w = cv.getBoundingClientRect().width;
+    const h = cv.getBoundingClientRect().height;
+    const mid = h / 2;
+    ctx.clearRect(0, 0, w, h);
+
+    const { segs, total } = buildTimeline();
+    if (total === 0) return;
+    const flow = getFlow();
+
+    // background tint if cafe scenario
+    if (flow.background) {
+      ctx.fillStyle = 'rgba(167, 139, 250, .06)';
+      ctx.fillRect(0, 0, w, h);
+      ctx.fillStyle = '#a78bfa'; ctx.font = '10px system-ui';
+      ctx.fillText('CAFE NOISE BED', 6, 14);
+    }
+
+    let x = 0;
+    for (const seg of segs) {
+      const segW = (seg.durMs / total) * w;
+      // band fill
+      if (seg.kind === 'caller') {
+        ctx.fillStyle = 'rgba(103, 232, 249, .08)';
+        ctx.fillRect(x, 0, segW, h);
+        drawWavelet(ctx, x, segW, mid, h, '#67e8f9', 0.7, 0.21);
+      } else if (seg.kind === 'agent') {
+        ctx.fillStyle = 'rgba(134, 239, 172, .08)';
+        ctx.fillRect(x, 0, segW, h);
+        drawWavelet(ctx, x, segW, mid, h, '#86efac', 0.55, 0.17);
+        if (seg.interrupted) {
+          // red truncation marker
+          ctx.fillStyle = 'rgba(239, 68, 68, .25)';
+          ctx.fillRect(x + segW - 4, 0, 4, h);
+        }
+      } else if (seg.kind === 'silence') {
+        ctx.fillStyle = 'rgba(239, 68, 68, .14)';
+        ctx.fillRect(x, 0, segW, h);
+        ctx.strokeStyle = '#475569'; ctx.lineWidth = 0.8;
+        ctx.beginPath(); ctx.moveTo(x, mid); ctx.lineTo(x + segW, mid); ctx.stroke();
+        if (segW > 70) {
+          ctx.fillStyle = '#fca5a5'; ctx.font = 'bold 10px system-ui';
+          ctx.fillText(seg.label, x + 6, h - 8);
+        }
+      } else if (seg.kind === 'gap') {
+        ctx.fillStyle = 'rgba(34, 197, 94, .14)';
+        ctx.fillRect(x, 0, segW, h);
+        ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 0.6;
+        ctx.setLineDash([2, 3]); ctx.beginPath();
+        ctx.moveTo(x, mid); ctx.lineTo(x + segW, mid); ctx.stroke();
+        ctx.setLineDash([]);
+        if (segW > 50) {
+          ctx.fillStyle = '#86efac'; ctx.font = 'bold 10px system-ui';
+          ctx.fillText(seg.label, x + 4, h - 8);
+        }
+      } else if (seg.kind === 'bargein') {
+        ctx.fillStyle = 'rgba(251, 191, 36, .2)';
+        ctx.fillRect(x, 0, segW, h);
+        ctx.fillStyle = '#fbbf24'; ctx.font = 'bold 9px system-ui';
+        if (segW > 60) ctx.fillText(seg.label, x + 4, 12);
+      }
+      // top label for caller/agent
+      if (seg.kind === 'caller' && segW > 40) {
+        ctx.fillStyle = '#67e8f9'; ctx.font = 'bold 10px system-ui';
+        ctx.fillText('CALLER', x + 4, 12);
+      }
+      if (seg.kind === 'agent' && segW > 40) {
+        ctx.fillStyle = '#86efac'; ctx.font = 'bold 10px system-ui';
+        ctx.fillText('AGENT', x + 4, 12);
+      }
+      // boundary line
+      ctx.strokeStyle = 'rgba(255,255,255,.04)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(x + segW, 0); ctx.lineTo(x + segW, h); ctx.stroke();
+      x += segW;
+    }
+  }
+
+  // synthetic waveform shape for a band
+  function drawWavelet(ctx, x0, width, mid, h, color, freqA, freqB) {
+    ctx.strokeStyle = color; ctx.lineWidth = 1.2;
+    ctx.beginPath();
+    const step = 2;
+    let first = true;
+    for (let xx = x0; xx <= x0 + width; xx += step) {
+      const t = (xx - x0) / width;
+      const env = Math.sin(t * Math.PI) * 0.7 + 0.3;
+      const wob = Math.sin(xx * freqA) * 0.5 + Math.sin(xx * freqB) * 0.5;
+      const y = mid + wob * env * (h * 0.32);
+      if (first) { ctx.moveTo(xx, y); first = false; } else ctx.lineTo(xx, y);
+    }
+    ctx.stroke();
+  }
+
+  // ============================================================
+  // Breakdown bar (per-silence pipeline)
+  // ============================================================
+  function renderBreakdown() {
+    const s = getStack(), n = getNet(), flow = getFlow();
+    const sttExtra = flow.extraSttMs || 0;
+    const total = pipelineMs(sttExtra);
+
+    const segs = s.oneShot
+      ? [
+          { cls: 'net-in', ms: n.inbound, label: 'in' },
+          { cls: 'llm', ms: s.llm, label: 'realtime model' },
+          { cls: 'net-out', ms: n.outbound, label: 'out' },
+        ]
+      : [
+          { cls: 'net-in', ms: n.inbound, label: 'in' },
+          { cls: 'stt', ms: s.stt + sttExtra, label: 'STT' + (sttExtra ? '+noise' : '') },
+          { cls: 'llm', ms: s.llm, label: 'LLM' },
+          { cls: 'tts', ms: s.tts, label: 'TTS' },
+          { cls: 'net-out', ms: n.outbound, label: 'out' },
+        ];
+
+    const bar = $('#breakdown');
+    bar.innerHTML = '';
+    segs.forEach(seg => {
+      const d = document.createElement('div');
+      d.className = 'seg ' + seg.cls;
+      d.style.flex = seg.ms + ' 0 0';
+      d.title = seg.label + ' · ' + seg.ms + ' ms';
+      d.textContent = seg.ms >= 80 ? (seg.label + ' ' + seg.ms) : '';
+      bar.appendChild(d);
+    });
+
+    const kv = $('#kvBreakdown');
+    kv.innerHTML = '';
+    const rows = s.oneShot
+      ? [
+          ['Inbound ' + n.name, n.inbound + ' ms', 'one-way RTT'],
+          ['Realtime model (' + s.name + ')', s.llm + ' ms', 'single-pass speech-to-speech'],
+          ['Outbound ' + n.name, n.outbound + ' ms', 'one-way RTT'],
+        ]
+      : [
+          ['Inbound ' + n.name, n.inbound + ' ms', 'one-way RTT'],
+          ['STT' + (sttExtra ? ' (+' + sttExtra + ' bg noise)' : ''), (s.stt + sttExtra) + ' ms', 'streaming TTFT'],
+          ['LLM', s.llm + ' ms', 'TTFT median'],
+          ['TTS', s.tts + ' ms', 'first audio'],
+          ['Outbound ' + n.name, n.outbound + ' ms', 'one-way RTT'],
+          ['Per-silence total', total + ' ms', verdictOf(total).txt + ' · ' + s.src],
+        ];
+    rows.forEach(([k, v, d]) => {
+      const a = document.createElement('div'); a.className = 'k'; a.textContent = k;
+      const b = document.createElement('div'); b.className = 'desc'; b.textContent = d;
+      const c = document.createElement('div'); c.className = 'v'; c.textContent = v;
+      kv.appendChild(a); kv.appendChild(b); kv.appendChild(c);
+    });
+  }
+
+  function updateUI() {
+    const flow = getFlow();
+    // selection summary (the line under the pickers) — names only, no numbers
+    const stackName = getStack().name.replace(/\s*\(.*\)$/, '');
+    let summary = `<b>${stackName}</b> on <b>${getNet().name}</b> · <b>${flow.name}</b>`;
+    $('#summaryText').innerHTML = summary;
+
+    // verdict pill inside .result is set during the call run; keep it empty at idle
+    const v = verdictOf(pipelineMs(flow.extraSttMs || 0));
+    $('#verdict').className = 'verdict ' + v.cls;
+    $('#verdict').textContent = '';
+
+    // reset clock if no run in progress
+    if (!activeRun || activeRun.abort) $('#clock').textContent = '0';
+    if ($('#status')) {
+      $('#status').textContent = '';
+      $('#status').className = 'status muted';
+    }
+    draw();
+    renderBreakdown();
+    renderCompare();
+  }
+
+  // ============================================================
+  // Cross-stack comparison waterfall (renders inside the result panel)
+  // ============================================================
+  function ckTotalFor(stack, netRtt) {
+    return netRtt + stack.stt + stack.llm + stack.tts + netRtt;
+  }
+  function ckScaleMax() {
+    const net = getNet();
+    let max = 0;
+    for (const k of Object.keys(STACKS)) {
+      const s = STACKS[k];
+      const v = ckTotalFor(s, net.inbound);
+      if (v > max) max = v;
+    }
+    return Math.ceil((max + 100) / 500) * 500;
+  }
+  function renderCompare() {
+    const net = getNet();
+    $('#ckNetName').textContent = net.name;
+    const max = ckScaleMax();
+    // axis
+    const axis = $('#ckAxis');
+    axis.innerHTML = '';
+    const ticks = [0, 500, 1000, 1500, 2000, 2500, 3000].filter(t => t <= max);
+    if (!ticks.includes(max)) ticks.push(max);
+    const narrow = window.innerWidth < 560;
+    ticks.forEach((t, i) => {
+      if (narrow && i % 2 !== 0 && i !== ticks.length - 1) return;
+      const tk = document.createElement('div');
+      tk.className = 'tk';
+      tk.style.left = (t / max * 100) + '%';
+      tk.textContent = t + ' ms';
+      if (i === ticks.length - 1) { tk.style.transform = 'translateX(-100%)'; }
+      axis.appendChild(tk);
+    });
+
+    // rows (ordered fastest → slowest for the current network)
+    const order = Object.keys(STACKS).map(k => ({ k, s: STACKS[k], total: ckTotalFor(STACKS[k], net.inbound) }))
+                        .sort((a, b) => a.total - b.total);
+    const rowsEl = $('#ckRows');
+    rowsEl.innerHTML = '';
+
+    order.forEach(({ k, s, total }, rowIdx) => {
+      const v = verdictOf(total);
+      const row = document.createElement('div');
+      row.className = 'ck-row' + (k === stackKey ? ' is-picked' : '');
+
+      const name = document.createElement('div');
+      name.className = 'ck-name';
+      name.textContent = s.name.replace(/\s*\(.*\)$/, '');
+
+      const bar = document.createElement('div');
+      bar.className = 'ck-bar';
+
+      // guidelines (gate + human floor)
+      const gl = document.createElement('div');
+      gl.className = 'ck-gateline';
+      gl.style.left = (GATE / max * 100) + '%';
+      bar.appendChild(gl);
+      const hl = document.createElement('div');
+      hl.className = 'ck-humanline';
+      hl.style.left = (HUMAN_FLOOR / max * 100) + '%';
+      bar.appendChild(hl);
+
+      const segs = s.oneShot
+        ? [
+            { cls:'netin',   ms:net.inbound, label:String(net.inbound) },
+            { cls:'realtime',ms:s.llm,       label:String(s.llm) },
+            { cls:'netout',  ms:net.outbound,label:String(net.outbound) },
+          ]
+        : [
+            { cls:'netin',  ms:net.inbound,  label:String(net.inbound) },
+            { cls:'stt',    ms:s.stt,        label:String(s.stt) },
+            { cls:'llm',    ms:s.llm,        label:String(s.llm) },
+            { cls:'tts',    ms:s.tts,        label:String(s.tts) },
+            { cls:'netout', ms:net.outbound, label:String(net.outbound) },
+          ];
+      let acc = 0;
+      segs.forEach((sg, segIdx) => {
+        const seg = document.createElement('div');
+        seg.className = 'ck-seg ' + sg.cls;
+        seg.style.left = (acc / max * 100) + '%';
+        seg.style.width = (sg.ms / max * 100) + '%';
+        const widthPct = (sg.ms / max * 100);
+        seg.textContent = widthPct > 3 ? sg.label : '';
+        bar.appendChild(seg);
+        setTimeout(() => seg.classList.add('shown'), 60 + rowIdx * 50 + segIdx * 25);
+        acc += sg.ms;
+      });
+
+      const totalEl = document.createElement('div');
+      totalEl.className = 'ck-total';
+      totalEl.innerHTML = `${total.toLocaleString()} ms<span class="ck-v ${v.cls}">${v.txt}</span>`;
+
+      // mobile-friendly structure: header line (name + total) above the bar.
+      // CSS hides .ck-hdr on desktop (flex children flow directly) and shows it on mobile.
+      const hdr = document.createElement('div');
+      hdr.className = 'ck-hdr';
+      hdr.appendChild(name);
+      hdr.appendChild(totalEl);
+
+      row.appendChild(hdr);
+      row.appendChild(bar);
+      rowsEl.appendChild(row);
+    });
+  }
+
+  // ============================================================
+  // Web Audio: speech, background noise
+  // ============================================================
+  function ensureCtx() {
+    if (!ac) ac = new (window.AudioContext || window.webkitAudioContext)();
+    if (ac.state === 'suspended') ac.resume();
+    return ac;
+  }
+
+  function startBackground() {
+    const c = ensureCtx();
+    if (bgNodes) stopBackground();
+    const dur = 20;
+    const buf = c.createBuffer(2, c.sampleRate * dur, c.sampleRate);
+    for (let ch = 0; ch < 2; ch++) {
+      const d = buf.getChannelData(ch);
+      let b0=0,b1=0,b2=0,b3=0,b4=0,b5=0,b6=0;
+      for (let i = 0; i < d.length; i++) {
+        const w = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + w * 0.0555179;
+        b1 = 0.99332 * b1 + w * 0.0750759;
+        b2 = 0.96900 * b2 + w * 0.1538520;
+        b3 = 0.86650 * b3 + w * 0.3104856;
+        b4 = 0.55000 * b4 + w * 0.5329522;
+        b5 = -0.7616 * b5 - w * 0.0168980;
+        d[i] = (b0+b1+b2+b3+b4+b5+b6+w*0.5362) * 0.04;
+        b6 = w * 0.115926;
+      }
+    }
+    const src = c.createBufferSource();
+    src.buffer = buf; src.loop = true;
+    const bp = c.createBiquadFilter();
+    bp.type = 'bandpass'; bp.frequency.value = 700; bp.Q.value = 0.4;
+    const g = c.createGain(); g.gain.value = 0.0;
+    src.connect(bp); bp.connect(g); g.connect(c.destination);
+    src.start();
+    g.gain.linearRampToValueAtTime(0.15, c.currentTime + 0.4);
+    bgNodes = { src, gain: g };
+  }
+  function stopBackground() {
+    if (!bgNodes) return;
+    const c = ac; const now = c.currentTime;
+    try {
+      bgNodes.gain.gain.cancelScheduledValues(now);
+      bgNodes.gain.gain.setValueAtTime(bgNodes.gain.gain.value, now);
+      bgNodes.gain.gain.linearRampToValueAtTime(0, now + 0.25);
+      const src = bgNodes.src;
+      setTimeout(() => { try { src.stop(); } catch(e){} }, 300);
+    } catch(e){}
+    bgNodes = null;
+  }
+
+  // pre-cache voice list
+  let _voices = [];
+  function refreshVoices() {
+    if (!('speechSynthesis' in window)) return;
+    _voices = speechSynthesis.getVoices();
+  }
+  if ('speechSynthesis' in window) {
+    refreshVoices();
+    speechSynthesis.onvoiceschanged = refreshVoices;
+  }
+  function pickVoice(prefer) {
+    if (!_voices.length) refreshVoices();
+    if (!_voices.length) return null;
+    const eng = _voices.filter(v => /en[-_]/i.test(v.lang) || v.lang === 'en');
+    const pool = eng.length ? eng : _voices;
+    if (prefer === 'agent') {
+      const f = pool.find(v => /female|samantha|victoria|karen|ava|allison|serena|kate|fiona|moira/i.test(v.name));
+      return f || pool[0];
+    }
+    const m = pool.find(v => /male|daniel|alex|fred|tom|aaron|oliver|rishi|ryan/i.test(v.name));
+    return m || pool[Math.min(1, pool.length - 1)];
+  }
+
+  function speak(text, opts={}) {
+    return new Promise(resolve => {
+      if (!('speechSynthesis' in window)) {
+        setTimeout(resolve, opts.maxMs || 4000);
+        return;
+      }
+      try { speechSynthesis.cancel(); } catch(e){}
+      const u = new SpeechSynthesisUtterance(text);
+      const v = pickVoice(opts.who);
+      if (v) u.voice = v;
+      u.pitch = opts.pitch || 1.0;
+      u.rate = opts.rate || 1.0;
+      u.volume = opts.volume == null ? 1.0 : opts.volume;
+      let done = false;
+      const finish = () => { if (done) return; done = true; resolve(); };
+      u.onend = finish; u.onerror = finish;
+      if (opts.maxMs) setTimeout(finish, opts.maxMs);
+      try { speechSynthesis.speak(u); } catch(e) { finish(); }
+    });
+  }
+  function cancelSpeech() { try { speechSynthesis.cancel(); } catch(e){} }
+
+  // ============================================================
+  // Orchestration: walk the timeline, fire audio + animate playhead
+  // ============================================================
+  function tick(durMs, onTick) {
+    return new Promise(resolve => {
+      const startWall = performance.now();
+      const targetDur = durMs * speed;
+      function loop() {
+        if (activeRun && activeRun.abort) return resolve();
+        const elapsed = performance.now() - startWall;
+        const k = Math.min(1, elapsed / targetDur);
+        const cur = k * durMs;
+        onTick && onTick(cur);
+        if (k < 1) requestAnimationFrame(loop); else resolve();
+      }
+      loop();
+    });
+  }
+
+  function logTranscript(role, text) {
+    const div = document.createElement('div');
+    div.className = 'line ' + role;
+    if (role === 'system') {
+      div.textContent = text;
+    } else {
+      const b = document.createElement('b');
+      b.textContent = role === 'caller' ? 'Caller:' : 'Agent:';
+      div.appendChild(b);
+      div.appendChild(document.createTextNode(text));
+    }
+    $('#transcript').appendChild(div);
+    $('#transcript').scrollTop = $('#transcript').scrollHeight;
+  }
+  function clearTranscript() { $('#transcript').innerHTML = ''; }
+
+  async function run() {
+    if (activeRun) activeRun.abort = true;
+    const me = activeRun = { abort: false };
+
+    const flow = getFlow();
+    const timeline = buildTimeline();
+    const totalT = timeline.total;
+    if (totalT === 0) return;
+
+    $('#result').classList.add('show');
+    $('#playhead').style.display = 'block';
+    clearTranscript();
+
+    if (flow.background) {
+      startBackground();
+      logTranscript('system', '… cafe background bed on …');
+    }
+
+    let elapsed = 0; // ms of pipeline-time
+    let silenceClockBase = 0;
+    let silenceTotal = 0;
+    let perceivedSilenceMs = 0;
+
+    function setPlayhead(curT) {
+      $('#playhead').style.left = (curT / totalT * 100) + '%';
+    }
+    setPlayhead(0);
+    $('#clock').textContent = '0';
+
+    for (let i = 0; i < timeline.segs.length; i++) {
+      if (me.abort) return cleanup();
+      const seg = timeline.segs[i];
+
+      if (seg.kind === 'caller') {
+        $('#status').textContent = 'Caller speaking…';
+        $('#status').className = 'status';
+        logTranscript('caller', seg.text);
+        const callerSpeech = speak(seg.text, {
+          who: 'caller', pitch: 0.85, rate: 1.0 / speed,
+          volume: flow.background ? 0.95 : 1.0,
+          maxMs: Math.max(seg.durMs + 2000, 8000),
+        });
+        const callerVisual = tick(seg.durMs, cur => setPlayhead(elapsed + cur));
+        await Promise.all([callerSpeech, callerVisual]);
+        elapsed += seg.durMs;
+        if (me.abort) { cancelSpeech(); return cleanup(); }
+      }
+      else if (seg.kind === 'agent') {
+        $('#status').textContent = 'Agent speaking…';
+        $('#status').className = 'status warm';
+        const agentText = seg.interrupted ? seg.text.replace(/…$/, '') : seg.text;
+        logTranscript('agent', agentText + (seg.interrupted ? ' [interrupted]' : ''));
+        const agentSpeech = speak(seg.text, {
+          who: 'agent', pitch: 1.15, rate: 1.0 / speed,
+          volume: flow.background ? 0.95 : 1.0,
+          maxMs: Math.max(seg.durMs + 2000, 7000),
+        });
+        const agentVisual = tick(seg.durMs, cur => setPlayhead(elapsed + cur));
+        await Promise.all([
+          // for interrupted turns, cancel speech when visual is done
+          agentVisual.then(() => { if (seg.interrupted) cancelSpeech(); }),
+          agentSpeech,
+        ]);
+        elapsed += seg.durMs;
+        if (me.abort) { cancelSpeech(); return cleanup(); }
+      }
+      else if (seg.kind === 'silence') {
+        $('#status').textContent = 'Dead air. Pipeline running.';
+        $('#status').className = 'status silent';
+        const segVerdict = verdictOf(seg.durMs);
+        $('#clock').className = 'big ' + segVerdict.cls;
+        let pastGate = false;
+        silenceClockBase = elapsed;
+        await tick(seg.durMs, cur => {
+          setPlayhead(elapsed + cur);
+          $('#clock').textContent = Math.round(cur).toLocaleString();
+          if (!pastGate && cur >= GATE) {
+            pastGate = true;
+            $('#status').textContent = '⚠ Past 1500 ms. Line feels dropped.';
+            $('#status').className = 'status warn';
+          }
+        });
+        elapsed += seg.durMs;
+        silenceTotal += seg.durMs;
+        perceivedSilenceMs = seg.durMs;
+        if (me.abort) return cleanup();
+      }
+      else if (seg.kind === 'gap') {
+        $('#status').textContent = seg.label;
+        $('#status').className = 'status muted';
+        await tick(seg.durMs, cur => setPlayhead(elapsed + cur));
+        elapsed += seg.durMs;
+        if (me.abort) return cleanup();
+      }
+      else if (seg.kind === 'bargein') {
+        $('#status').textContent = '⚠ Barge-in: agent still finishing (' + seg.durMs + ' ms latency)';
+        $('#status').className = 'status warn';
+        logTranscript('system', 'barge-in detect: ' + seg.durMs + ' ms before agent stops');
+        await tick(seg.durMs, cur => setPlayhead(elapsed + cur));
+        elapsed += seg.durMs;
+        if (me.abort) return cleanup();
+      }
+    }
+
+    const finalVerdict = verdictOf(perceivedSilenceMs || pipelineMs(flow.extraSttMs || 0));
+    $('#status').textContent = `Call done · last silence ${perceivedSilenceMs || 0} ms · ${finalVerdict.txt}`;
+    $('#status').className = 'status ' + (finalVerdict.cls === 'human' || finalVerdict.cls === 'good' ? 'warm' : 'silent');
+
+    cleanup();
+    function cleanup() {
+      $('#playhead').style.display = 'none';
+      stopBackground();
+    }
+  }
+
+  // ============================================================
+  // UI wiring
+  // ============================================================
+  $$('#pickProvider .pill').forEach(b => b.addEventListener('click', () => {
+    $$('#pickProvider .pill').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    stackKey = b.dataset.stack;
+    updateUI();
+  }));
+  $$('#pickNetwork .pill').forEach(b => b.addEventListener('click', () => {
+    $$('#pickNetwork .pill').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    netKey = b.dataset.net;
+    updateUI();
+  }));
+  $$('#pickFlow .pill').forEach(b => b.addEventListener('click', () => {
+    $$('#pickFlow .pill').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    flowKey = b.dataset.flow;
+    updateUI();
+  }));
+  $$('.speed button').forEach(b => b.addEventListener('click', () => {
+    $$('.speed button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    speed = +b.dataset.speed;
+  }));
+
+  $('#play').addEventListener('click', () => { ensureCtx(); run(); });
+  $('#stop').addEventListener('click', () => {
+    if (activeRun) activeRun.abort = true;
+    cancelSpeech();
+    stopBackground();
+    $('#status').textContent = 'Stopped.';
+    $('#status').className = 'status muted';
+    $('#playhead').style.display = 'none';
+  });
+
+  resizeCanvas();
+  updateUI();
+
+  // Auto-size iframe to fit content
+  function postSize() {
+    // Use body content height. documentElement.scrollHeight follows the iframe's
+    // allocated height which creates a feedback loop and prevents shrinking.
+    const h = document.body.getBoundingClientRect().height;
+    try { parent.postMessage({ type: 'voice-sim-resize', height: Math.ceil(h) }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+
+})();
+</script>
+</body>
+</html>

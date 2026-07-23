@@ -1,0 +1,28 @@
+{{- $src := .Get "src" -}}
+{{- $initial := .Get "initial" | default "600px" -}}
+{{- $title := .Get "title" | default "Embedded App" -}}
+{{- $id := printf "appauto-%s" (substr (md5 $src) 0 8) -}}
+
+<div class="embedded-app" style="margin: 1.5rem 0;">
+  <iframe
+    id="{{ $id }}"
+    src="{{ $src }}"
+    title="{{ $title }}"
+    scrolling="no"
+    style="width: 100%; height: {{ $initial }}; border: 1px solid var(--border); border-radius: 8px; background: var(--code-bg); display: block; overflow: hidden;"
+    loading="lazy"
+    sandbox="allow-scripts allow-same-origin"
+  ></iframe>
+</div>
+<script>
+(function(){
+  var iframe = document.getElementById({{ $id | jsonify }});
+  if (!iframe) return;
+  window.addEventListener('message', function(e){
+    if (!e.data || typeof e.data !== 'object') return;
+    if (e.data.type !== 'voice-sim-resize' || !e.data.height) return;
+    if (e.source !== iframe.contentWindow) return;
+    iframe.style.height = (e.data.height + 4) + 'px';
+  });
+})();
+</script>

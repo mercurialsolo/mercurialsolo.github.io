@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pre-gate moments · listen to the failure modes</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a32; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --line-strong:#334155;
+  --caller:#67e8f9; --agent:#86efac;
+  --vad:#fcd34d; --smart:#22d3ee;
+  --bad:#ef4444; --good:#22c55e;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:18px}
+h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+
+/* Tabs / scenario picker */
+.tabs{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+.tab{cursor:pointer;border-radius:999px;padding:7px 12px;border:1px solid var(--line-strong);background:transparent;color:var(--ink);font:600 12px system-ui;white-space:nowrap;transition:background .15s,border-color .15s}
+.tab:hover{background:#1a2547}
+.tab.on{background:var(--smart);color:#031018;border-color:var(--smart)}
+
+.demo{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px}
+.demo h3{margin:0 0 4px;font-size:14px;font-weight:700}
+.demo .desc{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+
+/* Caller avatar + transcript bubble */
+.scene{display:flex;align-items:flex-start;gap:10px;margin-bottom:14px;min-height:90px}
+.avatar{flex:0 0 44px;height:44px;border-radius:50%;background:var(--caller);color:#031018;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;position:relative}
+.avatar.agent{background:var(--agent)}
+.avatar::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--caller);opacity:0;transition:opacity .15s}
+.avatar.agent::after{border-color:var(--agent)}
+.avatar.speaking::after{opacity:1;animation:pulse 1s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1);opacity:.7}50%{transform:scale(1.12);opacity:.3}}
+
+.bubble{flex:1;position:relative;background:#08111f;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:13.5px;line-height:1.6;min-height:60px}
+.bubble.caller{border-left:3px solid var(--caller)}
+.bubble.agent{border-left:3px solid var(--agent)}
+.bubble .who{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:4px}
+.bubble .text{color:var(--ink)}
+.bubble .text .word{opacity:.25;transition:opacity .15s}
+.bubble .text .word.spoken{opacity:1}
+.bubble .text .word.pause{color:var(--muted);font-style:italic}
+.bubble .text .word.silence-mark{color:var(--vad);font-weight:700}
+
+/* Timeline visualization */
+.timelines{margin-top:10px}
+.timeline{display:flex;align-items:center;gap:10px;margin-bottom:6px;font-size:11px}
+.timeline .lbl{flex:0 0 110px;text-align:right;color:var(--muted);font-weight:700;letter-spacing:.4px;text-transform:uppercase;font-size:9.5px}
+.timeline .lbl.vad{color:var(--vad)}
+.timeline .lbl.smart{color:var(--smart)}
+.timeline .track{position:relative;flex:1;height:28px;background:#070b18;border:1px solid var(--line);border-radius:4px;overflow:hidden}
+.timeline .track .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:9.5px;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.6);font-weight:600;overflow:hidden;white-space:nowrap;padding:0 4px;opacity:0;transition:opacity .25s}
+.timeline .track .seg.shown{opacity:1}
+.timeline .track .seg.speech{background:rgba(103,232,249,.25);border-left:1px solid rgba(103,232,249,.6)}
+.timeline .track .seg.silence{background:transparent}
+.timeline .track .seg.silence::after{content:"silence";color:var(--muted);font-style:italic;font-size:9.5px}
+.timeline .track .mark{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--vad);opacity:0;transition:opacity .2s;z-index:2}
+.timeline .track .mark.shown{opacity:1}
+.timeline .track .mark.smart{background:var(--smart)}
+.timeline .track .mark .lbl{position:absolute;top:-15px;left:3px;font-size:9.5px;font-weight:700;color:var(--vad);white-space:nowrap}
+.timeline .track .mark.smart .lbl{color:var(--smart)}
+.timeline .track .mark.fired-bad .lbl{color:var(--bad)}
+.timeline .track .mark.fired-bad{background:var(--bad)}
+.timeline .track .ph{position:absolute;top:0;bottom:0;width:2px;background:#fff;opacity:.6;pointer-events:none;display:none}
+
+/* Controls */
+.controls{display:flex;gap:8px;align-items:center;margin:14px 0 8px;flex-wrap:wrap}
+.btn{cursor:pointer;border-radius:8px;padding:10px 16px;border:0;font:700 13px system-ui;background:var(--smart);color:#031018;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{filter:brightness(1.05)}
+.btn.stop{background:transparent;border:1px solid var(--line-strong);color:var(--ink);font-weight:600}
+.btn.stop:hover{background:#1a2547}
+
+/* Verdict box (post-play) */
+.verdict-box{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+@media(max-width:520px){.verdict-box{grid-template-columns:1fr}}
+.verdict-card{background:#08111f;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+.verdict-card .label{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
+.verdict-card .out{font-size:12.5px;font-weight:600}
+.verdict-card.bad{border-left:3px solid var(--bad)}
+.verdict-card.bad .label{color:#fca5a5}
+.verdict-card.good{border-left:3px solid var(--good)}
+.verdict-card.good .label{color:#86efac}
+
+.note{font-size:11px;color:var(--muted);margin-top:10px;line-height:1.5}
+.note b{color:var(--ink)}
+
+@media(max-width:520px){
+  .avatar{flex-basis:36px;height:36px;font-size:15px}
+  .timeline .lbl{flex-basis:88px;font-size:8.5px}
+  .bubble{font-size:13px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Pre-gate moments</h1>
+  <div class="sub">Three failure modes that live upstream of <code>speech_final</code>. Headphones on; the audio is the point.</div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab on" data-demo="semantic">Semantic turn detection</button>
+    <button class="tab" data-demo="bargein">Barge-in vs backchannel</button>
+    <button class="tab" data-demo="multispeaker">Two people, one call</button>
+  </div>
+
+  <div class="demo" id="demo">
+    <h3 id="demoTitle"></h3>
+    <div class="desc" id="demoDesc"></div>
+
+    <div class="scene">
+      <div class="avatar caller" id="avatarA">C</div>
+      <div class="bubble caller" id="bubbleA">
+        <div class="who">Caller</div>
+        <div class="text" id="textA"></div>
+      </div>
+    </div>
+    <div class="scene" id="sceneB" style="display:none">
+      <div class="avatar agent" id="avatarB">A</div>
+      <div class="bubble agent" id="bubbleB">
+        <div class="who" id="whoB">Agent</div>
+        <div class="text" id="textB"></div>
+      </div>
+    </div>
+
+    <div class="timelines">
+      <div class="timeline">
+        <span class="lbl vad">VAD-only</span>
+        <div class="track" id="trackVad">
+          <div class="ph" id="phVad"></div>
+        </div>
+      </div>
+      <div class="timeline">
+        <span class="lbl smart">Semantic turn</span>
+        <div class="track" id="trackSmart">
+          <div class="ph" id="phSmart"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="play">▶ Play scenario</button>
+      <button class="btn stop" id="stop">Stop</button>
+    </div>
+
+    <div class="verdict-box" id="verdictBox" style="display:none">
+      <div class="verdict-card bad">
+        <div class="label">VAD-only result</div>
+        <div class="out" id="vadOut"></div>
+      </div>
+      <div class="verdict-card good">
+        <div class="label">Semantic turn result</div>
+        <div class="out" id="smartOut"></div>
+      </div>
+    </div>
+
+    <div class="note" id="demoNote"></div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  // ============================================================
+  // Scenario data — each entry: segments (audio+visual), timeline, verdicts
+  // ============================================================
+  const SCENARIOS = {
+    semantic: {
+      title: 'Semantic turn detection',
+      desc: 'Caller is mid-thought with disfluencies. VAD-only treats the first 800 ms of silence as turn-final. A semantic classifier reads the trailing words ("uhm", "think") and holds.',
+      showB: false,
+      // segments are spoken in order; pauses produce real silence
+      // Each segment: { kind: 'speak' | 'pause', text?, durMs }
+      segs: [
+        { kind:'speak', text:'Uhm...', durMs:900, who:'caller' },
+        { kind:'pause', durMs:850, label:'silence (≈ VAD threshold)' },
+        { kind:'speak', text:'let me think...', durMs:1100, who:'caller' },
+        { kind:'pause', durMs:700, label:'silence' },
+        { kind:'speak', text:"yeah, I want to book a room next Tuesday.", durMs:2400, who:'caller' },
+        { kind:'pause', durMs:1300, label:'true end of turn' },
+      ],
+      events: {
+        // each event: { atSegIdx, atOffsetMs, kind: 'vad-fire' | 'smart-hold' | 'smart-fire', label }
+        vad: [
+          { afterSeg:1, offsetMs:50, label:'speech_final ✗ (fires too early)' },
+        ],
+        smart: [
+          { afterSeg:1, offsetMs:50, label:'held (trailing "uhm")' },
+          { afterSeg:3, offsetMs:50, label:'held (trailing "think")' },
+          { afterSeg:5, offsetMs:300, label:'speech_final ✓' },
+        ],
+      },
+      verdict: {
+        vad: '"Uhm." is sent to the LLM. The LLM responds. The caller, still mid-thought, hears the agent talking over them.',
+        smart: 'Holds through both disfluencies. Fires on the true end of turn. Caller finishes their sentence before the agent responds.',
+      },
+      note: 'VAD-only systems set the endpointing window low to feel responsive, then ship false interruptions. Semantic turn detection uses the trailing acoustic + text features to distinguish "I am still thinking" from "I am done". Cost: ~15 ms inference on smart-turn-v2, near-zero on LiveKit\'s model.'
+    },
+
+    bargein: {
+      title: 'Barge-in vs backchannel',
+      desc: 'Agent is rattling off a list. The caller says "mhm" (acknowledgment) and then "wait, what about Cigna?" (real interrupt). A naive system flushes on both; a smart system flushes only on the real interrupt.',
+      showB: true,
+      bRole: 'Agent',
+      segs: [
+        { kind:'speak', text:'We accept Aetna, Blue Cross,', durMs:1900, who:'agent' },
+        { kind:'speak', text:'mhm', durMs:400, who:'caller', overlap:true },
+        { kind:'speak', text:'United Healthcare, Cigna,', durMs:1800, who:'agent' },
+        { kind:'pause', durMs:120, label:'gap' },
+        { kind:'speak', text:'wait, what about Aetna?', durMs:1700, who:'caller', overlap:true },
+      ],
+      events: {
+        vad: [
+          { afterSeg:1, offsetMs:80, label:'flush ✗ (on "mhm")' },
+          { afterSeg:4, offsetMs:80, label:'flush again' },
+        ],
+        smart: [
+          { afterSeg:1, offsetMs:120, label:'classified as backchannel, ignored' },
+          { afterSeg:4, offsetMs:80, label:'flush ✓ (real interrupt)' },
+        ],
+      },
+      verdict: {
+        vad: 'Agent stops speaking on "mhm". Stutters and restarts. The caller has to repeat the question.',
+        smart: 'Agent ignores the "mhm" backchannel, continues. Flushes cleanly on the "wait" interrupt and answers the real question.',
+      },
+      note: 'A backchannel ("mhm", "yeah", "got it") is acknowledgment, not interrupt. The framework cannot tell the difference acoustically — it needs the agent to classify intent on the partial transcript before flushing TTS playout.'
+    },
+
+    multispeaker: {
+      title: 'Two people, one call',
+      desc: 'Speakerphone in a kitchen. Two people answer slot questions. The agent treats both voices as "the caller" and books based on whichever answer landed last.',
+      showB: true,
+      bRole: 'Agent',
+      segs: [
+        { kind:'speak', text:'When would you like the appointment?', durMs:2000, who:'agent' },
+        { kind:'pause', durMs:400, label:'gap' },
+        { kind:'speak', text:'Tuesday at three.', durMs:1500, who:'caller', speakerVariant:'A' },
+        { kind:'pause', durMs:200, label:'gap' },
+        { kind:'speak', text:'No, Wednesday is better.', durMs:1700, who:'caller', speakerVariant:'B' },
+        { kind:'pause', durMs:900, label:'silence' },
+      ],
+      events: {
+        vad: [
+          { afterSeg:2, offsetMs:50, label:'captured: Tuesday at three' },
+          { afterSeg:4, offsetMs:50, label:'overwrites with: Wednesday' },
+          { afterSeg:5, offsetMs:300, label:'commits ✗ (wrong person\'s slot)' },
+        ],
+        smart: [
+          { afterSeg:2, offsetMs:50, label:'speaker A: "Tuesday at three"' },
+          { afterSeg:4, offsetMs:50, label:'⚠ speaker B detected, no commit' },
+          { afterSeg:5, offsetMs:300, label:'asks "who am I speaking with?"' },
+        ],
+      },
+      verdict: {
+        vad: 'Books Wednesday because that was the last voice. The person who actually called wanted Tuesday. Patient shows up Tuesday to an empty slot.',
+        smart: 'Speaker embedding flags a voice change mid-slot. Agent refuses to commit and re-asks for confirmation. Cost: ~50 ms extra at STT.',
+      },
+      note: 'Diarization in live calls is rare. The pragmatic fix is to require a single-speaker contract at the start of the call. The clean fix is speaker-conditioned STT, which costs ~50 ms and is available in some stacks but rare in production.'
+    },
+  };
+
+  // ============================================================
+  // Web Audio + Speech synthesis
+  // ============================================================
+  let _voices = [];
+  function refreshVoices() { if ('speechSynthesis' in window) _voices = speechSynthesis.getVoices(); }
+  if ('speechSynthesis' in window) { refreshVoices(); speechSynthesis.onvoiceschanged = refreshVoices; }
+
+  function pickVoice(opts) {
+    if (!_voices.length) refreshVoices();
+    if (!_voices.length) return null;
+    const eng = _voices.filter(v => /en[-_]/i.test(v.lang) || v.lang === 'en');
+    const pool = eng.length ? eng : _voices;
+    if (opts.who === 'agent') {
+      const f = pool.find(v => /female|samantha|victoria|karen|ava|allison|serena|kate|fiona|moira/i.test(v.name));
+      return f || pool[0];
+    }
+    // caller variants
+    if (opts.speakerVariant === 'B') {
+      const x = pool.find(v => /female|samantha|victoria|karen|ava/i.test(v.name));
+      return x || pool[Math.min(2, pool.length - 1)];
+    }
+    const m = pool.find(v => /male|daniel|alex|fred|tom|aaron|oliver|rishi|ryan/i.test(v.name));
+    return m || pool[Math.min(1, pool.length - 1)];
+  }
+
+  function speak(text, opts={}) {
+    return new Promise(resolve => {
+      if (!('speechSynthesis' in window)) { setTimeout(resolve, opts.maxMs || 1500); return; }
+      try { speechSynthesis.cancel(); } catch(e){}
+      const u = new SpeechSynthesisUtterance(text);
+      const v = pickVoice(opts);
+      if (v) u.voice = v;
+      u.pitch = opts.pitch || 1.0;
+      u.rate = opts.rate || 1.0;
+      u.volume = opts.volume == null ? 1.0 : opts.volume;
+      let done = false;
+      const finish = () => { if (done) return; done = true; resolve(); };
+      u.onend = finish; u.onerror = finish;
+      if (opts.maxMs) setTimeout(finish, opts.maxMs);
+      try { speechSynthesis.speak(u); } catch(e) { finish(); }
+    });
+  }
+  function cancelSpeech() { try { speechSynthesis.cancel(); } catch(e){} }
+  function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+  // ============================================================
+  // UI rendering
+  // ============================================================
+  let currentKey = 'semantic';
+  let activeRun = null;
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  function totalMs(scn) {
+    return scn.segs.reduce((a, s) => a + s.durMs, 0);
+  }
+
+  function loadScenario(key) {
+    const scn = SCENARIOS[key];
+    if (!scn) return;
+    currentKey = key;
+    $('#demoTitle').textContent = scn.title;
+    $('#demoDesc').textContent = scn.desc;
+    $('#sceneB').style.display = scn.showB ? 'flex' : 'none';
+    if (scn.showB && scn.bRole) {
+      $('#whoB').textContent = scn.bRole;
+      $('#avatarB').textContent = scn.bRole.charAt(0);
+    }
+
+    // Pre-render transcript text (initially dimmed)
+    renderTranscript(scn);
+    // Pre-render timeline tracks with segments
+    renderTracks(scn);
+
+    // hide verdict
+    $('#verdictBox').style.display = 'none';
+    $('#demoNote').textContent = scn.note;
+  }
+
+  function renderTranscript(scn) {
+    $('#textA').innerHTML = '';
+    $('#textB').innerHTML = '';
+    let aText = '', bText = '';
+    scn.segs.forEach((s, i) => {
+      if (s.kind === 'speak') {
+        const target = (s.who === 'caller') ? 'A' : 'B';
+        const span = document.createElement('span');
+        span.className = 'word' + (s.speakerVariant ? ' speaker-' + s.speakerVariant : '');
+        span.dataset.seg = i;
+        span.textContent = s.text + ' ';
+        if (target === 'A') $('#textA').appendChild(span);
+        else $('#textB').appendChild(span);
+      }
+    });
+  }
+
+  function renderTracks(scn) {
+    const total = totalMs(scn);
+    ['#trackVad', '#trackSmart'].forEach(sel => {
+      const tr = $(sel);
+      // clear segs + marks but keep playhead
+      Array.from(tr.querySelectorAll('.seg, .mark')).forEach(e => e.remove());
+      let x = 0;
+      scn.segs.forEach((s, i) => {
+        const el = document.createElement('div');
+        el.className = 'seg ' + (s.kind === 'speak' ? 'speech' : 'silence');
+        el.style.left = (x / total * 100) + '%';
+        el.style.width = (s.durMs / total * 100) + '%';
+        if (s.kind === 'speak') {
+          el.textContent = s.text.length > 20 ? s.text.slice(0, 18) + '…' : s.text;
+        }
+        el.dataset.seg = i;
+        tr.appendChild(el);
+        x += s.durMs;
+      });
+      // pre-add event markers (hidden)
+      const isVad = sel.includes('Vad');
+      const events = isVad ? scn.events.vad : scn.events.smart;
+      events.forEach(ev => {
+        // Compute marker position: end of seg `afterSeg` + offsetMs
+        let pos = 0;
+        for (let i = 0; i <= ev.afterSeg; i++) pos += scn.segs[i].durMs;
+        pos += ev.offsetMs || 0;
+        const mark = document.createElement('div');
+        mark.className = 'mark' + (isVad ? ' fired-bad' : ' smart');
+        mark.style.left = (pos / total * 100) + '%';
+        const lbl = document.createElement('span');
+        lbl.className = 'lbl';
+        lbl.textContent = ev.label;
+        mark.appendChild(lbl);
+        mark.dataset.pos = pos;
+        tr.appendChild(mark);
+      });
+    });
+  }
+
+  async function play() {
+    if (activeRun) activeRun.abort = true;
+    const me = activeRun = { abort: false };
+    const scn = SCENARIOS[currentKey];
+    const total = totalMs(scn);
+
+    // reset reveal state
+    $$('#textA .word, #textB .word').forEach(w => w.classList.remove('spoken'));
+    $$('#trackVad .mark, #trackSmart .mark').forEach(m => m.classList.remove('shown'));
+    $('#verdictBox').style.display = 'none';
+    $('#phVad').style.display = 'block';
+    $('#phSmart').style.display = 'block';
+
+    const startWall = performance.now();
+    let elapsed = 0;
+
+    // Run a parallel playhead animation for both timelines
+    let playheadActive = true;
+    function tickPlayhead() {
+      if (!playheadActive || me.abort) return;
+      const t = performance.now() - startWall;
+      const pct = Math.min(100, (t / total) * 100);
+      $('#phVad').style.left = pct + '%';
+      $('#phSmart').style.left = pct + '%';
+      // reveal marks whose pos <= t
+      $$('#trackVad .mark, #trackSmart .mark').forEach(m => {
+        if (+m.dataset.pos <= t) m.classList.add('shown');
+      });
+      requestAnimationFrame(tickPlayhead);
+    }
+    requestAnimationFrame(tickPlayhead);
+
+    // Walk segments in order
+    for (let i = 0; i < scn.segs.length; i++) {
+      if (me.abort) { cancelSpeech(); playheadActive = false; return cleanup(); }
+      const s = scn.segs[i];
+      const who = (s.who === 'agent') ? 'agent' : 'caller';
+      const avatarSel = who === 'agent' ? '#avatarB' : '#avatarA';
+
+      if (s.kind === 'speak') {
+        // highlight the word
+        const target = who === 'agent' ? '#textB' : '#textA';
+        const wordEl = document.querySelector(target + ' .word[data-seg="' + i + '"]');
+        if (wordEl) wordEl.classList.add('spoken');
+
+        document.querySelector(avatarSel).classList.add('speaking');
+        await speak(s.text, {
+          who, rate: 1.0, pitch: who === 'agent' ? 1.15 : (s.speakerVariant === 'B' ? 1.05 : 0.85),
+          speakerVariant: s.speakerVariant,
+          maxMs: s.durMs + 1500,
+        });
+        document.querySelector(avatarSel).classList.remove('speaking');
+        elapsed = performance.now() - startWall;
+      } else if (s.kind === 'pause') {
+        await sleep(s.durMs);
+        elapsed = performance.now() - startWall;
+      }
+    }
+
+    playheadActive = false;
+    $('#phVad').style.display = 'none';
+    $('#phSmart').style.display = 'none';
+
+    // show verdict
+    $('#vadOut').textContent = scn.verdict.vad;
+    $('#smartOut').textContent = scn.verdict.smart;
+    $('#verdictBox').style.display = 'grid';
+    if (window.innerWidth <= 520) $('#verdictBox').style.display = 'block';
+
+    cleanup();
+    function cleanup() {
+      document.querySelectorAll('.avatar').forEach(a => a.classList.remove('speaking'));
+    }
+  }
+
+  function stop() {
+    if (activeRun) activeRun.abort = true;
+    cancelSpeech();
+    $('#phVad').style.display = 'none';
+    $('#phSmart').style.display = 'none';
+    document.querySelectorAll('.avatar').forEach(a => a.classList.remove('speaking'));
+  }
+
+  // ============================================================
+  // Wiring
+  // ============================================================
+  $$('#tabs .tab').forEach(b => b.addEventListener('click', () => {
+    if (activeRun) activeRun.abort = true;
+    cancelSpeech();
+    $$('#tabs .tab').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    loadScenario(b.dataset.demo);
+  }));
+  $('#play').addEventListener('click', play);
+  $('#stop').addEventListener('click', stop);
+
+  loadScenario('semantic');
+
+  // iframe auto-resize
+  function postSize() {
+    const h = Math.ceil(document.body.getBoundingClientRect().height);
+    try { parent.postMessage({ type:'voice-sim-resize', height:h }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+
+})();
+</script>
+</body>
+</html>

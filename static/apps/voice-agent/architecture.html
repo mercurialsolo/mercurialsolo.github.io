@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Voice agent architecture</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a32; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --line-strong:#334155;
+  --framework:#22d3ee; --infra:#a78bfa; --agent:#86efac;
+  --caller:#67e8f9; --acc:#fbbf24;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:18px}
+
+h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+
+.layer{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px;margin-bottom:8px}
+.layer .badge{position:absolute;top:-10px;right:12px;padding:3px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase}
+.layer .badge.agent{background:var(--agent);color:#031018}
+.layer .badge.framework{background:var(--framework);color:#031018}
+.layer .badge.infra{background:var(--infra);color:#fff}
+.layer .ttl{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.layer .ttl .meta{color:var(--ink);text-transform:none;letter-spacing:0;font-weight:400;font-size:11px;margin-left:6px;opacity:.7}
+
+/* Component grids inside agent + infra layers */
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:6px}
+.box{background:#08111f;border:1px solid var(--line);border-left:3px solid var(--line-strong);border-radius:5px;padding:8px 10px;font-size:12px;line-height:1.3}
+
+/* Sub-group label + grid (used inside agent + infra layers to break up dense boxes) */
+.subgroup{margin-top:8px}
+.subgroup:first-child{margin-top:0}
+.subgroup .sub-h{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:#cbd5e1;margin:0 0 4px;padding-left:2px}
+.subgroup .sub-h .sub-tag{color:var(--muted);font-weight:400;letter-spacing:0;text-transform:none;font-size:10.5px;margin-left:6px}
+.box .b-name{font-weight:600;color:var(--ink);font-size:12px;display:block}
+.box .b-desc{display:block;font-size:10.5px;color:var(--muted);margin-top:2px}
+.layer.agent .box{border-left-color:var(--agent)}
+.layer.framework .box{border-left-color:var(--framework)}
+.layer.infra .box{border-left-color:var(--infra)}
+
+/* Framework pipeline (horizontal flow with arrows) — forced single-line on desktop */
+.pipeline{display:flex;align-items:stretch;gap:0;flex-wrap:nowrap;background:#08111f;border:1px solid var(--line);border-radius:6px;padding:8px 6px;margin-bottom:8px;position:relative}
+.pipeline .step{flex:1 1 0;min-width:0;text-align:center;padding:6px 3px;background:transparent;border-radius:4px;font-size:10.5px;color:var(--ink);font-weight:600;line-height:1.2;position:relative;z-index:1}
+.pipeline .step .stt{font-size:8.5px;color:var(--muted);font-weight:400;display:block;margin-top:1px;line-height:1.15}
+.pipeline .step.endpoint{flex:0 0 auto;color:var(--caller);font-size:14px;align-self:center;padding:0 2px;font-weight:300}
+.pipeline .step.caller{color:var(--caller);flex:0 0 38px}
+.pipeline .step.agent{color:var(--agent);flex:0 0 38px}
+.pipeline .step.boxed{background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3)}
+
+.framework-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.framework-meta .tag{font-size:10.5px;color:var(--muted);padding:3px 8px;background:#08111f;border:1px dashed var(--line-strong);border-radius:999px}
+.framework-meta .tag b{color:var(--ink);font-weight:600}
+
+/* Down arrows between layers */
+.arrows{display:flex;justify-content:space-around;padding:2px 20px;color:var(--muted);font-size:14px;line-height:1}
+
+/* Cross-cutting band */
+.cross{margin-top:12px;background:#08111f;border:1px dashed var(--line-strong);border-radius:8px;padding:10px 12px}
+.cross h3{margin:0 0 6px;font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.cross .lead{font-size:11.5px;color:var(--muted);line-height:1.5;margin-bottom:8px}
+.cross .ccs{display:flex;flex-wrap:wrap;gap:8px}
+.cross .cc{display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--panel);border:1px solid var(--line);border-radius:6px;font-size:11.5px;color:var(--ink);font-weight:600}
+.cross .cc::before{content:"";width:8px;height:8px;border-radius:50%;background:var(--acc)}
+
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:10.5px;color:var(--muted);margin-bottom:12px;padding:6px 12px;background:#08111f;border:1px solid var(--line);border-radius:6px}
+.legend span{display:inline-flex;align-items:center;gap:5px;font-weight:600;color:var(--ink)}
+.legend span::before{content:"";width:9px;height:9px;border-radius:2px}
+.legend .l-agent::before{background:var(--agent)}
+.legend .l-fr::before{background:var(--framework)}
+.legend .l-infra::before{background:var(--infra)}
+
+@media(max-width:560px){
+  .pipeline{flex-direction:column;padding:6px;gap:2px}
+  .pipeline .step{flex:1 1 auto;text-align:left;padding:6px 8px}
+  .pipeline .step.endpoint{display:none}
+  .pipeline .step.boxed{border-radius:4px}
+  .boxes{grid-template-columns:1fr 1fr;gap:5px}
+  .box{padding:7px 9px}
+  .legend{font-size:10px;gap:10px}
+}
+
+.note{font-size:11px;color:var(--muted);margin-top:6px;line-height:1.45}
+.note code{background:#08111f;border:1px solid var(--line);border-radius:3px;padding:1px 5px;font-size:10.5px;color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Voice agent at a glance</h1>
+  <div class="sub">Pipeline runs left-to-right inside the framework layer. Policy stacks on top, infrastructure stacks below. Four cross-cutting concerns run through all three.</div>
+
+  <div class="legend">
+    <span class="l-agent">Agent-specific · what to say, what's allowed</span>
+    <span class="l-fr">Framework · the real-time turn loop</span>
+    <span class="l-infra">Infra · where it runs and lands</span>
+  </div>
+
+  <!-- AGENT LAYER -->
+  <div class="layer agent">
+    <span class="badge agent">Agent</span>
+    <div class="ttl">What you own · decision &amp; content</div>
+
+    <div class="subgroup">
+      <div class="sub-h">How it sounds <span class="sub-tag">voice persona</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Persona + prompt</span><span class="b-desc">Pure differentiation. Versioned.</span></div>
+      </div>
+    </div>
+
+    <div class="subgroup">
+      <div class="sub-h">What it can do <span class="sub-tag">capabilities</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Tools</span><span class="b-desc">Your product surface. Framework provides the hook.</span></div>
+        <div class="box"><span class="b-name">KB / RAG content</span><span class="b-desc">What &amp; how to retrieve.</span></div>
+        <div class="box"><span class="b-name">Memory rules</span><span class="b-desc">What's worth remembering.</span></div>
+      </div>
+    </div>
+
+    <div class="subgroup">
+      <div class="sub-h">How it behaves <span class="sub-tag">conversation policy</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Flow / business policy</span><span class="b-desc">Slots, escalations, commits.</span></div>
+        <div class="box"><span class="b-name">Confirmation gates</span><span class="b-desc">Read-back slots, regex affirm.</span></div>
+      </div>
+    </div>
+
+    <div class="subgroup">
+      <div class="sub-h">Quality &amp; safety <span class="sub-tag">enforced rules</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Guardrail rules</span><span class="b-desc">Refusal style, jailbreak, HIPAA/PCI.</span></div>
+        <div class="box"><span class="b-name">Eval signals</span><span class="b-desc">What "good" means in your domain.</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="arrows" aria-hidden="true">↓ &nbsp; ↓ &nbsp; ↓</div>
+
+  <!-- FRAMEWORK LAYER (with pipeline) -->
+  <div class="layer framework">
+    <span class="badge framework">Framework</span>
+    <div class="ttl">The real-time turn loop <span class="meta">— mechanism only, policy plugs in from above</span></div>
+    <div class="pipeline">
+      <div class="step caller">Caller<span class="stt">in</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step boxed">AEC + VAD<span class="stt">echo · voice</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step boxed">STT<span class="stt">interims</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step boxed">Dialog<span class="stt">turn + spec</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step boxed">LLM<span class="stt">+ tools</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step boxed">TTS<span class="stt">streamed</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step boxed">Transport<span class="stt">WebRTC/SIP</span></div>
+      <div class="step endpoint">▶</div>
+      <div class="step agent">Caller<span class="stt">out</span></div>
+    </div>
+    <div class="framework-meta">
+      <span class="tag"><b>Barge-in</b> · transport-level flush, &lt;20 ms cancel</span>
+      <span class="tag"><b>Endpointing</b> · adaptive per slot kind</span>
+      <span class="tag"><b>Speculation</b> · fire LLM/tools on stable interim</span>
+      <span class="tag"><b>Confirmation hook</b> · regex fast-path, LLM fallback</span>
+      <span class="tag"><b>Safety hook</b> · pre-LLM input + post-LLM output filters, ~10 ms · rules from agent</span>
+    </div>
+    <div class="note">The framework should be the most swappable layer; the hooks above run under the cert-gate budget without stalling audio. Business logic in here = your moat coupled to a replaceable component.</div>
+  </div>
+
+  <div class="arrows" aria-hidden="true">↓ &nbsp; ↓ &nbsp; ↓</div>
+
+  <!-- INFRA LAYER -->
+  <div class="layer infra">
+    <span class="badge infra">Infra</span>
+    <div class="ttl">Substrate · model-agnostic, ops-owned</div>
+
+    <div class="subgroup">
+      <div class="sub-h">Compute <span class="sub-tag">where inference runs</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Model serving</span><span class="b-desc">GPU pool, autoscaling, warm starts, colocation.</span></div>
+        <div class="box"><span class="b-name">Filter models</span><span class="b-desc">PII scrub, classifier inference, refusal cascade.</span></div>
+      </div>
+    </div>
+
+    <div class="subgroup">
+      <div class="sub-h">State <span class="sub-tag">where data lives</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Vector store</span><span class="b-desc">RAG index. Hot cache for speculation.</span></div>
+        <div class="box"><span class="b-name">Memory store</span><span class="b-desc">Redis / KV, caller-keyed recall.</span></div>
+        <div class="box"><span class="b-name">Recording + storage</span><span class="b-desc">Retention, encryption, residency, PII.</span></div>
+      </div>
+    </div>
+
+    <div class="subgroup">
+      <div class="sub-h">Operations <span class="sub-tag">how you run it</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Observability</span><span class="b-desc">Traces, audio+transcript, cost-per-call.</span></div>
+        <div class="box"><span class="b-name">Eval harness</span><span class="b-desc">Batch sim calls, CI gating, regression dash.</span></div>
+      </div>
+    </div>
+
+    <div class="subgroup">
+      <div class="sub-h">Edge / transport <span class="sub-tag">the network boundary</span></div>
+      <div class="boxes">
+        <div class="box"><span class="b-name">Transport hosts</span><span class="b-desc">WebRTC SFU · PSTN bridge · TURN.</span></div>
+        <div class="box"><span class="b-name">Server-side AEC</span><span class="b-desc">WebRTC AEC3 on PSTN (no client canceller).</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="cross">
+    <h3>Cross-cutting · run through all three layers</h3>
+    <div class="lead">These do not live in any one bucket; each one needs an owner on each layer. Treat them as standing concerns, not features to bolt on at the end.</div>
+    <div class="ccs">
+      <div class="cc">Latency budgeting</div>
+      <div class="cc">Evaluation &amp; simulation</div>
+      <div class="cc">Observability &amp; tracing</div>
+      <div class="cc">Guardrails &amp; safety</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  function postSize() {
+    const h = Math.ceil(document.body.getBoundingClientRect().height);
+    try { parent.postMessage({ type:'voice-sim-resize', height:h }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Voice agent component allocation</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a32; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --line-strong:#334155;
+  --framework:#22d3ee; --infra:#a78bfa; --agent:#86efac;
+  --dot-primary:#fff; --dot-partial:#94a3b8;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:18px}
+
+h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{font-size:12.5px;color:var(--muted);margin-bottom:14px;line-height:1.5}
+
+.principle{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+@media(max-width:560px){.principle{grid-template-columns:1fr}}
+.principle .card{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px 12px;border-top:3px solid var(--line-strong)}
+.principle .card.f{border-top-color:var(--framework)}
+.principle .card.i{border-top-color:var(--infra)}
+.principle .card.a{border-top-color:var(--agent)}
+.principle .card h4{margin:0 0 4px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.principle .card h4 .n{display:inline-block;width:14px;height:14px;border-radius:50%;text-align:center;line-height:14px;font-size:9px;background:var(--line-strong);color:#fff;margin-right:5px}
+.principle .card.f h4 .n{background:var(--framework);color:#031018}
+.principle .card.i h4 .n{background:var(--infra);color:#fff}
+.principle .card.a h4 .n{background:var(--agent);color:#031018}
+.principle .card p{margin:0;font-size:12px;line-height:1.45}
+.principle .card b{color:var(--ink)}
+
+.tbl{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden}
+.tbl .hd{display:grid;grid-template-columns:1.4fr 50px 50px 50px 1.4fr;align-items:center;gap:8px;padding:10px 14px;background:#08111f;border-bottom:1px solid var(--line);font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.tbl .hd .col{text-align:center}
+.tbl .hd .col.f{color:var(--framework)}
+.tbl .hd .col.i{color:var(--infra)}
+.tbl .hd .col.a{color:var(--agent)}
+
+.row{display:grid;grid-template-columns:1.4fr 50px 50px 50px 1.4fr;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);font-size:12.5px;transition:background .15s}
+.row:last-child{border-bottom:0}
+.row:hover{background:#1a2547}
+/* Wrappers are transparent on desktop so name + 3 dots flow as direct grid children */
+.row .row-head,.row .dots{display:contents}
+.row .name{font-weight:600;color:var(--ink)}
+.row .dot{text-align:center;font-size:14px;line-height:1}
+.row .dot.primary{color:#fff}
+.row .dot.partial{color:var(--muted)}
+.row .dot.primary.f{color:var(--framework)}
+.row .dot.primary.i{color:var(--infra)}
+.row .dot.primary.a{color:var(--agent)}
+.row .note{font-size:11px;color:var(--muted);line-height:1.4}
+
+@media(max-width:600px){
+  /* Stack each row as a card: header line with name + dot trio, then note below. */
+  .tbl .hd{display:none}
+  .row{display:block;padding:12px 14px;font-size:13px}
+  .row .row-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+  .row .name{flex:1;font-size:13.5px;font-weight:700;line-height:1.25}
+  .row .dots{display:flex;gap:3px;flex:0 0 auto}
+  .row .dot{width:26px;height:26px;display:inline-flex;align-items:center;justify-content:center;font-size:14px;border-radius:50%;background:#08111f;border:1px solid var(--line)}
+  .row .dot:empty{background:transparent;border-color:transparent}
+  .row .dot.primary.f{background:rgba(34,211,238,.18);border-color:var(--framework);color:var(--framework)}
+  .row .dot.primary.i{background:rgba(167,139,250,.18);border-color:var(--infra);color:var(--infra)}
+  .row .dot.primary.a{background:rgba(134,239,172,.18);border-color:var(--agent);color:var(--agent)}
+  .row .note{display:block;font-size:12.5px;line-height:1.5;color:var(--muted)}
+}
+
+.legend-bar{display:flex;flex-wrap:wrap;gap:14px;font-size:11px;color:var(--muted);margin:0 0 10px;padding:8px 12px;background:#08111f;border:1px solid var(--line);border-radius:8px}
+.legend-bar span::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#fff;vertical-align:middle;margin-right:5px}
+.legend-bar .primary::before{background:#fff}
+.legend-bar .partial::before{background:var(--muted);width:6px;height:6px;margin-left:2px;margin-right:7px}
+.legend-bar .f::before{background:var(--framework)}
+.legend-bar .i::before{background:var(--infra)}
+.legend-bar .a::before{background:var(--agent)}
+
+.cross{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+.cross h2{margin:0 0 4px;font-size:14px;font-weight:700}
+.cross .lead{font-size:12px;color:var(--muted);margin-bottom:10px;line-height:1.5}
+
+.crow{display:grid;grid-template-columns:160px 1fr 1fr 1fr;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:12px;line-height:1.5}
+.crow:last-child{border-bottom:0}
+.crow .ccname{font-weight:700;color:var(--ink);font-size:12.5px}
+.crow .cell{font-size:11.5px;color:var(--muted)}
+.crow .cell b{color:var(--ink);font-weight:700}
+.crow .cell.f b{color:var(--framework)}
+.crow .cell.i b{color:var(--infra)}
+.crow .cell.a b{color:var(--agent)}
+.crow.head{font-size:10px;letter-spacing:1px;text-transform:uppercase;font-weight:700;color:var(--muted);padding-top:0}
+.crow.head .cell.f{color:var(--framework)}
+.crow.head .cell.i{color:var(--infra)}
+.crow.head .cell.a{color:var(--agent)}
+
+@media(max-width:600px){
+  .crow{grid-template-columns:1fr;gap:6px;padding-top:10px}
+  .crow.head{display:none}
+  .crow .cell::before{content:attr(data-label);display:inline-block;font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-right:6px}
+  .crow .cell.f::before{color:var(--framework)}
+  .crow .cell.i::before{color:var(--infra)}
+  .crow .cell.a::before{color:var(--agent)}
+}
+
+.foot{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:6px}
+.foot b{color:var(--ink)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Where the decisions live</h1>
+  <div class="sub">Nearly every voice-agent component is <i>split</i>. The framework owns the mechanism (how a turn is detected, how streams are wired). Infra owns the substrate (where it runs, scales, lands). The agent owns the policy (what to say, which model, what's allowed). Most boundary mistakes come from putting policy in the framework.</div>
+
+  <div class="principle">
+    <div class="card f">
+      <h4><span class="n">1</span>Framework</h4>
+      <p>Universal across all voice agents and latency-critical. Owns the <b>verb</b> — the real-time turn loop.</p>
+    </div>
+    <div class="card i">
+      <h4><span class="n">2</span>Infrastructure</h4>
+      <p>Running, scaling, storing, observing. Model-agnostic, ops-owned. Owns the <b>where</b>.</p>
+    </div>
+    <div class="card a">
+      <h4><span class="n">3</span>Agent-specific</h4>
+      <p>Where you differentiate — domain logic, knowledge, behavior, policy. Owns the <b>what/which</b>.</p>
+    </div>
+  </div>
+
+  <div class="legend-bar">
+    <span class="primary">● primary owner</span>
+    <span class="partial">◐ partial / shared</span>
+    <span class="f">Framework</span>
+    <span class="i">Infrastructure</span>
+    <span class="a">Agent-specific</span>
+  </div>
+
+  <div class="tbl" id="matrix">
+    <div class="hd">
+      <div>Component</div>
+      <div class="col f">Frame</div>
+      <div class="col i">Infra</div>
+      <div class="col a">Agent</div>
+      <div class="col notehd">Where the boundary sits</div>
+    </div>
+    <!-- rows injected by JS -->
+  </div>
+
+  <div class="cross">
+    <h2>Cross-cutting concerns</h2>
+    <div class="lead">Four concerns don't live in any single bucket — they audit all three. Forced into one column they get under-resourced, which is exactly how voice agents ship sounding bad.</div>
+
+    <div class="crow head">
+      <div class="ccname">Concern</div>
+      <div class="cell f">Framework</div>
+      <div class="cell i">Infrastructure</div>
+      <div class="cell a">Agent-specific</div>
+    </div>
+
+    <div class="crow">
+      <div class="ccname">Latency budgeting</div>
+      <div class="cell f" data-label="Framework"><b>Overlap or stack:</b> endpointing window, speculative LLM start, sentence-level TTS streaming.</div>
+      <div class="cell i" data-label="Infra"><b>Sets the floor:</b> model colocation, GPU proximity, jitter buffer, transport choice, warm pools.</div>
+      <div class="cell a" data-label="Agent"><b>Work per turn:</b> prompt size, serial tool/RAG hops, output verbosity, model size.</div>
+    </div>
+
+    <div class="crow">
+      <div class="ccname">Evaluation &amp; simulation</div>
+      <div class="cell f" data-label="Framework"><b>Replay/injection hooks:</b> recorded audio + synthetic turns through the real loop deterministically.</div>
+      <div class="cell i" data-label="Infra"><b>Harness at scale:</b> batch simulated calls, transcript + audio store, CI gating.</div>
+      <div class="cell a" data-label="Agent"><b>What "good" means:</b> adversarial caller personas, scoring rubrics, golden conversations.</div>
+    </div>
+
+    <div class="crow">
+      <div class="ccname">Observability &amp; tracing</div>
+      <div class="cell f" data-label="Framework"><b>Per-turn events:</b> endpoint fired, barge-in, STT-final, LLM TTFT, TTS first-byte, tool spans.</div>
+      <div class="cell i" data-label="Infra"><b>Collect, store, visualize:</b> trace backend, aligned audio+transcript, cost-per-call attribution.</div>
+      <div class="cell a" data-label="Agent"><b>What to flag:</b> which failures matter, semantic quality signals, business KPIs.</div>
+    </div>
+
+    <div class="crow">
+      <div class="ccname">Guardrails &amp; safety</div>
+      <div class="cell f" data-label="Framework"><b>Inline interception:</b> checks run under the latency budget without stalling audio.</div>
+      <div class="cell i" data-label="Infra"><b>Hosts filter models &amp; PII scrubbing:</b> retention, encryption, residency on recordings.</div>
+      <div class="cell a" data-label="Agent"><b>Owns the rules:</b> what's blocked, refusal style, jailbreak handling, HIPAA/PCI logic.</div>
+    </div>
+  </div>
+
+  <div class="foot">
+    The dotted (◐) rows in the matrix above are where teams most often get the boundary wrong. Retrieval, guardrails, tools, model selection all <i>feel</i> like framework concerns; the policy belongs to the agent. The framework offers the hook, never the rule.
+  </div>
+
+</div>
+
+<script>
+(() => {
+  // F=framework, I=infra, A=agent. Each cell: null | 'primary' | 'partial'.
+  const ROWS = [
+    ['VAD / endpointing',                      'primary', null,      'partial', 'Framework owns mechanism; you tune the threshold per use case.'],
+    ['Barge-in / interruption',                'primary', null,      'partial', 'Stop playout in ms, flush buffers. Agent decides if a backchannel ("mhm") counts as interrupt.'],
+    ['STT / TTS streaming orchestration',      'primary', null,      null,      'The core real-time event loop.'],
+    ['Transport (WebRTC / SIP / PSTN)',        'primary', 'partial', null,      'Framework abstracts the protocol; infra hosts the media servers.'],
+    ['AEC — WebRTC topology',                  'primary', null,      null,      'Commodity WebRTC AEC3 via transport/SDK; runs device-side. You do not build it.'],
+    ['AEC — PSTN topology',                    'partial', 'partial', null,      'No client AEC; agent must subtract its own TTS server-side. A DSP stage you own.'],
+    ['Noise suppression / jitter buffer',      'partial', 'partial', null,      'Mostly framework/SDK; jitter buffer is a tunable latency knob at transport.'],
+    ['Dialog state / turn management',         'primary', null,      'partial', 'Mechanism in framework; flow design is yours.'],
+    ['Model serving / inference hosting',      null,      'primary', null,      'GPU, autoscaling, colocation for latency.'],
+    ['STT / TTS / LLM model selection',        null,      'partial', 'primary', 'Infra serves them; which model is an agent decision.'],
+    ['Recording / storage',                    null,      'primary', null,      'Compliance-shaped retention and access.'],
+    ['Observability / tracing',                null,      'primary', 'partial', 'Infra captures; what you trace is agent-aware.'],
+    ['Eval / simulation harness',              null,      'partial', 'primary', 'Infra runs it; test personas + scoring are domain-specific.'],
+    ['System prompt / persona',                null,      null,      'primary', 'Pure differentiation.'],
+    ['RAG / knowledge retrieval',              null,      'partial', 'primary', 'Infra = vector store; what & how you retrieve is yours.'],
+    ['Tool / function calling',                'partial', null,      'primary', 'Framework offers the hook; the tools are your product.'],
+    ['Business policies / flow logic',         null,      null,      'primary', 'Never put this in the framework.'],
+    ['Cross-session memory',                   null,      'partial', 'primary', 'Store is infra; what to remember is agent logic.'],
+    ['Guardrails / PII redaction',             'partial', 'partial', 'primary', 'Inline hook (framework), runs on infra, rules are yours.'],
+    ['Fallback / failure handling',            'partial', null,      'primary', 'Framework gives reprompt hooks; recovery policy is yours.'],
+    ['Human handoff / warm transfer',          'partial', 'partial', 'primary', 'Transport + context passing; escalation rules are agent-side.'],
+    ['DTMF / IVR integration',                 'primary', 'partial', null,      'Keypad capture in framework; legacy tree mapping at infra.'],
+    ['Consent / compliance / residency',       null,      'primary', 'partial', 'Infra-enforced; policy is domain & jurisdiction-driven.'],
+    ['Cost tracking per call',                 null,      'primary', 'partial', 'Infra meters spend; unit-economic targets are agent-side.'],
+  ];
+
+  const COLS = ['f', 'i', 'a'];
+  const tbl = document.getElementById('matrix');
+
+  ROWS.forEach(([name, f, i, a, note]) => {
+    const r = document.createElement('div');
+    r.className = 'row';
+    const dots = [f, i, a].map((v, k) => {
+      const col = COLS[k];
+      if (v === 'primary') return `<div class="dot primary ${col}" title="primary owner">●</div>`;
+      if (v === 'partial') return `<div class="dot partial" title="partial / shared">◐</div>`;
+      return `<div class="dot"></div>`;
+    }).join('');
+    // .row-head groups name + dots for mobile card layout. On desktop CSS the
+    // children flow as a flat grid via display:contents.
+    r.innerHTML = `<div class="row-head"><div class="name">${name}</div><div class="dots">${dots}</div></div><div class="note">${note}</div>`;
+    tbl.appendChild(r);
+  });
+
+  // postMessage size
+  function postSize() {
+    const h = Math.ceil(document.body.getBoundingClientRect().height);
+    try { parent.postMessage({ type:'voice-sim-resize', height:h }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+})();
+</script>
+</body>
+</html>

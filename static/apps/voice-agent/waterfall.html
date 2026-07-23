@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Voice agent latency waterfall</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a32; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --line-strong:#334155;
+  --human:#22c55e; --gate:#f59e0b; --bad:#ef4444;
+  --c-netin:#7c3aed; --c-stt:#0891b2; --c-llm:#9333ea; --c-tts:#ea580c; --c-netout:#a855f7;
+  --c-realtime:#db2777;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:18px}
+
+h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+
+.netpick{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;align-items:center}
+.netpick .lbl{font-size:10.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.netpick button{font:600 11.5px system-ui;cursor:pointer;border-radius:6px;padding:5px 10px;border:1px solid var(--line-strong);background:transparent;color:var(--ink)}
+.netpick button:hover{background:#1a2547}
+.netpick button.on{background:#1a2547;border-color:#22d3ee;color:#fff}
+
+.chart{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 14px 22px;margin-bottom:14px}
+
+.axis{position:relative;height:30px;margin-left:170px;margin-bottom:6px}
+.axis .tick{position:absolute;top:0;height:14px;width:1px;background:rgba(255,255,255,.06)}
+.axis .tick .lbl{position:absolute;top:0;left:3px;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.axis .gate{position:absolute;top:16px;height:14px;border-left:1px dashed var(--gate)}
+.axis .gate .lbl{position:absolute;top:0;left:3px;color:var(--gate);font-weight:700;font-size:10px;white-space:nowrap}
+.axis .human{position:absolute;top:16px;height:14px;border-left:1px dashed var(--human)}
+.axis .human .lbl{position:absolute;top:0;left:3px;color:#86efac;font-weight:700;font-size:10px;white-space:nowrap}
+
+.row{display:flex;align-items:center;gap:8px;margin:6px 0;min-height:36px}
+/* On desktop, .hdr is transparent: name + total flow as direct flex children of .row */
+.row .hdr{display:contents}
+.row .name{flex:0 0 162px;font-size:12px;font-weight:600;text-align:right;padding-right:8px;line-height:1.25;color:var(--ink)}
+.row .name .src{display:block;font-size:10px;color:var(--muted);font-weight:400;margin-top:2px}
+.row .barwrap{position:relative;flex:1;height:24px;background:#070b18;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.row .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.6);white-space:nowrap;overflow:hidden;padding:0 3px;opacity:0;transform:translateX(-4px);transition:opacity .5s ease,transform .5s ease}
+.row .seg.shown{opacity:1;transform:translateX(0)}
+.row .seg.netin{background:var(--c-netin)}
+.row .seg.stt{background:var(--c-stt)}
+.row .seg.llm{background:var(--c-llm)}
+.row .seg.tts{background:var(--c-tts)}
+.row .seg.netout{background:var(--c-netout)}
+.row .seg.realtime{background:var(--c-realtime)}
+.row .total{flex:0 0 70px;font-variant-numeric:tabular-nums;font-weight:800;font-size:13px;text-align:right;color:var(--ink)}
+.row .total .verdict{display:block;font-size:9.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;margin-top:1px}
+.row .total .verdict.human{color:#86efac}
+.row .total .verdict.good{color:#67e8f9}
+.row .total .verdict.warn{color:#fcd34d}
+.row .total .verdict.bad{color:#fca5a5}
+.row .barwrap .gateline{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(245,158,11,.55);pointer-events:none}
+.row .barwrap .humanline{position:absolute;top:0;bottom:0;border-left:1px dashed rgba(34,197,94,.55);pointer-events:none}
+
+.legend{display:flex;flex-wrap:wrap;gap:10px;font-size:11px;color:var(--muted);margin-top:6px;padding-left:170px}
+.legend span::before{content:"";display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:middle}
+.legend .netin::before{background:var(--c-netin)}
+.legend .stt::before{background:var(--c-stt)}
+.legend .llm::before{background:var(--c-llm)}
+.legend .tts::before{background:var(--c-tts)}
+.legend .netout::before{background:var(--c-netout)}
+.legend .realtime::before{background:var(--c-realtime)}
+
+.note{font-size:11.5px;color:var(--muted);line-height:1.5;margin-top:10px}
+.note b{color:var(--ink)}
+
+@media(max-width:600px){
+  .wrap{padding:14px;overflow-x:hidden}
+  .chart{padding:12px;overflow-x:hidden}
+  .note{word-break:break-word}
+  /* Stack each row vertically: header line (name + total) above the bar */
+  .row{display:block;margin:10px 0;min-height:0}
+  .row .hdr{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:4px}
+  .row .name{flex:1;font-size:11.5px;text-align:left;padding-right:0;line-height:1.2}
+  .row .name .src{display:inline;font-size:10px;margin-top:0;margin-left:5px}
+  .row .total{flex:0 0 auto;font-size:12px;text-align:right;display:flex;align-items:baseline;gap:6px}
+  .row .total .verdict{display:inline-block;margin-top:0;font-size:9px}
+  .row .barwrap{height:24px}
+  .row .seg{font-size:11px}
+  /* Axis spans full width; legend too */
+  .axis{margin-left:0}
+  .legend{padding-left:0;font-size:10px;gap:8px}
+  .netpick button{font-size:11px;padding:4px 8px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Where the time goes</h1>
+  <div class="sub">Per-stack median latency, broken out by component. Color marks the component (see legend); numbers inside the bars are milliseconds.</div>
+
+  <div class="netpick" id="netpick">
+    <span class="lbl">Network</span>
+    <button data-net="wifi" class="on">Wi-Fi · 60 ms</button>
+    <button data-net="5g">5G · 40 ms</button>
+    <button data-net="4g">4G · 100 ms</button>
+    <button data-net="pstn">PSTN · 250 ms</button>
+    <button data-net="3g">3G · 600 ms</button>
+  </div>
+
+  <div class="chart">
+    <div class="axis" id="axis"></div>
+    <div id="rows"></div>
+    <div class="legend">
+      <span class="netin">Inbound</span>
+      <span class="stt">STT</span>
+      <span class="llm">LLM</span>
+      <span class="tts">TTS</span>
+      <span class="netout">Outbound</span>
+      <span class="realtime">Realtime (one-shot)</span>
+    </div>
+    <div class="note">
+      <b>Green dashed line:</b> 200 ms human inter-turn gap (Stivers et al.). <b>Amber dashed line:</b> 1500 ms cert gate where the call starts feeling broken. Stacks to the right of amber miss the gate; stacks to the left of green pass for "human-natural."
+    </div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  const STACKS = [
+    { key:'cerebras', name:'Cerebras + Cartesia', src:'cerebras.ai · cartesia.ai',         stt:200, llm:110,  tts:190 },
+    { key:'managed',  name:'Managed (Vapi · Retell · Bland)', src:'retellai.com · hamming.ai', stt:200, llm:360,  tts:190 },
+    { key:'livekit',  name:'LiveKit ref',          src:'DG + Haiku + Cartesia',             stt:220, llm:440,  tts:190 },
+    { key:'modal',    name:'Self-hosted',          src:'Pipecat + Modal',                   stt:250, llm:560,  tts:190 },
+    { key:'industry', name:'Industry median',      src:'hamming.ai · millions of calls',    stt:300, llm:1000, tts:200 },
+    { key:'openai',   name:'OpenAI Realtime',      src:'navtalk.ai (real-world)',           stt:0,   llm:2240, tts:0, oneShot:true },
+  ];
+
+  const NETS = {
+    wifi: { rtt:30,  label:'Wi-Fi' },
+    '5g': { rtt:20,  label:'5G' },
+    '4g': { rtt:50,  label:'4G LTE' },
+    pstn: { rtt:125, label:'PSTN' },
+    '3g': { rtt:300, label:'3G' },
+  };
+
+  const HUMAN_FLOOR = 200;
+  const GATE = 1500;
+
+  let netKey = 'wifi';
+
+  const $ = s => document.querySelector(s);
+  const $$ = s => Array.from(document.querySelectorAll(s));
+
+  function verdictOf(ms) {
+    if (ms <= HUMAN_FLOOR + 60) return { cls:'human', txt:'Human' };
+    if (ms <= 800)               return { cls:'good',  txt:'Responsive' };
+    if (ms <= GATE)              return { cls:'warn',  txt:'Noticeable' };
+    if (ms <= 2500)              return { cls:'bad',   txt:'Broken' };
+    return { cls:'bad', txt:'Hangup' };
+  }
+
+  function totalFor(stack, netRtt) {
+    return netRtt + stack.stt + stack.llm + stack.tts + netRtt;
+  }
+
+  // pick a max for axis: round up to nearest 500 above the worst total
+  function scaleMax() {
+    const net = NETS[netKey];
+    const max = Math.max(...STACKS.map(s => totalFor(s, net.rtt)));
+    return Math.ceil((max + 100) / 500) * 500;
+  }
+
+  function renderAxis(max) {
+    const axis = $('#axis');
+    axis.innerHTML = '';
+    const ticks = [0, 500, 1000, 1500, 2000, 2500, 3000].filter(t => t <= max);
+    if (!ticks.includes(max)) ticks.push(max);
+    // At narrow widths, skip alternate tick labels so the long "2000 ms / 2500 ms"
+    // pair doesn't overlap each other. Tick lines stay; labels drop.
+    const narrow = window.innerWidth < 520;
+    ticks.forEach((t, idx) => {
+      const el = document.createElement('div');
+      el.className = 'tick';
+      el.style.left = (t / max * 100) + '%';
+      // skip every other label on narrow viewports (keep the first one)
+      const labelThis = !narrow || idx % 2 === 0;
+      if (labelThis) {
+        const lbl = document.createElement('span');
+        lbl.className = 'lbl';
+        lbl.textContent = t + ' ms';
+        // Right-anchor the last tick so its label stays inside the chart edge
+        if (idx === ticks.length - 1) {
+          lbl.style.left = 'auto';
+          lbl.style.right = '3px';
+        }
+        el.appendChild(lbl);
+      }
+      axis.appendChild(el);
+    });
+    // human + gate marker lines
+    const human = document.createElement('div');
+    human.className = 'human';
+    human.style.left = (HUMAN_FLOOR / max * 100) + '%';
+    const hl = document.createElement('span'); hl.className = 'lbl'; hl.textContent = '200 human'; human.appendChild(hl);
+    axis.appendChild(human);
+    const gate = document.createElement('div');
+    gate.className = 'gate';
+    gate.style.left = (GATE / max * 100) + '%';
+    const gl = document.createElement('span'); gl.className = 'lbl'; gl.textContent = '1500 gate'; gate.appendChild(gl);
+    axis.appendChild(gate);
+  }
+
+  function render() {
+    const net = NETS[netKey];
+    const max = scaleMax();
+    renderAxis(max);
+
+    const rowsEl = $('#rows');
+    rowsEl.innerHTML = '';
+    STACKS.forEach((s, i) => {
+      const total = totalFor(s, net.rtt);
+      const v = verdictOf(total);
+
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const name = document.createElement('div');
+      name.className = 'name';
+      name.innerHTML = `${s.name}<span class="src">${s.src}</span>`;
+
+      const wrap = document.createElement('div');
+      wrap.className = 'barwrap';
+
+      const segs = s.oneShot
+        ? [
+            { cls:'netin',   ms:net.rtt, label:String(net.rtt), full:'Inbound ' + net.rtt + ' ms' },
+            { cls:'realtime',ms:s.llm,   label:String(s.llm),   full:'Realtime model ' + s.llm + ' ms' },
+            { cls:'netout',  ms:net.rtt, label:String(net.rtt), full:'Outbound ' + net.rtt + ' ms' },
+          ]
+        : [
+            { cls:'netin',  ms:net.rtt, label:String(net.rtt), full:'Inbound ' + net.rtt + ' ms' },
+            { cls:'stt',    ms:s.stt,   label:String(s.stt),   full:'STT ' + s.stt + ' ms' },
+            { cls:'llm',    ms:s.llm,   label:String(s.llm),   full:'LLM ' + s.llm + ' ms' },
+            { cls:'tts',    ms:s.tts,   label:String(s.tts),   full:'TTS ' + s.tts + ' ms' },
+            { cls:'netout', ms:net.rtt, label:String(net.rtt), full:'Outbound ' + net.rtt + ' ms' },
+          ];
+
+      // gate + human guidelines inside the bar
+      const humanLine = document.createElement('div');
+      humanLine.className = 'humanline';
+      humanLine.style.left = (HUMAN_FLOOR / max * 100) + '%';
+      wrap.appendChild(humanLine);
+      const gateLine = document.createElement('div');
+      gateLine.className = 'gateline';
+      gateLine.style.left = (GATE / max * 100) + '%';
+      wrap.appendChild(gateLine);
+
+      let acc = 0;
+      segs.forEach((sg, k) => {
+        const el = document.createElement('div');
+        el.className = 'seg ' + sg.cls;
+        el.style.left = (acc / max * 100) + '%';
+        el.style.width = (sg.ms / max * 100) + '%';
+        // ms-only label so it fits any segment ≥ ~3% wide; component identity comes from color/legend
+        const widthPct = (sg.ms / max * 100);
+        el.textContent = widthPct > 3 ? sg.label : '';
+        el.title = sg.full;
+        wrap.appendChild(el);
+        // staggered reveal
+        setTimeout(() => el.classList.add('shown'), 80 + i * 70 + k * 50);
+        acc += sg.ms;
+      });
+
+      const totalEl = document.createElement('div');
+      totalEl.className = 'total';
+      totalEl.innerHTML = `${total.toLocaleString()} ms<span class="verdict ${v.cls}">${v.txt}</span>`;
+
+      // Mobile-friendly structure: header row (name + total) above the bar.
+      // CSS hides .hdr on desktop (flex children flow directly) and shows it on mobile.
+      const hdr = document.createElement('div');
+      hdr.className = 'hdr';
+      hdr.appendChild(name);
+      hdr.appendChild(totalEl);
+
+      row.appendChild(hdr); row.appendChild(wrap);
+      rowsEl.appendChild(row);
+    });
+  }
+
+  $$('#netpick button').forEach(b => b.addEventListener('click', () => {
+    $$('#netpick button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    netKey = b.dataset.net;
+    render();
+  }));
+
+  render();
+
+  // postMessage size to parent
+  function postSize() {
+    const h = Math.ceil(document.body.getBoundingClientRect().height);
+    try { parent.postMessage({ type:'voice-sim-resize', height:h }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+})();
+</script>
+</body>
+</html>

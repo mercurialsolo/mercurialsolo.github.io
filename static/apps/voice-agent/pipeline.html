@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>TTFA pipeline · cold vs warm</title>
+<style>
+:root{
+  --bg:#0b1020; --panel:#121a32; --ink:#e2e8f0; --muted:#94a3b8;
+  --line:#1e293b; --line-strong:#334155;
+  --gate:#f59e0b; --human:#22c55e;
+  --c-stt:#0891b2; --c-mw:#475569; --c-rag:#d97706; --c-mem:#d97706;
+  --c-llm:#9333ea; --c-tool:#7c3aed; --c-cont:#6366f1; --c-ttsfmt:#ea580c;
+  --c-cart:#f97316; --c-pacer:#64748b;
+  --cold:#ef4444; --warm:#22c55e;
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+.wrap{max-width:780px;margin:0 auto;padding:18px}
+
+h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
+.sub{font-size:12px;color:var(--muted);margin-bottom:14px}
+
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;margin-bottom:14px}
+
+.path{margin-bottom:18px}
+.path:last-child{margin-bottom:0}
+.path-hdr{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:8px;flex-wrap:wrap}
+.path-hdr .name{font-size:11.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted)}
+.path-hdr .name.cold{color:#fca5a5}
+.path-hdr .name.warm{color:#86efac}
+.path-hdr .total{font-variant-numeric:tabular-nums;font-weight:800;font-size:14px}
+.path-hdr .total.cold{color:#fca5a5}
+.path-hdr .total.warm{color:#86efac}
+.path-hdr .verdict{font-size:10.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:2px 6px;border-radius:999px}
+.path-hdr .verdict.fail{background:rgba(239,68,68,.15);color:#fca5a5}
+.path-hdr .verdict.pass{background:rgba(34,197,94,.18);color:#86efac}
+
+.barwrap{position:relative;height:32px;background:#070b18;border-radius:5px;overflow:hidden;border:1px solid var(--line)}
+.barwrap .gateline{position:absolute;top:0;bottom:0;border-left:2px dashed var(--gate);pointer-events:none;z-index:2}
+.barwrap .gateline .lbl{position:absolute;top:-18px;left:-22px;font-size:10px;color:var(--gate);font-weight:700;white-space:nowrap}
+.barwrap .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;text-shadow:0 0 3px rgba(0,0,0,.6);overflow:hidden;white-space:nowrap;padding:0 3px;opacity:0;transform:translateX(-4px);transition:opacity .5s ease,transform .5s ease}
+.barwrap .seg.shown{opacity:1;transform:translateX(0)}
+.barwrap .seg.collapsed{outline:1px dashed rgba(255,255,255,.4);outline-offset:-2px}
+
+.scale{position:relative;height:18px;margin-top:4px}
+.scale .tick{position:absolute;top:0;font-size:10px;color:var(--muted);font-variant-numeric:tabular-nums;transform:translateX(-50%);white-space:nowrap}
+
+.legend{display:flex;flex-wrap:wrap;gap:8px 10px;font-size:10.5px;color:var(--muted);margin-top:10px}
+.legend span::before{content:"";display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:middle}
+.legend .stt::before{background:var(--c-stt)}
+.legend .mw::before{background:var(--c-mw)}
+.legend .rag::before{background:var(--c-rag)}
+.legend .mem::before{background:var(--c-mem)}
+.legend .llm::before{background:var(--c-llm)}
+.legend .tool::before{background:var(--c-tool)}
+.legend .cont::before{background:var(--c-cont)}
+.legend .ttsfmt::before{background:var(--c-ttsfmt)}
+.legend .cart::before{background:var(--c-cart)}
+.legend .pacer::before{background:var(--c-pacer)}
+
+.savings{background:#08111f;border:1px dashed var(--line-strong);border-radius:8px;padding:10px 12px;margin-top:14px;font-size:12px;color:var(--muted);line-height:1.55}
+.savings h3{margin:0 0 6px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#cbd5e1}
+.savings .row{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid var(--line)}
+.savings .row:last-child{border-bottom:0}
+.savings .row .stage{color:var(--ink)}
+.savings .row .delta{font-variant-numeric:tabular-nums;font-weight:700;color:var(--warm)}
+
+.controls{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.controls button{font:600 12px system-ui;cursor:pointer;border-radius:6px;padding:6px 12px;border:1px solid var(--line-strong);background:transparent;color:var(--ink)}
+.controls button:hover{background:#1a2547}
+.controls button.primary{background:#22d3ee;color:#031018;border-color:#22d3ee;font-weight:700}
+
+@media(max-width:560px){
+  .wrap{padding:14px}
+  .barwrap{height:34px}
+  .barwrap .seg{font-size:11px}
+  .legend{font-size:11.5px;gap:8px}
+  .savings{font-size:12.5px}
+  .savings .row{flex-wrap:wrap;gap:4px 8px}
+  .path-hdr .total{font-size:15px}
+  .scale .tick{font-size:11px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>The TTFA pipeline</h1>
+  <div class="sub">Ten stages from <code>speech_final</code> to first audio out. Cold path runs them serially. Speculation collapses five of them to ~50 ms each on hit.</div>
+
+  <div class="controls">
+    <button id="replay" class="primary">▶ Replay animation</button>
+    <button id="show-cold" class="on">Show cold</button>
+    <button id="show-warm" class="on">Show warm</button>
+  </div>
+
+  <div class="chart">
+    <div class="path" id="path-cold">
+      <div class="path-hdr">
+        <span class="name cold">Default cold · no caches warm</span>
+        <span><span class="total cold" id="total-cold">2135</span><span class="verdict fail" style="margin-left:8px">over the 1500 ms gate</span></span>
+      </div>
+      <div class="barwrap" id="bar-cold">
+        <div class="gateline" id="gate-cold"><span class="lbl">1500 ms gate</span></div>
+      </div>
+    </div>
+
+    <div class="path" id="path-warm">
+      <div class="path-hdr">
+        <span class="name warm">Optimized warm · all speculation hits</span>
+        <span><span class="total warm" id="total-warm">625</span><span class="verdict pass" style="margin-left:8px">passes with margin</span></span>
+      </div>
+      <div class="barwrap" id="bar-warm">
+        <div class="gateline" id="gate-warm"><span class="lbl">1500 ms gate</span></div>
+      </div>
+      <div class="scale" id="scale"></div>
+    </div>
+
+    <div class="legend">
+      <span class="stt">STT silence</span>
+      <span class="mw">Middleware</span>
+      <span class="rag">RAG</span>
+      <span class="mem">Memory</span>
+      <span class="llm">LLM TTFT</span>
+      <span class="tool">Tool dispatch</span>
+      <span class="cont">LLM continuation</span>
+      <span class="ttsfmt">TTS formatter</span>
+      <span class="cart">Cartesia first audio</span>
+      <span class="pacer">TX pacer</span>
+    </div>
+  </div>
+
+  <div class="savings">
+    <h3>Where the speculation saves time</h3>
+    <div class="row"><span class="stage">RAG retrieval</span><span><span class="delta">50 → 5 ms</span> (cache hit)</span></div>
+    <div class="row"><span class="stage">Memory load</span><span><span class="delta">20 → 5 ms</span> (cache hit)</span></div>
+    <div class="row"><span class="stage">LLM TTFT</span><span><span class="delta">900 → 50 ms</span> (the big one · ~95% hit in clean rooms)</span></div>
+    <div class="row"><span class="stage">Tool dispatch</span><span><span class="delta">300 → 50 ms</span> (pre-dispatched read-only tool)</span></div>
+    <div class="row"><span class="stage">LLM continuation</span><span><span class="delta">250 → 150 ms</span> (faster post-tool turn)</span></div>
+    <div class="row"><span class="stage">TTS formatter</span><span><span class="delta">300 → 50 ms</span> (Haiku formatter pre-warmed)</span></div>
+  </div>
+
+</div>
+
+<script>
+(() => {
+  // Cold path stages (default, no speculation, single tool hop)
+  // Labels are ms-only; component identity comes from color (see legend).
+  const COLD = [
+    { key:'stt',    ms:50,  color:'#0891b2', label:'50',  full:'STT silence 50 ms' },
+    { key:'mw',     ms:15,  color:'#475569', label:'15',  full:'Middleware 15 ms' },
+    { key:'rag',    ms:50,  color:'#d97706', label:'50',  full:'RAG retrieval 50 ms' },
+    { key:'mem',    ms:20,  color:'#d97706', label:'20',  full:'Memory load 20 ms' },
+    { key:'llm',    ms:900, color:'#9333ea', label:'900', full:'LLM TTFT 900 ms' },
+    { key:'tool',   ms:300, color:'#7c3aed', label:'300', full:'Tool dispatch 300 ms' },
+    { key:'cont',   ms:250, color:'#6366f1', label:'250', full:'LLM continuation 250 ms' },
+    { key:'ttsfmt', ms:300, color:'#ea580c', label:'300', full:'TTS formatter 300 ms' },
+    { key:'cart',   ms:250, color:'#f97316', label:'250', full:'Cartesia first audio 250 ms' },
+    { key:'pacer',  ms:10,  color:'#64748b', label:'10',  full:'TX pacer 10 ms' },
+  ];
+  // Warm path (all speculation hits)
+  const WARM = [
+    { key:'stt',    ms:50,  color:'#0891b2', label:'50',  full:'STT silence 50 ms' },
+    { key:'mw',     ms:15,  color:'#475569', label:'15',  full:'Middleware 15 ms' },
+    { key:'rag',    ms:5,   color:'#d97706', label:'5',   full:'RAG cache hit 5 ms',  collapsed:true },
+    { key:'mem',    ms:5,   color:'#d97706', label:'5',   full:'Memory cache hit 5 ms', collapsed:true },
+    { key:'llm',    ms:50,  color:'#9333ea', label:'50',  full:'LLM speculation hit 50 ms', collapsed:true },
+    { key:'tool',   ms:50,  color:'#7c3aed', label:'50',  full:'Tool dispatch cached 50 ms', collapsed:true },
+    { key:'cont',   ms:150, color:'#6366f1', label:'150', full:'LLM continuation 150 ms' },
+    { key:'ttsfmt', ms:50,  color:'#ea580c', label:'50',  full:'TTS formatter cache hit 50 ms', collapsed:true },
+    { key:'cart',   ms:250, color:'#f97316', label:'250', full:'Cartesia first audio 250 ms' },
+    { key:'pacer',  ms:10,  color:'#64748b', label:'10',  full:'TX pacer 10 ms' },
+  ];
+
+  const COLD_TOTAL = COLD.reduce((a,s) => a + s.ms, 0); // 2145, close to 2135
+  const WARM_TOTAL = WARM.reduce((a,s) => a + s.ms, 0); // 635, close to 625
+  const MAX = 2200; // both bars share this scale so warm visibly compresses
+  const GATE = 1500;
+
+  const $ = s => document.querySelector(s);
+
+  function renderBar(stages, containerId, totalEl, animOffset = 0) {
+    const wrap = document.getElementById(containerId);
+    // clear previous segs but keep gateline
+    Array.from(wrap.querySelectorAll('.seg')).forEach(e => e.remove());
+
+    let acc = 0;
+    stages.forEach((s, i) => {
+      const el = document.createElement('div');
+      el.className = 'seg' + (s.collapsed ? ' collapsed' : '');
+      el.style.left = (acc / MAX * 100) + '%';
+      el.style.width = (s.ms / MAX * 100) + '%';
+      el.style.background = s.color;
+      const pct = (s.ms / MAX * 100);
+      el.textContent = pct > 2.5 ? s.label : '';
+      el.title = s.full + (s.collapsed ? ' (speculation hit)' : '');
+      wrap.appendChild(el);
+      setTimeout(() => el.classList.add('shown'), animOffset + 80 + i * 80);
+      acc += s.ms;
+    });
+
+    // gate marker position
+    const gate = wrap.querySelector('.gateline');
+    if (gate) gate.style.left = (GATE / MAX * 100) + '%';
+  }
+
+  function renderScale() {
+    const el = $('#scale');
+    el.innerHTML = '';
+    [0, 500, 1000, 1500, 2000].forEach(t => {
+      const tick = document.createElement('div');
+      tick.className = 'tick';
+      tick.style.left = (t / MAX * 100) + '%';
+      tick.textContent = t + ' ms';
+      el.appendChild(tick);
+    });
+  }
+
+  function renderAll() {
+    renderBar(COLD, 'bar-cold', null, 0);
+    renderBar(WARM, 'bar-warm', null, 850);
+    renderScale();
+    $('#total-cold').textContent = COLD_TOTAL.toLocaleString() + ' ms';
+    $('#total-warm').textContent = WARM_TOTAL.toLocaleString() + ' ms';
+  }
+
+  $('#replay').addEventListener('click', renderAll);
+
+  renderAll();
+
+  // postMessage size
+  function postSize() {
+    const h = Math.ceil(document.body.getBoundingClientRect().height);
+    try { parent.postMessage({ type:'voice-sim-resize', height:h }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+})();
+</script>
+</body>
+</html>

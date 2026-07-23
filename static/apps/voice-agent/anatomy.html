@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Anatomy of a Voice Agent · menta</title>
+
+<style>
+:root{
+  --bg:#fafafa; --card:#ffffff; --ink:#0f172a; --muted:#475569;
+  --line:#e2e8f0; --line-strong:#cbd5e1;
+  --req:#16a34a; --req-bg:#dcfce7;
+  --opt:#d97706; --opt-bg:#fef3c7;
+  --spec:#2563eb; --spec-bg:#dbeafe;
+  --net:#7c3aed; --net-bg:#ede9fe;
+  --pre:#64748b; --pre-bg:#e2e8f0;
+  --danger:#b91c1c; --danger-bg:#fef2f2;
+  --r:10px; --rs:6px; --pad:18px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;font:16px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased}
+main{max-width:780px;margin:0 auto;padding:0 16px 80px}
+h1,h2,h3{margin:0;line-height:1.25;letter-spacing:-.01em}
+h1{font-size:clamp(28px,7vw,38px);font-weight:800}
+h2{font-size:clamp(22px,5vw,28px);font-weight:700;margin:0 0 6px}
+p{margin:0}
+.muted{color:var(--muted)}
+.eyebrow{font-size:12.5px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.tag{display:inline-block;font-size:11.5px;font-weight:700;letter-spacing:.5px;padding:3px 8px;border-radius:999px;background:#f1f5f9;color:var(--muted)}
+.tag.req{background:var(--req-bg);color:#166534}
+.tag.opt{background:var(--opt-bg);color:#92400e}
+.tag.spec{background:var(--spec-bg);color:#1e3a8a}
+.tag.net{background:var(--net-bg);color:#5b21b6}
+
+/* ===== HERO ===== */
+.hero{padding:48px 0 24px}
+.hero h1 span{color:#475569;font-weight:600}
+.hero .stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.hero .stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.hero .stat .n{font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.hero .stat .n.win{color:var(--req)}
+.hero .stat .n.bad{color:var(--danger)}
+.hero .stat .l{font-size:12px;color:var(--muted);margin-top:2px}
+.hero .meta{font-size:13px;color:var(--muted);margin-top:18px}
+
+.cta{display:inline-flex;align-items:center;gap:10px;margin-top:22px;background:var(--ink);color:#fff;border:0;font:600 15px system-ui;padding:13px 18px;border-radius:999px;cursor:pointer;-webkit-appearance:none}
+.cta:active{transform:scale(.98)}
+.cta .dot{width:8px;height:8px;border-radius:50%;background:#22d3ee;box-shadow:0 0 0 4px rgba(34,211,238,.25)}
+.cta.secondary{background:#fff;color:var(--ink);border:1px solid var(--line-strong)}
+
+/* ===== SPEED TOGGLE ===== */
+.speedbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:18px;padding:10px;background:#fff;border:1px solid var(--line);border-radius:999px}
+.speedbar .lbl{font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin:0 6px 0 10px}
+.speedbar button{background:transparent;border:0;color:var(--ink);font:600 13px system-ui;padding:7px 12px;border-radius:999px;cursor:pointer}
+.speedbar button.on{background:var(--ink);color:#fff}
+.speedbar small{margin-left:auto;font-size:11.5px;color:var(--muted);padding-right:8px}
+
+/* ===== SECTION ===== */
+section.cell{margin:36px 0;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:var(--pad);scroll-margin-top:20px}
+section.cell .head{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px}
+section.cell .num{flex:0 0 36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;color:#fff}
+section.cell .num.n1{background:var(--pre)}
+section.cell .num.n2{background:var(--spec)}
+section.cell .num.n3{background:var(--req)}
+section.cell .num.n4{background:var(--net)}
+section.cell .num.n5{background:var(--req)}
+section.cell .num.n6{background:var(--opt)}
+section.cell .num.nw{background:var(--ink)}
+section.cell .head h2{font-size:20px}
+section.cell .head .sub{font-size:13px;color:var(--muted);margin-top:2px}
+
+/* ===== STAGE CARD ===== */
+.stage{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;border:1.5px solid var(--line);border-radius:var(--rs);padding:12px 14px;margin:8px 0;background:#fff;transition:transform .2s,box-shadow .2s,outline-color .2s}
+.stage .meta{flex:1;min-width:0}
+.stage .name{font-weight:700;font-size:15px}
+.stage .desc{font-size:12.5px;color:var(--muted);margin-top:2px}
+.stage .time{font-weight:700;font-size:14px;color:#334155;white-space:nowrap}
+.stage.req{background:var(--req-bg);border-color:var(--req)}
+.stage.opt{background:var(--opt-bg);border-color:var(--opt);border-style:dashed}
+.stage.spec{background:var(--spec-bg);border-color:var(--spec);border-style:dashed}
+.stage.net{background:var(--net-bg);border-color:var(--net)}
+.stage.pre{background:var(--pre-bg);border-color:var(--pre)}
+.stage.is-active{transform:translateY(-1px);box-shadow:0 6px 18px -10px rgba(15,23,42,.25);outline:2px solid rgba(34,197,94,.5);outline-offset:2px}
+.stage.is-done{opacity:.55}
+
+/* ===== PLAYER ===== */
+.player{margin-top:6px}
+.player .progress{position:relative;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden;margin-bottom:14px}
+.player .progress .bar{position:absolute;inset:0 100% 0 0;background:linear-gradient(90deg,#16a34a,#22c55e);transition:right .1s linear}
+.player .clock{display:flex;align-items:baseline;gap:8px;font-variant-numeric:tabular-nums;margin-bottom:10px}
+.player .clock .ms{font-size:28px;font-weight:800;color:var(--ink)}
+.player .clock .lbl{font-size:13px;color:var(--muted)}
+.player .ctl{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.player button.btn{background:#fff;border:1px solid var(--line-strong);font:600 13px system-ui;color:var(--ink);padding:8px 12px;border-radius:999px;cursor:pointer;-webkit-appearance:none}
+.player button.btn:active{transform:scale(.97)}
+.player button.btn.primary{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+.gate{display:flex;align-items:center;gap:8px;padding:8px 10px;margin:14px 0;background:var(--danger-bg);border:1.5px dashed var(--danger);border-radius:var(--rs);color:var(--danger);font-weight:700;font-size:12.5px}
+.gate.green{background:#f0fdf4;border-color:var(--req);color:#15803d}
+
+/* ===== SPEC TRACKS ===== */
+.specgrid{display:grid;gap:10px}
+.spectrack{position:relative;border:1.5px dashed var(--spec);background:var(--spec-bg);border-radius:var(--rs);padding:12px 14px;transition:background .3s,border-color .3s,opacity .3s}
+.spectrack .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.spectrack .nm{font-weight:700;font-size:14.5px;color:var(--ink)}
+.spectrack .st{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}
+.spectrack .bar{margin-top:8px;height:8px;background:#fff;border:1px solid var(--spec);border-radius:4px;overflow:hidden;position:relative}
+.spectrack .bar > i{display:block;height:100%;background:repeating-linear-gradient(45deg,#60a5fa,#60a5fa 6px,#93c5fd 6px,#93c5fd 12px);width:0;transition:width .2s linear}
+.spectrack.fired .bar > i{width:100%}
+.spectrack.hit{background:#ecfdf5;border-color:var(--req)}
+.spectrack.hit .bar > i{background:repeating-linear-gradient(45deg,#22c55e,#22c55e 6px,#86efac 6px,#86efac 12px)}
+.spectrack.miss{background:#fef2f2;border-color:var(--danger);opacity:.85}
+.spectrack.miss .bar > i{background:repeating-linear-gradient(45deg,#ef4444,#ef4444 6px,#fca5a5 6px,#fca5a5 12px)}
+.spectrack .verdict{font-size:11.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-top:6px}
+.spectrack.hit .verdict{color:#15803d}
+.spectrack.miss .verdict{color:var(--danger)}
+
+/* ===== RELIABILITY CARDS ===== */
+.relcards{display:grid;gap:10px}
+details.relcard{border:1px solid var(--line);border-radius:var(--rs);background:#fff;overflow:hidden}
+details.relcard[open]{border-color:var(--spec)}
+details.relcard summary{cursor:pointer;list-style:none;padding:13px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;font-weight:700}
+details.relcard summary::-webkit-details-marker{display:none}
+details.relcard summary::after{content:"+";font-size:20px;font-weight:400;color:var(--muted);transition:transform .2s}
+details.relcard[open] summary::after{content:"−"}
+details.relcard .body{padding:0 16px 16px;border-top:1px solid var(--line);font-size:13.5px;color:#334155}
+details.relcard .body .row{margin-top:10px}
+details.relcard .body .row b{display:block;font-size:12px;font-weight:700;letter-spacing:.5px;color:var(--muted);text-transform:uppercase;margin-bottom:2px}
+details.relcard .save{color:#15803d;font-weight:600}
+details.relcard .gap{color:var(--danger);font-weight:600}
+
+/* ===== COMPARE BARS ===== */
+.compare{display:grid;gap:14px;margin-top:6px}
+.cmp{background:#fff;border:1px solid var(--line);border-radius:var(--rs);padding:14px;position:relative}
+.cmp .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.cmp .who{font-weight:700;font-size:15px}
+.cmp .total{font-variant-numeric:tabular-nums;font-weight:800;font-size:18px}
+.cmp.win .total{color:var(--req)}
+.cmp.bad .total{color:var(--danger)}
+.cmp .track{position:relative;height:22px;border-radius:11px;background:#f1f5f9;margin-top:10px;overflow:hidden}
+.cmp .track .seg{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10.5px;font-weight:700;text-shadow:0 1px 1px rgba(0,0,0,.15);transition:width 1s ease}
+.cmp .gateline{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--danger);box-shadow:0 0 0 1px rgba(255,255,255,.5)}
+.cmp .gateline span{position:absolute;top:-16px;left:50%;transform:translateX(-50%);font-size:11px;font-weight:700;color:var(--danger);white-space:nowrap}
+.cmp .legend{font-size:12px;color:var(--muted);margin-top:8px}
+
+/* ===== WATERFALL ===== */
+.wf-wrap{margin-top:6px;border:1px solid var(--line);border-radius:var(--rs);background:#fff;padding:14px 12px 10px}
+.wf-axis{position:relative;height:22px;margin-left:120px;border-bottom:1px solid var(--line-strong)}
+.wf-axis .tk{position:absolute;top:0;bottom:0;width:1px;background:#e2e8f0}
+.wf-axis .lb{position:absolute;top:1px;font-size:10.5px;color:var(--muted);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.wf-axis .gateline{position:absolute;top:-2px;bottom:-2px;width:2px;background:var(--danger)}
+.wf-axis .gateline .lb{color:var(--danger);font-weight:700;top:-14px}
+.wf-row{position:relative;display:flex;align-items:center;height:26px;margin-top:4px}
+.wf-row .wf-label{flex:0 0 120px;font-size:12.5px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-right:6px}
+.wf-row .wf-label .sub{font-size:10px;color:var(--muted);font-weight:500;display:block;line-height:1}
+.wf-row .wf-track{position:relative;flex:1;height:14px;background:#f8fafc;border-radius:3px;overflow:hidden}
+.wf-row .wf-bar{position:absolute;top:0;bottom:0;border-radius:3px;background:#16a34a;transform-origin:left center;transform:scaleX(0);transition:transform .12s linear}
+.wf-row .wf-bar.req{background:#22c55e}
+.wf-row .wf-bar.opt{background:#fbbf24;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.25) 0 3px,transparent 3px 6px)}
+.wf-row .wf-bar.spec{background:#60a5fa;background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.3) 0 3px,transparent 3px 6px)}
+.wf-row .wf-bar.net{background:#a78bfa}
+.wf-row .wf-bar.pre{background:#94a3b8}
+.wf-row .wf-time{position:absolute;right:6px;top:50%;transform:translateY(-50%);font-size:10.5px;font-weight:700;color:#0f172a;font-variant-numeric:tabular-nums;text-shadow:0 1px 0 rgba(255,255,255,.6);pointer-events:none}
+.wf-playhead{position:absolute;top:32px;bottom:36px;width:2px;background:#0f172a;left:0;transform:translateX(120px);box-shadow:0 0 0 1px rgba(255,255,255,.6);pointer-events:none}
+.wf-playhead .dot{position:absolute;top:-6px;left:-5px;width:12px;height:12px;border-radius:50%;background:#0f172a}
+.wf-clock{display:flex;justify-content:space-between;align-items:baseline;margin-top:14px;padding-top:10px;border-top:1px solid var(--line);font-variant-numeric:tabular-nums}
+.wf-clock .now{font-size:22px;font-weight:800}
+.wf-clock .who{font-size:12.5px;color:var(--muted)}
+.wf-end{font-size:12.5px;color:var(--muted);margin-top:6px}
+.wf-stage-marker{position:absolute;display:flex;flex-direction:column;align-items:center;font-size:10px;color:var(--danger);font-weight:700}
+.wf-event{position:absolute;font-size:11px;font-weight:700;color:#b91c1c;white-space:nowrap}
+
+/* ===== POST-TTFA GRID ===== */
+.gridcards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gcard{background:var(--opt-bg);border:1.5px dashed var(--opt);border-radius:var(--rs);padding:12px}
+.gcard h4{margin:0;font-size:14px;font-weight:700}
+.gcard p{font-size:12px;color:var(--muted);margin-top:3px}
+
+/* ===== LEGEND ROW ===== */
+.legendrow{display:flex;flex-wrap:wrap;gap:10px 14px;font-size:12.5px;color:var(--muted);margin-top:6px}
+.legendrow .it{display:flex;align-items:center;gap:6px}
+.legendrow .sw{width:14px;height:12px;border-radius:3px}
+.legendrow .sw.req{background:var(--req-bg);border:1.5px solid var(--req)}
+.legendrow .sw.opt{background:var(--opt-bg);border:1.5px dashed var(--opt)}
+.legendrow .sw.spec{background:var(--spec-bg);border:1.5px dashed var(--spec)}
+.legendrow .sw.net{background:var(--net-bg);border:1.5px solid var(--net)}
+.legendrow .sw.pre{background:var(--pre-bg);border:1.5px solid var(--pre)}
+
+/* ===== STICKY MINI ===== */
+.mini{position:fixed;left:50%;bottom:14px;transform:translateX(-50%);display:none;align-items:center;gap:10px;background:rgba(15,23,42,.92);color:#fff;padding:8px 12px;border-radius:999px;box-shadow:0 12px 30px -10px rgba(0,0,0,.3);z-index:99;backdrop-filter:blur(8px)}
+.mini.show{display:flex}
+.mini .lbl{font-size:12.5px;color:#e2e8f0}
+.mini button{background:#fff;color:var(--ink);border:0;font:700 12px system-ui;padding:6px 12px;border-radius:999px;cursor:pointer}
+
+footer{padding:24px 0 40px;text-align:center;font-size:12.5px;color:var(--muted)}
+footer a{color:var(--ink)}
+
+@media (min-width:720px){
+  .hero .stats{grid-template-columns:repeat(4,1fr)}
+  .gridcards{grid-template-columns:repeat(2,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<main>
+
+  <!-- ================== HERO ================== -->
+  <section class="hero">
+    <div class="eyebrow">menta · framework spec</div>
+    <h1>Anatomy of a <span>voice agent</span></h1>
+    <p class="muted" style="margin-top:14px;font-size:15px">Where a single turn spends its time — and how speculation hides the wait. Pick a playback speed: <b>real-time</b> shows the actual ms wait so you can feel the delay.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="n win" data-count="625">0</div><div class="l">Warm TTFA · ms</div></div>
+      <div class="stat"><div class="n bad" data-count="2135">0</div><div class="l">Default TTFA · ms</div></div>
+      <div class="stat"><div class="n bad" data-count="2685" style="color:#7f1d1d">0</div><div class="l">2-hop worst · ms</div></div>
+      <div class="stat"><div class="n" data-count="1500" style="color:#0f172a">0</div><div class="l">Cert gate p95 · ms</div></div>
+    </div>
+
+    <div class="legendrow" style="margin-top:18px">
+      <div class="it"><span class="sw req"></span> required</div>
+      <div class="it"><span class="sw opt"></span> optional</div>
+      <div class="it"><span class="sw spec"></span> speculative</div>
+      <div class="it"><span class="sw net"></span> network</div>
+      <div class="it"><span class="sw pre"></span> pre-gate</div>
+    </div>
+
+    <div class="speedbar" id="speedbar" role="radiogroup" aria-label="Playback speed">
+      <div class="lbl">Speed</div>
+      <button type="button" data-speed="0.4">Quick</button>
+      <button type="button" data-speed="1" class="on">Real-time</button>
+      <button type="button" data-speed="2">2× slow</button>
+      <small id="speedHint">1 ms of pipeline = 1 ms of animation</small>
+    </div>
+
+    <button class="cta" id="playTurn"><span class="dot"></span> Play one turn</button>
+    <button class="cta secondary" id="jumpRace">Jump to comparison</button>
+    <p class="meta">Numbers are p50 ranges in a quiet room · cellular &amp; PSTN trend toward the high end of network bands.</p>
+  </section>
+
+  <!-- ================== 1. INBOUND ================== -->
+  <section class="cell" id="sec-1" data-section="1">
+    <div class="head">
+      <div class="num n1">1</div>
+      <div>
+        <h2>Inbound</h2>
+        <div class="sub">caller's mouth → server-side <b>speech_final</b> · happens BEFORE the cert gate timer starts</div>
+      </div>
+    </div>
+
+    <div class="player">
+      <div class="progress"><div class="bar" id="p1bar"></div></div>
+      <div class="clock"><div class="ms" id="p1clock">0</div><div class="lbl">ms elapsed since caller's last syllable</div></div>
+
+      <div class="stage net" data-ms="125"><div class="meta"><div class="name">Inbound network</div><div class="desc">WebRTC ICE + jitter buffer · PSTN trunks add 80–150 ms</div></div><div class="time">50–200 ms</div></div>
+      <div class="stage opt" data-ms="5"><div class="meta"><div class="name">AEC</div><div class="desc">browser AEC today · server-side parked</div></div><div class="time">~0 ms</div></div>
+      <div class="stage opt" data-ms="10"><div class="meta"><div class="name">VAD (LayeredVAD)</div><div class="desc">Silero + webrtcvad fallback · per 20 ms frame</div></div><div class="time">5–15 ms</div></div>
+      <div class="stage req" data-ms="50"><div class="meta"><div class="name">Deepgram STT (streaming)</div><div class="desc">model: nova-3-medical · interims drive speculation</div></div><div class="time">interims 200–400 ms</div></div>
+      <div class="stage req" data-ms="200"><div class="meta"><div class="name">Endpointing window (adaptive)</div><div class="desc">scaled by slot input_kind · dob/phone longer · yes/no shorter</div></div><div class="time">~200 ms</div></div>
+
+      <div class="gate"><span>▼</span> speech_final — TTFA timer starts now</div>
+
+      <div class="ctl">
+        <button class="btn primary" data-play="1">▶ Play inbound</button>
+        <button class="btn" data-reset="1">↺ Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== 2. TTFA WINDOW (default cold, NOW with RAG + memory) ================== -->
+  <section class="cell" id="sec-2" data-section="2">
+    <div class="head">
+      <div class="num n3">2</div>
+      <div>
+        <h2>TTFA window — default cold path</h2>
+        <div class="sub">includes pre-LLM hops (RAG + memory) · single tool hop · total ≈ 2135 ms (over)</div>
+      </div>
+    </div>
+
+    <div class="player">
+      <div class="progress"><div class="bar" id="p2bar"></div></div>
+      <div class="clock"><div class="ms" id="p2clock">0</div><div class="lbl">ms inside the cert window</div></div>
+
+      <div class="stage req" data-ms="50"><div class="meta"><div class="name">STT silence gap</div><div class="desc">post-final wait Deepgram needs</div></div><div class="time">50 ms</div></div>
+      <div class="stage req" data-ms="15"><div class="meta"><div class="name">Middleware chain</div><div class="desc">PII · Abuse · OffTopic · FAQ · Supervisor · Flow</div></div><div class="time">15 ms</div></div>
+      <div class="stage opt" data-ms="50"><div class="meta"><div class="name">Retrieval (RAG)</div><div class="desc">Moss / InMemory · pre-LLM hop · range 10–500 (vector DB)</div></div><div class="time">~50 ms</div></div>
+      <div class="stage opt" data-ms="20"><div class="meta"><div class="name">Memory load</div><div class="desc">caller-keyed identity-confirmed · range 5–80 ms</div></div><div class="time">~20 ms</div></div>
+      <div class="stage req" data-ms="900"><div class="meta"><div class="name">LLM TTFT (Haiku)</div><div class="desc">range 600–1200 · single biggest knob</div></div><div class="time">~900 ms</div></div>
+      <div class="stage req" data-ms="300"><div class="meta"><div class="name">Tool dispatch</div><div class="desc">+1 hop = +550 ms · max_hops=3</div></div><div class="time">~300 ms</div></div>
+      <div class="stage req" data-ms="250"><div class="meta"><div class="name">LLM continuation</div><div class="desc">post tool_result hop</div></div><div class="time">~250 ms</div></div>
+      <div class="stage opt" data-ms="300"><div class="meta"><div class="name">TTS formatter</div><div class="desc">"911" → "nine one one" · range 200–400</div></div><div class="time">~300 ms</div></div>
+      <div class="stage req" data-ms="250"><div class="meta"><div class="name">Cartesia first audio</div><div class="desc">SSE chunks · sentence-boundary aware</div></div><div class="time">~250 ms</div></div>
+      <div class="stage req" data-ms="10"><div class="meta"><div class="name">TX pacer</div><div class="desc">transport-level push</div></div><div class="time">~10 ms</div></div>
+
+      <div class="gate"><span>✗</span> Total 2135 ms — over the 1500 ms gate. Two-hop turn adds +550 ms.</div>
+
+      <div class="ctl">
+        <button class="btn primary" data-play="2">▶ Play default path</button>
+        <button class="btn" data-reset="2">↺ Reset</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== 3. WATERFALL ================== -->
+  <section class="cell" id="sec-wf">
+    <div class="head">
+      <div class="num nw">★</div>
+      <div>
+        <h2>Waterfall — the full TTFA timeline</h2>
+        <div class="sub">every stage on one chart · playhead sweeps in real time · pick a scenario to see the win</div>
+      </div>
+    </div>
+
+    <div class="wf-wrap">
+      <div class="wf-axis" id="wfAxis" aria-hidden="true">
+        <!-- ticks injected by JS -->
+        <div class="gateline" id="wfGate"><span class="lb">1500</span></div>
+      </div>
+      <div id="wfBody"></div>
+      <div class="wf-playhead" id="wfHead"><span class="dot"></span></div>
+      <div class="wf-clock">
+        <div><span class="now" id="wfNow">0 ms</span> <span class="who muted" id="wfWho">paused</span></div>
+        <div class="who"><span id="wfTotal" style="font-weight:700"></span></div>
+      </div>
+      <div class="wf-end" id="wfEnd"></div>
+    </div>
+
+    <div class="ctl" style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+      <button class="btn primary" data-wf="default">▶ Default cold (2135)</button>
+      <button class="btn" data-wf="worst">▶ Worst (2-hop, 2685)</button>
+      <button class="btn" data-wf="warm">▶ Optimized warm (625)</button>
+      <button class="btn" data-wf="reset">↺ Reset</button>
+    </div>
+    <p class="muted" style="font-size:12.5px;margin-top:10px">Bar widths scale with real ms · playback obeys the speed picker · in real-time, the LLM bar takes a full 900 ms to fill.</p>
+  </section>
+
+  <!-- ================== 4. SPECULATION ================== -->
+  <section class="cell" id="sec-3" data-section="3">
+    <div class="head">
+      <div class="num n2">3</div>
+      <div>
+        <h2>Speculation — what fires during caller speech</h2>
+        <div class="sub">four parallel tracks pre-compute work · on speech_final each hits (free) or misses (wasted cost)</div>
+      </div>
+    </div>
+
+    <div class="specgrid" id="specGrid">
+      <div class="spectrack" data-track="spec-llm" data-save="700">
+        <div class="row"><div class="nm">Speculative LLM</div><div class="st">saves ~700 ms</div></div>
+        <div class="bar"><i></i></div><div class="verdict">idle</div>
+      </div>
+      <div class="spectrack" data-track="spec-tool" data-save="300">
+        <div class="row"><div class="nm">Speculative tools</div><div class="st">saves 100–500 ms</div></div>
+        <div class="bar"><i></i></div><div class="verdict">idle</div>
+      </div>
+      <div class="spectrack" data-track="spec-rag" data-save="50">
+        <div class="row"><div class="nm">Predictive retriever (RAG)</div><div class="st">saves 10–500 ms</div></div>
+        <div class="bar"><i></i></div><div class="verdict">idle</div>
+      </div>
+      <div class="spectrack" data-track="spec-ttsfmt" data-save="300">
+        <div class="row"><div class="nm">TTS formatter warm</div><div class="st">saves 200–400 ms</div></div>
+        <div class="bar"><i></i></div><div class="verdict">idle</div>
+      </div>
+    </div>
+
+    <div class="ctl" style="margin-top:14px">
+      <button class="btn primary" data-spec="hit">▶ All hit (warm)</button>
+      <button class="btn" data-spec="mix">▶ Mixed</button>
+      <button class="btn" data-spec="miss">▶ All miss (cold)</button>
+      <button class="btn" data-spec="reset">↺ Reset</button>
+    </div>
+
+    <p class="muted" style="font-size:13px;margin-top:14px">Every track has an env kill-switch. Cost of a wasted Haiku speculation: $0.001–$0.005.</p>
+  </section>
+
+  <!-- ================== 5. RELIABILITY ================== -->
+  <section class="cell" id="sec-4">
+    <div class="head">
+      <div class="num n2">4</div>
+      <div>
+        <h2>Reliability gaps · the tradeoffs</h2>
+        <div class="sub">tap a card · each speculative win has a failure mode + a mitigation</div>
+      </div>
+    </div>
+
+    <div class="relcards">
+      <details class="relcard">
+        <summary>Speculative LLM <span class="tag spec">~700 ms</span></summary>
+        <div class="body">
+          <div class="row"><b>What fires</b>Deep LLM call on a stable interim (≥3 words, confident). Cache lookup at speech_final.</div>
+          <div class="row save">✓ Saves ~700 ms on hit · ~95% hit rate in clean rooms</div>
+          <div class="row gap">⚠ Stale match: interim grew between fire and final · cached answer is for the shorter prefix</div>
+          <div class="row"><b>Mitigation</b>Proper-noun growth guard rejects matches where new trailing text contains capitalized words other than "I". MENTA_SPEC_ENABLED=false kills the track.</div>
+        </div>
+      </details>
+
+      <details class="relcard">
+        <summary>Speculative tools <span class="tag spec">100–500 ms</span></summary>
+        <div class="body">
+          <div class="row"><b>What fires</b>Pre-dispatch read-only tools (find_appointment, check_availability) when intent + entity present on the interim.</div>
+          <div class="row save">✓ Saves the backend round-trip when the LLM later asks for the same tool with matching args.</div>
+          <div class="row gap">⚠ Side-effecting tools must NEVER be spec'd — would cause double-booking.</div>
+          <div class="row"><b>Mitigation</b>Whitelist in code; only registered read-only tools are eligible. Args-keyed cache so STT mishears miss cleanly.</div>
+        </div>
+      </details>
+
+      <details class="relcard">
+        <summary>Predictive retriever (RAG) <span class="tag spec">10–500 ms</span></summary>
+        <div class="body">
+          <div class="row"><b>What fires</b>retrieve_async on the interim · LRU cache · take_result on speech_final.</div>
+          <div class="row save">✓ Saves the Moss / external vector DB round-trip.</div>
+          <div class="row gap">⚠ Stale retrievals: docs pulled for interim phrasing may not match final question.</div>
+          <div class="row"><b>Mitigation</b>Cache eviction when interim drifts more than 25 chars. Falls back to cold retrieve on miss.</div>
+        </div>
+      </details>
+
+      <details class="relcard">
+        <summary>TTS formatter warm <span class="tag spec">200–400 ms</span></summary>
+        <div class="body">
+          <div class="row"><b>What fires</b>Haiku formatter on the speculative LLM result · normalises "911" → "nine one one", phone digits, dosages.</div>
+          <div class="row save">✓ Saves the formatter's LLM TTFT on the happy path.</div>
+          <div class="row gap">⚠ Compound failure: if spec LLM was wrong, formatted text is wrong too. Both invalidate together.</div>
+          <div class="row"><b>Mitigation</b>skip_format per-chunk bypasses formatter entirely.</div>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- ================== 6. OUTBOUND ================== -->
+  <section class="cell" id="sec-5">
+    <div class="head">
+      <div class="num n4">5</div>
+      <div>
+        <h2>Outbound</h2>
+        <div class="sub">first audio chunk → caller's ear · AFTER the cert gate · symmetric to inbound network</div>
+      </div>
+    </div>
+
+    <div class="stage net" data-ms="125">
+      <div class="meta"><div class="name">Outbound network (server → caller)</div><div class="desc">SRTP / Opus packetization · caller-side jitter buffer + playout</div></div>
+      <div class="time">50–200 ms</div>
+    </div>
+
+    <div style="background:#fff7ed;border:1.5px solid #f59e0b;border-radius:8px;padding:14px;margin-top:14px">
+      <div style="font-weight:700;font-size:14px">Caller-perceived RTT</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:6px">
+        <span style="color:var(--danger);font-weight:700">Default cold ≈ 2400–2700 ms</span> · jarring<br>
+        <span style="color:#7f1d1d;font-weight:700">2-hop worst case ≈ 3000–3200 ms</span> · audibly bad<br>
+        <span style="color:var(--req);font-weight:700">Optimized warm ≈ 1000–1300 ms</span> · feels natural
+      </div>
+    </div>
+  </section>
+
+  <!-- ================== 7. COMPARE ================== -->
+  <section class="cell" id="sec-6">
+    <div class="head">
+      <div class="num n5">6</div>
+      <div>
+        <h2>Default vs Optimized · animated race</h2>
+        <div class="sub">three scenarios head-to-head · speculation drops LLM, tool, RAG, memory, TTS formatter to ~50 ms each</div>
+      </div>
+    </div>
+
+    <div class="compare" id="compareWrap">
+      <div class="cmp bad" id="cmpWorst">
+        <div class="top"><div class="who">Worst (2-hop tools, KB, memory)</div><div class="total" data-target="2685">0 ms</div></div>
+        <div class="track" data-bar="worst"><div class="gateline" style="left:55.9%"><span>1500 gate</span></div></div>
+        <div class="legend">50 + 15 + 50 + 20 + 900 + 300 + 250 + 300 + 250 + 300 + 250 + 100</div>
+      </div>
+      <div class="cmp bad" id="cmpCold">
+        <div class="top"><div class="who">Default (single hop)</div><div class="total" data-target="2135">0 ms</div></div>
+        <div class="track" data-bar="cold"><div class="gateline" style="left:70.3%"><span>1500</span></div></div>
+        <div class="legend">50 + 15 + 50 + 20 + 900 + 300 + 250 + 300 + 250 + 10</div>
+      </div>
+      <div class="cmp win" id="cmpWarm">
+        <div class="top"><div class="who">Optimized (warm)</div><div class="total" data-target="625">0 ms</div></div>
+        <div class="track" data-bar="warm"></div>
+        <div class="legend">50 + 15 + 5 + 5 + 50 + 50 + 150 + 50 + 250 + 10</div>
+      </div>
+    </div>
+
+    <div class="ctl" style="margin-top:14px">
+      <button class="btn primary" id="raceBtn">▶ Replay race</button>
+    </div>
+  </section>
+
+  <!-- ================== 8. POST-TTFA ================== -->
+  <section class="cell" id="sec-7">
+    <div class="head">
+      <div class="num n6">7</div>
+      <div>
+        <h2>Post-TTFA surfaces</h2>
+        <div class="sub">truly after the gate · KB + memory live IN the TTFA window, not here</div>
+      </div>
+    </div>
+
+    <div class="gridcards">
+      <div class="gcard"><h4>Barge-in (flush)</h4><p>~20 ms cancel · transport-level</p></div>
+      <div class="gcard"><h4>Confirmation read-back</h4><p>regex fast-path · 0 LLM hops</p></div>
+      <div class="gcard"><h4>Handoff bridge</h4><p>LiveKit room · issue #226</p></div>
+      <div class="gcard"><h4>Stream rest of TTS</h4><p>sentence-chunked · paced</p></div>
+    </div>
+  </section>
+
+  <footer>
+    Interactive companion to the blog post · numbers from production menta deployments
+  </footer>
+</main>
+
+<div class="mini" id="mini" aria-live="polite">
+  <span class="lbl" id="miniLbl">Inbound · 0 ms</span>
+  <button id="miniStop">Pause</button>
+</div>
+
+<script>
+(() => {
+  const $  = (s, r=document) => r.querySelector(s);
+  const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ===== Speed control =====
+     SCALE = animation_ms / pipeline_ms.
+     - "Quick"     SCALE = 0.4 (compressed, ~5x faster than real)
+     - "Real-time" SCALE = 1 (one wall-clock ms per pipeline ms — audience feels the wait)
+     - "2x slow"   SCALE = 2 (slower so a busy room can read every stage)
+  */
+  let SCALE = 1;
+  const speedHint = $('#speedHint');
+  $$('.speedbar button').forEach(b => b.addEventListener('click', () => {
+    $$('.speedbar button').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    SCALE = +b.dataset.speed;
+    speedHint.textContent = {
+      0.4: 'Compressed · ~2.5× real-time',
+      1:   '1 ms of pipeline = 1 ms of animation',
+      2:   'Slow · 2 ms of animation per pipeline ms'
+    }[SCALE] || '';
+  }));
+
+  let activeRun = null;
+
+  /* ===== Hero counters ===== */
+  const animateCounter = (el, target, dur=900) => {
+    const start = performance.now();
+    const step = (t) => {
+      const k = Math.min(1, (t - start) / dur);
+      el.textContent = Math.round(k * target).toLocaleString();
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  };
+  $$('.hero .stat .n').forEach(el => {
+    const target = +el.dataset.count;
+    new IntersectionObserver((entries, ob) => {
+      entries.forEach(e => { if (e.isIntersecting) { animateCounter(el, target); ob.unobserve(el); } });
+    }, {threshold:.5}).observe(el);
+  });
+
+  /* ===== Pipeline player (sections 1 & 2) ===== */
+  async function playPipeline(sectionId, {totalLabel}={}) {
+    if (activeRun) activeRun.abort = true;
+    const run = activeRun = {abort:false};
+    const sec = $(`#sec-${sectionId}`);
+    const stages = $$('.stage', sec);
+    const bar = $(`#p${sectionId}bar`);
+    const clock = $(`#p${sectionId}clock`);
+    const mini = $('#mini');
+    const miniLbl = $('#miniLbl');
+
+    stages.forEach(s => s.classList.remove('is-active','is-done'));
+    if (bar) bar.style.right = '100%';
+    if (clock) clock.textContent = '0';
+    mini.classList.add('show');
+
+    const total = stages.reduce((a,s) => a + (+s.dataset.ms || 0), 0);
+    let elapsed = 0;
+
+    for (const s of stages) {
+      if (run.abort) { mini.classList.remove('show'); return; }
+      const ms = +s.dataset.ms || 0;
+      const name = $('.name', s).textContent;
+      s.classList.add('is-active');
+      const animMs = Math.max(60, Math.round(ms * SCALE));
+      const startT = performance.now();
+      const startE = elapsed;
+      await new Promise(res => {
+        const tick = (t) => {
+          if (run.abort) return res();
+          const k = Math.min(1, (t - startT) / animMs);
+          const cur = startE + Math.round(k * ms);
+          if (clock) clock.textContent = cur.toLocaleString();
+          if (bar) bar.style.right = `${100 - ((startE + k*ms)/total)*100}%`;
+          miniLbl.textContent = `${name} · ${cur} ms`;
+          if (k < 1) requestAnimationFrame(tick);
+          else res();
+        };
+        requestAnimationFrame(tick);
+      });
+      elapsed += ms;
+      s.classList.remove('is-active');
+      s.classList.add('is-done');
+    }
+    miniLbl.textContent = `${totalLabel || 'done'} · ${elapsed} ms`;
+    setTimeout(() => mini.classList.remove('show'), 1200);
+  }
+  function resetPipeline(sectionId) {
+    if (activeRun) activeRun.abort = true;
+    const sec = $(`#sec-${sectionId}`);
+    $$('.stage', sec).forEach(s => s.classList.remove('is-active','is-done'));
+    const bar = $(`#p${sectionId}bar`); if (bar) bar.style.right='100%';
+    const clock = $(`#p${sectionId}clock`); if (clock) clock.textContent='0';
+    $('#mini').classList.remove('show');
+  }
+
+  $$('button[data-play]').forEach(b => b.addEventListener('click', () => {
+    const id = b.dataset.play;
+    playPipeline(id, {totalLabel: id==='1'?'speech_final':'first audio out'});
+  }));
+  $$('button[data-reset]').forEach(b => b.addEventListener('click', () => resetPipeline(b.dataset.reset)));
+
+  /* ===== Waterfall =====
+     Scenarios are arrays of stages with {name, sub?, kind, ms, optional?: bool}.
+     Bars are positioned by cumulative offset; widths scale to the chosen
+     scenario's wall length. The playhead sweeps left→right over the same
+     duration the pipeline player uses (so SCALE applies here too).
+  */
+  const WF_SCENARIOS = {
+    'default': {
+      label: 'Default cold (single tool hop)',
+      total: 2135,
+      stages: [
+        {name:'STT silence gap', kind:'req', ms:50},
+        {name:'Middleware',      kind:'req', ms:15},
+        {name:'Retrieval (RAG)', kind:'opt', ms:50, sub:'pre-LLM hop'},
+        {name:'Memory load',     kind:'opt', ms:20, sub:'pre-LLM hop'},
+        {name:'LLM TTFT',        kind:'req', ms:900},
+        {name:'Tool dispatch',   kind:'req', ms:300},
+        {name:'LLM continuation',kind:'req', ms:250},
+        {name:'TTS formatter',   kind:'opt', ms:300},
+        {name:'Cartesia audio',  kind:'req', ms:250},
+        {name:'TX pacer',        kind:'req', ms:10},
+      ]
+    },
+    'worst': {
+      label: 'Worst case: 2 tool hops + KB + memory',
+      total: 2685,
+      stages: [
+        {name:'STT silence gap', kind:'req', ms:50},
+        {name:'Middleware',      kind:'req', ms:15},
+        {name:'Retrieval (RAG)', kind:'opt', ms:50},
+        {name:'Memory load',     kind:'opt', ms:20},
+        {name:'LLM TTFT',        kind:'req', ms:900},
+        {name:'Tool dispatch 1', kind:'req', ms:300},
+        {name:'LLM cont 1',      kind:'req', ms:250},
+        {name:'Tool dispatch 2', kind:'req', ms:300, sub:'extra hop'},
+        {name:'LLM cont 2',      kind:'req', ms:250, sub:'extra hop'},
+        {name:'TTS formatter',   kind:'opt', ms:300},
+        {name:'Cartesia audio',  kind:'req', ms:250},
+        {name:'TX pacer',        kind:'req', ms:10},
+      ]
+    },
+    'warm': {
+      label: 'Optimized warm (all spec hit)',
+      total: 625,
+      stages: [
+        {name:'STT silence gap', kind:'req', ms:50},
+        {name:'Middleware',      kind:'req', ms:15},
+        {name:'Retrieval ✓',     kind:'spec', ms:5,   sub:'cache hit'},
+        {name:'Memory ✓',        kind:'spec', ms:5,   sub:'cache hit'},
+        {name:'LLM ✓',           kind:'spec', ms:50,  sub:'cache hit'},
+        {name:'Tool ✓',          kind:'spec', ms:50,  sub:'cache hit'},
+        {name:'LLM continuation',kind:'req', ms:150},
+        {name:'TTS formatter ✓', kind:'spec', ms:50,  sub:'cache hit'},
+        {name:'Cartesia audio',  kind:'req', ms:250},
+        {name:'TX pacer',        kind:'req', ms:10},
+      ]
+    }
+  };
+
+  const wfBody = $('#wfBody');
+  const wfAxis = $('#wfAxis');
+  const wfHead = $('#wfHead');
+  const wfNow  = $('#wfNow');
+  const wfWho  = $('#wfWho');
+  const wfTotal= $('#wfTotal');
+  const wfEnd  = $('#wfEnd');
+  const wfGate = $('#wfGate');
+  const LABEL_W = 120; // px label column
+
+  function renderWaterfall(scenarioKey, {animate=false} = {}) {
+    if (activeRun) activeRun.abort = true;
+    const run = activeRun = {abort:false};
+
+    const sc = WF_SCENARIOS[scenarioKey];
+    if (!sc) return;
+
+    // axis ticks at 0, 500, 1000, 1500, 2000, total
+    const ticks = [0, 500, 1000, 1500, 2000, 2500].filter(t => t <= sc.total + 100);
+    if (ticks[ticks.length-1] !== sc.total) ticks.push(sc.total);
+
+    wfAxis.querySelectorAll('.tk,.lb').forEach(n=>n.remove());
+    ticks.forEach(t => {
+      if (t > 0) {
+        const tk = document.createElement('div'); tk.className='tk'; tk.style.left = (t/sc.total*100)+'%';
+        wfAxis.appendChild(tk);
+      }
+      const lb = document.createElement('div'); lb.className='lb'; lb.style.left = (t/sc.total*100)+'%';
+      lb.textContent = t.toLocaleString();
+      wfAxis.appendChild(lb);
+    });
+    // gate line position
+    if (sc.total >= 1500) {
+      wfGate.style.display = 'block';
+      wfGate.style.left = (1500/sc.total*100)+'%';
+    } else {
+      wfGate.style.display = 'none';
+    }
+
+    // Render rows
+    wfBody.innerHTML = '';
+    let acc = 0;
+    const rows = sc.stages.map((s, i) => {
+      const row = document.createElement('div'); row.className='wf-row';
+      const lbl = document.createElement('div'); lbl.className='wf-label';
+      lbl.innerHTML = `${s.name}${s.sub?`<span class="sub">${s.sub}</span>`:''}`;
+      const track = document.createElement('div'); track.className='wf-track';
+      const bar = document.createElement('div'); bar.className=`wf-bar ${s.kind}`;
+      const leftPct = (acc / sc.total) * 100;
+      const widthPct = (s.ms / sc.total) * 100;
+      bar.style.left = leftPct + '%';
+      bar.style.width = widthPct + '%';
+      const time = document.createElement('div'); time.className='wf-time';
+      time.textContent = s.ms + ' ms';
+      track.appendChild(bar);
+      track.appendChild(time);
+      row.appendChild(lbl); row.appendChild(track);
+      wfBody.appendChild(row);
+      const stageStart = acc;
+      acc += s.ms;
+      return {row, bar, name:s.name, ms:s.ms, start:stageStart, end:acc};
+    });
+
+    wfTotal.textContent = `Total ≈ ${sc.total.toLocaleString()} ms`;
+    wfTotal.style.color = sc.total > 1500 ? 'var(--danger)' : 'var(--req)';
+    wfEnd.innerHTML = sc.total > 1500
+      ? `Over the 1500 ms cert gate by <b style="color:var(--danger)">${(sc.total-1500).toLocaleString()} ms</b>.`
+      : `Comfortably under the 1500 ms cert gate (margin: <b style="color:var(--req)">${(1500-sc.total).toLocaleString()} ms</b>).`;
+
+    // Pre-collapse bars for animation
+    if (animate) rows.forEach(r => r.bar.style.transform='scaleX(0)');
+    else rows.forEach(r => r.bar.style.transform='scaleX(1)');
+
+    // Reset playhead
+    const containerW = wfBody.getBoundingClientRect().width;
+    const barAreaW = containerW - LABEL_W;
+    wfHead.style.transform = `translateX(${LABEL_W}px)`;
+    wfNow.textContent = '0 ms';
+    wfWho.textContent = sc.label;
+
+    if (!animate) return;
+
+    // Animate: playhead sweeps total*SCALE; each bar's scaleX fills as the
+    // playhead crosses its [start, end]. We tick on rAF.
+    const animDur = Math.max(800, sc.total * SCALE);
+    const t0 = performance.now();
+    let activeIdx = -1;
+
+    return new Promise(resolve => {
+      const tick = (t) => {
+        if (run.abort) return resolve();
+        const k = Math.min(1, (t - t0) / animDur);
+        const ms = Math.round(k * sc.total);
+        // Update each bar's scale based on how far playhead is into its stage
+        for (const r of rows) {
+          if (ms <= r.start) r.bar.style.transform = 'scaleX(0)';
+          else if (ms >= r.end) r.bar.style.transform = 'scaleX(1)';
+          else r.bar.style.transform = `scaleX(${(ms - r.start) / r.ms})`;
+        }
+        // Active row highlight
+        const i = rows.findIndex(r => ms >= r.start && ms < r.end);
+        if (i !== activeIdx) {
+          if (activeIdx >= 0 && rows[activeIdx]) rows[activeIdx].row.style.outline = '';
+          activeIdx = i;
+          if (i >= 0) rows[i].row.style.outline = '2px solid rgba(15,23,42,.15)';
+        }
+        // Playhead position
+        const headPx = LABEL_W + (ms / sc.total) * barAreaW;
+        wfHead.style.transform = `translateX(${headPx}px)`;
+        // Clock
+        wfNow.textContent = ms.toLocaleString() + ' ms';
+        const stageName = i >= 0 ? rows[i].name : (k>=1 ? 'done' : '…');
+        wfWho.textContent = `${sc.label} · ${stageName}`;
+
+        if (k < 1) requestAnimationFrame(tick);
+        else {
+          if (activeIdx >= 0 && rows[activeIdx]) rows[activeIdx].row.style.outline='';
+          resolve();
+        }
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+  // initial render (default cold, static)
+  renderWaterfall('default', {animate:false});
+
+  $$('button[data-wf]').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.wf;
+    if (k === 'reset') renderWaterfall('default', {animate:false});
+    else renderWaterfall(k, {animate:true});
+  }));
+
+  /* ===== Speculation ===== */
+  async function playSpec(mode) {
+    if (activeRun) activeRun.abort = true;
+    const run = activeRun = {abort:false};
+    const tracks = $$('.spectrack');
+    tracks.forEach(t => { t.classList.remove('fired','hit','miss'); $('.verdict', t).textContent='idle'; });
+    for (let i = 0; i < tracks.length; i++) {
+      if (run.abort) return;
+      const t = tracks[i];
+      $('.verdict', t).textContent = 'firing on interim…';
+      await sleep(RM ? 0 : 200);
+      t.classList.add('fired');
+    }
+    await sleep(RM ? 0 : 700);
+    if (run.abort) return;
+    const verdicts = {hit:['hit','hit','hit','hit'],miss:['miss','miss','miss','miss'],mix:['hit','miss','hit','hit']}[mode] || [];
+    tracks.forEach((t, i) => {
+      const v = verdicts[i]; if (!v) return;
+      t.classList.add(v);
+      const save = +t.dataset.save || 0;
+      $('.verdict', t).textContent = v==='hit' ? `CACHE HIT · saved ${save} ms` : `CACHE MISS · ${save} ms wasted (cost only)`;
+    });
+  }
+  $$('button[data-spec]').forEach(b => b.addEventListener('click', () => {
+    const m = b.dataset.spec;
+    if (m === 'reset') { $$('.spectrack').forEach(t => { t.classList.remove('fired','hit','miss'); $('.verdict', t).textContent='idle'; }); }
+    else playSpec(m);
+  }));
+
+  /* ===== Compare bars ===== */
+  const SEG_WORST = [
+    {t:50,c:'#16a34a',l:'STT'},{t:15,c:'#16a34a',l:'MW'},
+    {t:50,c:'#d97706',l:'RAG'},{t:20,c:'#d97706',l:'mem'},
+    {t:900,c:'#16a34a',l:'LLM'},{t:300,c:'#16a34a',l:'tool1'},
+    {t:250,c:'#16a34a',l:'cont1'},{t:300,c:'#7f1d1d',l:'tool2'},
+    {t:250,c:'#7f1d1d',l:'cont2'},{t:300,c:'#d97706',l:'fmt'},
+    {t:250,c:'#16a34a',l:'audio'},{t:10,c:'#475569',l:'TX'},
+  ];
+  const SEG_COLD = [
+    {t:50,c:'#16a34a',l:'STT'},{t:15,c:'#16a34a',l:'MW'},
+    {t:50,c:'#d97706',l:'RAG'},{t:20,c:'#d97706',l:'mem'},
+    {t:900,c:'#16a34a',l:'LLM'},{t:300,c:'#16a34a',l:'tool'},
+    {t:250,c:'#16a34a',l:'cont'},{t:300,c:'#d97706',l:'fmt'},
+    {t:250,c:'#16a34a',l:'audio'},{t:10,c:'#475569',l:'TX'},
+  ];
+  const SEG_WARM = [
+    {t:50,c:'#16a34a',l:'STT'},{t:15,c:'#16a34a',l:'MW'},
+    {t:5,c:'#2563eb',l:'R✓'},{t:5,c:'#2563eb',l:'M✓'},
+    {t:50,c:'#2563eb',l:'LLM✓'},{t:50,c:'#2563eb',l:'Tool✓'},
+    {t:150,c:'#16a34a',l:'cont'},{t:50,c:'#2563eb',l:'fmt✓'},
+    {t:250,c:'#16a34a',l:'audio'},{t:10,c:'#475569',l:'TX'},
+  ];
+  const TOTAL_SCALE = 2685;
+
+  function placeSegments(trackEl, segs) {
+    trackEl.querySelectorAll('.seg').forEach(n => n.remove());
+    let acc = 0;
+    segs.forEach(s => {
+      const seg = document.createElement('div');
+      seg.className = 'seg'; seg.style.background = s.c;
+      seg.style.left  = (acc/TOTAL_SCALE*100) + '%';
+      seg.style.width = '0%'; seg.textContent = s.l;
+      trackEl.appendChild(seg);
+      requestAnimationFrame(() => { seg.style.width = (s.t/TOTAL_SCALE*100) + '%'; });
+      acc += s.t;
+    });
+    return acc;
+  }
+  function countTo(el, target, dur=1400) {
+    const start = performance.now();
+    const t0 = +(el.textContent.replace(/[^0-9]/g,'')) || 0;
+    const step = (t) => {
+      const k = Math.min(1, (t-start)/dur);
+      el.textContent = Math.round(t0 + k*(target-t0)).toLocaleString() + ' ms';
+      if (k < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+  async function playRace() {
+    const worst = $('[data-bar="worst"]');
+    const cold = $('[data-bar="cold"]');
+    const warm = $('[data-bar="warm"]');
+    [worst,cold,warm].forEach(b => b.querySelectorAll('.seg').forEach(n=>n.remove()));
+    $('#cmpWorst .total').textContent='0 ms';
+    $('#cmpCold .total').textContent='0 ms';
+    $('#cmpWarm .total').textContent='0 ms';
+    const tWorst = placeSegments(worst, SEG_WORST);
+    const tCold  = placeSegments(cold, SEG_COLD);
+    const tWarm  = placeSegments(warm, SEG_WARM);
+    countTo($('#cmpWorst .total'), tWorst, 1600);
+    countTo($('#cmpCold .total'), tCold, 1300);
+    countTo($('#cmpWarm .total'), tWarm, 700);
+  }
+  $('#raceBtn').addEventListener('click', playRace);
+
+  /* ===== Auto-play on scroll ===== */
+  const triggered = new Set();
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const id = e.target.id;
+      if (triggered.has(id)) return;
+      triggered.add(id);
+      if (id === 'sec-1') playPipeline(1);
+      else if (id === 'sec-2') playPipeline(2);
+      else if (id === 'sec-wf') renderWaterfall('default', {animate:true});
+      else if (id === 'sec-3') playSpec('hit');
+      else if (id === 'sec-6') playRace();
+    });
+  }, {threshold:.45});
+  $$('section.cell').forEach(s => io.observe(s));
+
+  $('#miniStop').addEventListener('click', () => {
+    if (activeRun) activeRun.abort = true;
+    $('#mini').classList.remove('show');
+  });
+
+  $('#playTurn').addEventListener('click', async () => {
+    document.getElementById('sec-1').scrollIntoView({behavior:'smooth', block:'start'});
+    await sleep(700);
+    await playPipeline(1);
+    document.getElementById('sec-wf').scrollIntoView({behavior:'smooth', block:'start'});
+    await sleep(700);
+    await renderWaterfall('default', {animate:true});
+  });
+  $('#jumpRace').addEventListener('click', () => {
+    document.getElementById('sec-6').scrollIntoView({behavior:'smooth', block:'start'});
+  });
+
+  // Re-render waterfall on resize so bar widths track container width
+  let resizeTO; window.addEventListener('resize', () => {
+    clearTimeout(resizeTO); resizeTO = setTimeout(() => renderWaterfall('default', {animate:false}), 200);
+  });
+
+  // Auto-size iframe via postMessage
+  function postSize() {
+    const h = Math.max(document.documentElement.scrollHeight, document.body.scrollHeight);
+    try { parent.postMessage({ type: 'voice-sim-resize', height: h }, '*'); } catch(e){}
+  }
+  postSize();
+  window.addEventListener('load', postSize);
+  new ResizeObserver(postSize).observe(document.body);
+
+})();
+</script>
+
+</body>
+</html>
