@@ -98,6 +98,6 @@ Anthropic's [Economic Scenarios explorer](https://www.anthropic.com/institute/ec
 
 ---
 
-## The full taxonomy
+## Find your role
 
 {{< chart src="roles-in-the-agent-era/taxonomy.html" caption="Filter by discipline or layer, or search for your own role. Every row links to its source." min="620px" fit="off" >}}

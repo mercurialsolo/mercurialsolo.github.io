@@ -93,8 +93,7 @@ li.item[data-layer="Structural"]{border-left-color:var(--str)}
 </style>
 
 <div class="head">
-<p class="kicker">Role morphs &middot; 31 rows, six disciplines</p>
-<h1>Find your role</h1>
+<h1 id="h" hidden>Find your role</h1>
 <p class="lede">Every field automates its operational work first and its decision work last. The operational layer is where juniors learn the judgement.</p>
 
 <div class="controls">
@@ -301,6 +300,12 @@ document.getElementById("src").textContent =
   "Scanned off career pages, research-team pages and industry reporting, March–September 2026 · " +
   "4 rows rest on a named study, 10 on job postings, 13 on industry reporting, 1 on a research team page, " +
   "1 on a vendor's own claim, 2 on argument alone";
+
+// the section heading already says "Find your role"; only show the tool's own
+// title when it is opened on its own rather than inside the post
+if (window.self === window.top) {
+  var h = document.getElementById("h"); if (h) h.hidden = false;
+}
 
 buildControls();
 render();
