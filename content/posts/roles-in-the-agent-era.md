@@ -78,7 +78,7 @@ Narayanan, for all his caution about timing, agrees on the direction. He expects
 
 {{< chart src="roles-in-the-agent-era/checklist.html" >}}
 
-Look down the 31 rows below and notice what isn't there: a job that simply vanished. Every row is a role that changed shape. The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. What moved is the operational half underneath them.
+Look down the 31 rows below and notice what isn't there: a job that simply vanished. Every job looks like it transformed. The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. What moved is the operational half underneath them.
 
 The work isn't disappearing, it's changing. Job specs are where you read that first; the official numbers will catch up in 2028. Don't wait for them.
 
