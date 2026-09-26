@@ -50,7 +50,7 @@ Indeed's Hiring Lab found AI-touched job titles [more common outside tech than i
 
 Geoffrey Hinton predicted in 2016 that AI would do a radiologist's job within five years, and he's since [admitted he was wrong on the timing](https://www.auntminnie.com/imaging-informatics/artificial-intelligence/article/15746014/hinton-acknowledges-mistake-in-predicting-ai-replacement-of-radiologists). He bet on the judgement, medicine automated the operational paperwork first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
 
-Law is not far behind, and it's more brutal about it. Legal AI is best at exactly the first-pass review that paid for junior associates. Firms are moving from the pyramid to what iManage calls [the diamond](https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/), with fewer entry roles and a thicker middle of specialists and technologists.
+Legal firms are moving from the pyramid to what iManage calls [the diamond](https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/), with fewer entry roles and a thicker middle of specialists and technologists.
 
 Labs have automated routine work for decades, but ["humans were always pulling the strings. They were the ones developing the hypotheses and deciding which experiments were needed to test them. Now that paradigm is changing."](https://www.nature.com/collections/cgbiacfcgc)
 
