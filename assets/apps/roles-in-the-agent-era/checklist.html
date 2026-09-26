@@ -4,31 +4,38 @@
 <style>
 :root{
   --g:#faf9f7;--ink:#16150f;--ink2:#55524a;--ink3:#817d72;--rule:#e3e0d8;--rs:#c9c5ba;
-  --card:#fff;--tick:#1baf7a;--accent:#eb6834;
+  --card:#fff;--tick:#1baf7a;--accent:#eb6834;--chip:#f1efe9;
   --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
 }
 @media(prefers-color-scheme:dark){:root{
   --g:#1a1a19;--ink:#f5f4ef;--ink2:#c3c2b7;--ink3:#8f8e84;--rule:#35352f;--rs:#4b4b43;
-  --card:#212120;--tick:#199e70;--accent:#e0763c;
+  --card:#212120;--tick:#199e70;--accent:#e0763c;--chip:#2a2a26;
 }}
 *{box-sizing:border-box}
 body{margin:0;background:var(--g);color:var(--ink);font-family:var(--sans);
   padding:18px 16px 14px;-webkit-text-size-adjust:100%}
 
-.bar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
-  margin:0 0 4px;flex-wrap:wrap}
-h1{font-size:15px;font-weight:600;margin:0;line-height:1.3}
-.count{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
-.count b{color:var(--ink);font-weight:500}
-.meter{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;margin:0 0 16px}
+h1{font-size:15px;font-weight:600;margin:0 0 12px;line-height:1.3}
+
+/* Each audience counts separately: nobody is both a student and already working,
+   so a single combined tally over all six was a category error. */
+.tabs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 4px}
+.tabs button{font-family:var(--sans);font-size:12px;line-height:1;padding:7px 12px;
+  border-radius:999px;border:1px solid var(--rule);background:var(--chip);color:var(--ink2);
+  cursor:pointer;transition:background .13s,color .13s,border-color .13s}
+.tabs button:hover{border-color:var(--rs)}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--g);border-color:var(--ink)}
+.tabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tabs .count{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--ink3);white-space:nowrap}
+.tabs .count b{color:var(--ink);font-weight:500}
+
+.meter{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;margin:0 0 14px}
 .meter i{display:block;height:100%;width:0;background:var(--tick);transition:width .22s ease}
 
-h2{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--ink3);margin:18px 0 8px;font-weight:500}
-h2:first-of-type{margin-top:0}
-
 ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+[role="tabpanel"][hidden]{display:none}
 
 li label{display:grid;grid-template-columns:22px 1fr;gap:0 10px;align-items:start;
   background:var(--card);border:1px solid var(--rule);border-radius:7px;
@@ -49,7 +56,7 @@ li label:has(input:checked){opacity:.55}
 li label:has(input:checked) .txt b{text-decoration:line-through;text-decoration-thickness:1px}
 
 .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
-  margin:16px 0 0;padding-top:9px;border-top:1px dotted var(--rule)}
+  margin:14px 0 0;padding-top:9px;border-top:1px dotted var(--rule)}
 .note{font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;
   color:var(--ink3);line-height:1.6}
 button.reset{font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;
@@ -61,43 +68,47 @@ button.reset:hover{color:var(--ink);border-bottom-color:var(--ink)}
   body{padding:15px 13px 12px}
   .txt{font-size:12px}
   li label{padding:10px 11px;grid-template-columns:20px 1fr;gap:0 9px}
+  .tabs .count{margin-left:0;width:100%;order:3}
 }
 </style>
 
-<div class="bar">
-  <h1>What to do before the data catches up</h1>
+<h1 id="h" hidden>What to do before the data catches up</h1>
+
+<div class="tabs" role="tablist" aria-label="Who you are">
+  <button role="tab" id="t0" aria-controls="p0" aria-selected="true">Professionals</button>
+  <button role="tab" id="t1" aria-controls="p1" aria-selected="false" tabindex="-1">Students</button>
   <span class="count" id="count"></span>
 </div>
 <div class="meter"><i id="meter"></i></div>
 
-<div id="groups"></div>
+<div id="panels"></div>
 
 <div class="foot">
   <span class="note">Ticks are saved in this browser only</span>
-  <button class="reset" type="button" id="reset">Clear</button>
+  <button class="reset" type="button" id="reset">Clear this list</button>
 </div>
 
 <script>
-const GROUPS = [
-  {name: "If you're a student", items: [
-    ["Learn to verify the machine output.",
-     "In medicine that's validating a generated note; in law, sampling a model's document review; in software, writing the eval. Get reps at it before anyone pays you to."],
-    ["Pair your subject with the computational layer inside it.",
-     "Anthropic's interpretability team hires astronomers, physicists, mathematicians and biologists. Be the person in your field who can test what the model does."],
-    ["Practise judgment where mistakes are cheap.",
-     "Law firms are training new associates on simulated cases so they can fail safely. Find the equivalent in your field: projects where you make the call and someone senior checks it."]
-  ]},
-  {name: "If you're already working", items: [
+const TABS = [
+  {name: "Professionals", items: [
     ["Move up a layer before yours moves.",
      "List the operational parts of your job, because that's what goes first. Put your hours into the parts where you specify, evaluate and decide."],
     ["Read job specs, not job titles.",
      "The official categories are frozen until 2028. Postings show the new shape now, and 63% of US AI-titled postings are already outside tech."],
     ["If you manage people, rebuild the rung.",
      "Your juniors learned on the work you're automating. Give them the evals to write and the AI output to review, with a senior checking their calls."]
+  ]},
+  {name: "Students", items: [
+    ["Learn to verify the machine output.",
+     "In medicine that's validating a generated note; in law, sampling a model's document review; in software, writing the eval. Get reps at it before anyone pays you to."],
+    ["Pair your subject with the computational layer inside it.",
+     "Anthropic's interpretability team hires astronomers, physicists, mathematicians and biologists. Be the person in your field who can test what the model does."],
+    ["Practise judgment where mistakes are cheap.",
+     "Law firms are training new associates on simulated cases so they can fail safely. Find the equivalent in your field: projects where you make the call and someone senior checks it."]
   ]}
 ];
 
-const KEY = "roles-checklist-v1";
+const KEY = "roles-checklist-v2";
 
 // localStorage can be unavailable or throw (private windows, blocked site data),
 // so the list has to work without it.
@@ -105,24 +116,25 @@ function load() {
   try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
   catch (e) { return {}; }
 }
-function save(state) {
-  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+function save(s) {
+  try { localStorage.setItem(KEY, JSON.stringify(s)); } catch (e) {}
 }
 
 let state = load();
-let total = 0;
-const boxes = [];
+let active = 0;
+const boxesByTab = [[], []];
 
-const groups = document.getElementById("groups");
-GROUPS.forEach(function (g, gi) {
-  const h = document.createElement("h2");
-  h.textContent = g.name;
-  groups.appendChild(h);
+const panels = document.getElementById("panels");
+TABS.forEach(function (t, ti) {
+  const panel = document.createElement("div");
+  panel.id = "p" + ti;
+  panel.setAttribute("role", "tabpanel");
+  panel.setAttribute("aria-labelledby", "t" + ti);
+  if (ti !== 0) panel.hidden = true;
 
   const ul = document.createElement("ul");
-  g.items.forEach(function (it, ii) {
-    const id = "c" + gi + "-" + ii;
-    total++;
+  t.items.forEach(function (it, ii) {
+    const id = "t" + ti + "-" + ii;
 
     const li = document.createElement("li");
     const label = document.createElement("label");
@@ -136,7 +148,7 @@ GROUPS.forEach(function (g, gi) {
       save(state);
       tally();
     });
-    boxes.push(box);
+    boxesByTab[ti].push(box);
 
     const txt = document.createElement("span");
     txt.className = "txt";
@@ -150,21 +162,53 @@ GROUPS.forEach(function (g, gi) {
     li.appendChild(label);
     ul.appendChild(li);
   });
-  groups.appendChild(ul);
+  panel.appendChild(ul);
+  panels.appendChild(panel);
 });
 
 function tally() {
+  const boxes = boxesByTab[active];
   const done = boxes.filter(function (b) { return b.checked; }).length;
-  document.getElementById("count").innerHTML = "<b>" + done + "</b> of " + total + " done";
-  document.getElementById("meter").style.width = (done / total * 100) + "%";
+  document.getElementById("count").innerHTML = "<b>" + done + "</b> of " + boxes.length + " done";
+  document.getElementById("meter").style.width = (done / boxes.length * 100) + "%";
 }
 
+const tabEls = [document.getElementById("t0"), document.getElementById("t1")];
+
+function select(i) {
+  active = i;
+  tabEls.forEach(function (el, j) {
+    el.setAttribute("aria-selected", String(j === i));
+    el.tabIndex = j === i ? 0 : -1;
+    document.getElementById("p" + j).hidden = j !== i;
+  });
+  tally();
+}
+
+tabEls.forEach(function (el, i) {
+  el.addEventListener("click", function () { select(i); });
+  el.addEventListener("keydown", function (e) {
+    if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
+    e.preventDefault();
+    const step = e.key === "ArrowRight" ? 1 : -1;
+    const next = (i + step + tabEls.length) % tabEls.length;
+    select(next);
+    tabEls[next].focus();
+  });
+});
+
 document.getElementById("reset").addEventListener("click", function () {
-  boxes.forEach(function (b) { b.checked = false; });
-  state = {};
+  boxesByTab[active].forEach(function (b) { b.checked = false; state[b.id] = false; });
   save(state);
   tally();
 });
 
-tally();
+// the section heading above already names this panel, so show the title
+// only when the page is opened on its own
+if (window.self === window.top) {
+  const h = document.getElementById("h");
+  if (h) h.hidden = false;
+}
+
+select(0);
 </script>

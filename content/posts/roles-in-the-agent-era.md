@@ -22,7 +22,7 @@ TocOpen: false
 
 ## Every job spec has a computational section
 
-Anthropic and OpenAI now both employ a chief economist who actively measure the impact of AI on the labour market. Anthropic's Peter McCrory told a Harvard forum this week that he wants to use [the tools of economics to help Anthropic understand the impact of its own decisions](https://www.thecrimson.com/article/2026/9/24/anthropic-economist-forum/).
+Anthropic and OpenAI now both employ a chief economist who actively measure the impact of AI on the labour market. Peter McCrory (Anthropic) told a Harvard forum this week that he wants to use [the tools of economics to help Anthropic understand the impact of its own decisions](https://www.thecrimson.com/article/2026/9/24/anthropic-economist-forum/).
 
 Arvind Narayanan has made a careful case that [AI spreads slowly](https://knightcolumbia.org/content/ai-as-normal-technology), and he puts the adaptation at [a decade or two](https://www.normaltech.ai/p/what-will-be-left-for-us-to-work). But this is describing payroll data. Employers are rewriting roles the quarter they believe something; payrolls record it years later, once training and org design have caught up. The job specs are changing now, and not only in software.
 
@@ -76,7 +76,7 @@ The entry job now demands judgement not execution skills. So who's going to be q
 
 Narayanan, for all his caution about timing, agrees on the direction. He expects human effort to shift ["from building towards evaluation and monitoring"](https://icml.cc/virtual/2026/invited-talk/67274), with domain knowledge and normative judgment gaining in importance.
 
-{{< chart src="roles-in-the-agent-era/checklist.html" caption="Tick these off as you go. Your progress is saved in this browser." >}}
+{{< chart src="roles-in-the-agent-era/checklist.html" >}}
 
 Look down the 31 rows below and notice what isn't there: a job that simply vanished. Every row is a role that changed shape. The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. What moved is the operational half underneath them.
 
