@@ -63,7 +63,7 @@ Classic SaaS tolerated 200ms response times. Model-adjacent products need sub-50
 
 Route most requests through a fast path. Reserve expensive reasoning for the tail.
 
-{{< tweet user="karpathy" id="2009037707918626874" >}}
+{{< x user="karpathy" id="2009037707918626874" >}}
 
 ```mermaid
 flowchart LR

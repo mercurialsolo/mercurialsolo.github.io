@@ -37,7 +37,7 @@ AI isn't synonymous with autonomy. The spectrum runs from assistance to augmenta
 
 Most products today sit at L2-L3. The infrastructure you build determines how far up you can safely climb.
 
-{{< tweet user="simonw" id="2006514122977063350" >}}
+{{< x user="simonw" id="2006514122977063350" >}}
 
 ```mermaid
 flowchart LR
