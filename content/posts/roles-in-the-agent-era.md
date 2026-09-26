@@ -68,7 +68,7 @@ Read the official statistics and it looks like none of this has happened and is 
 
 {{< chart src="roles-in-the-agent-era/soc-timeline.html" caption="No official code for an AI engineer until 2028." >}}
 
-MIT's [Project Iceberg](https://iceberg.mit.edu/report.pdf) gets underneath the codes by counting skills. The technology roles the headlines cover account for 2.2% of US wage value, about $211 billion. Skills AI can already perform across administrative, financial and professional work account for 11.7%, about $1.2 trillion, and they're spread across every state. Delaware and South Dakota score higher than California.
+MIT's [Project Iceberg](https://iceberg.mit.edu/report.pdf) gets underneath the codes by counting skills. The technology roles the headlines cover account for 2.2% of US wage value, about $211 billion. Skills AI can already perform across administrative, financial and professional work account for 11.7%, about $1.2 trillion, and they're spread across every state.
 
 ## What to do before the data catches up
 
