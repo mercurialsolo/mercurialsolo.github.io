@@ -54,7 +54,7 @@ Legal firms are moving from the pyramid to what iManage calls [the diamond](http
 
 Labs have automated routine work for decades, but ["humans were always pulling the strings. They were the ones developing the hypotheses and deciding which experiments were needed to test them. Now that paradigm is changing."](https://www.nature.com/collections/cgbiacfcgc)
 
-Inside every field the sequencing looks similar - AI’s taking the operational work first and the decisions last. The cost of a wrong draft is cheap vs a wrong call. We’ve seen it in medicine and law, software handed over the code before the architecture; science is handing over the literature search and the experiments before the choice of what to test. Unfortunately the operational layer is where the juniors learn the job.
+Inside every field the sequencing looks similar - AI’s taking the operational work first and the decisions last. The cost of a wrong draft is cheap vs a wrong call. We’ve seen it in medicine and law, software handed over the code before the architecture; science is handing over the literature search and the experiments before the choice of what to test. Unfortunately the operational layer is where the juniors learn the judgement.
 
 {{< chart src="roles-in-the-agent-era/automation-gap.html" caption="Anthropic classifies each Claude conversation as automation or augmentation. In five fields of six, the support role sits further right than the professional one." >}}
 
