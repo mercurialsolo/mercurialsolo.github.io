@@ -1,0 +1,170 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>What to do before the data catches up</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --g:#faf9f7;--ink:#16150f;--ink2:#55524a;--ink3:#817d72;--rule:#e3e0d8;--rs:#c9c5ba;
+  --card:#fff;--tick:#1baf7a;--accent:#eb6834;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --g:#1a1a19;--ink:#f5f4ef;--ink2:#c3c2b7;--ink3:#8f8e84;--rule:#35352f;--rs:#4b4b43;
+  --card:#212120;--tick:#199e70;--accent:#e0763c;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--g);color:var(--ink);font-family:var(--sans);
+  padding:18px 16px 14px;-webkit-text-size-adjust:100%}
+
+.bar{display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+  margin:0 0 4px;flex-wrap:wrap}
+h1{font-size:15px;font-weight:600;margin:0;line-height:1.3}
+.count{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink3)}
+.count b{color:var(--ink);font-weight:500}
+.meter{height:3px;background:var(--rule);border-radius:2px;overflow:hidden;margin:0 0 16px}
+.meter i{display:block;height:100%;width:0;background:var(--tick);transition:width .22s ease}
+
+h2{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink3);margin:18px 0 8px;font-weight:500}
+h2:first-of-type{margin-top:0}
+
+ul{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+
+li label{display:grid;grid-template-columns:22px 1fr;gap:0 10px;align-items:start;
+  background:var(--card);border:1px solid var(--rule);border-radius:7px;
+  padding:11px 13px;cursor:pointer;transition:border-color .15s,opacity .15s}
+li label:hover{border-color:var(--rs)}
+li input{appearance:none;-webkit-appearance:none;margin:1px 0 0;width:17px;height:17px;
+  border:1.5px solid var(--rs);border-radius:4px;background:var(--card);cursor:pointer;
+  display:grid;place-content:center;transition:background .15s,border-color .15s}
+li input:checked{background:var(--tick);border-color:var(--tick)}
+li input::after{content:"";width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;
+  transform:rotate(-45deg) translate(1px,-1px);opacity:0;transition:opacity .15s}
+li input:checked::after{opacity:1}
+li input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.txt{font-size:12.5px;line-height:1.55;color:var(--ink2)}
+.txt b{color:var(--ink);font-weight:600}
+li label:has(input:checked){opacity:.55}
+li label:has(input:checked) .txt b{text-decoration:line-through;text-decoration-thickness:1px}
+
+.foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+  margin:16px 0 0;padding-top:9px;border-top:1px dotted var(--rule)}
+.note{font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;text-transform:uppercase;
+  color:var(--ink3);line-height:1.6}
+button.reset{font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-transform:uppercase;
+  background:none;border:0;padding:0;color:var(--ink3);cursor:pointer;
+  border-bottom:1px solid var(--rule)}
+button.reset:hover{color:var(--ink);border-bottom-color:var(--ink)}
+
+@media(max-width:480px){
+  body{padding:15px 13px 12px}
+  .txt{font-size:12px}
+  li label{padding:10px 11px;grid-template-columns:20px 1fr;gap:0 9px}
+}
+</style>
+
+<div class="bar">
+  <h1>What to do before the data catches up</h1>
+  <span class="count" id="count"></span>
+</div>
+<div class="meter"><i id="meter"></i></div>
+
+<div id="groups"></div>
+
+<div class="foot">
+  <span class="note">Ticks are saved in this browser only</span>
+  <button class="reset" type="button" id="reset">Clear</button>
+</div>
+
+<script>
+const GROUPS = [
+  {name: "If you're a student", items: [
+    ["Learn to check the machine in your field.",
+     "In medicine that's validating a generated note; in law, sampling a model's document review; in software, writing the eval. Get reps at it before anyone pays you to."],
+    ["Pair your subject with the computational layer inside it.",
+     "Anthropic's interpretability team hires astronomers, physicists, mathematicians and biologists. Be the person in your field who can test what the model does."],
+    ["Practise judgment where mistakes are cheap.",
+     "Law firms are training new associates on simulated cases so they can fail safely. Find the equivalent in your field: projects where you make the call and someone senior checks it."]
+  ]},
+  {name: "If you're already working", items: [
+    ["Move up a layer before yours moves.",
+     "List the operational parts of your job, because that's what goes first. Put your hours into the parts where you specify, evaluate and decide."],
+    ["Read job specs, not job titles.",
+     "The official categories are frozen until 2028. Postings show the new shape now, and 63% of US AI-titled postings are already outside tech."],
+    ["If you manage people, rebuild the rung.",
+     "Your juniors learned on the work you're automating. Give them the evals to write and the AI output to review, with a senior checking their calls."]
+  ]}
+];
+
+const KEY = "roles-checklist-v1";
+
+// localStorage can be unavailable or throw (private windows, blocked site data),
+// so the list has to work without it.
+function load() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || {}; }
+  catch (e) { return {}; }
+}
+function save(state) {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+let state = load();
+let total = 0;
+const boxes = [];
+
+const groups = document.getElementById("groups");
+GROUPS.forEach(function (g, gi) {
+  const h = document.createElement("h2");
+  h.textContent = g.name;
+  groups.appendChild(h);
+
+  const ul = document.createElement("ul");
+  g.items.forEach(function (it, ii) {
+    const id = "c" + gi + "-" + ii;
+    total++;
+
+    const li = document.createElement("li");
+    const label = document.createElement("label");
+
+    const box = document.createElement("input");
+    box.type = "checkbox";
+    box.id = id;
+    box.checked = !!state[id];
+    box.addEventListener("change", function () {
+      state[id] = box.checked;
+      save(state);
+      tally();
+    });
+    boxes.push(box);
+
+    const txt = document.createElement("span");
+    txt.className = "txt";
+    const lead = document.createElement("b");
+    lead.textContent = it[0] + " ";
+    txt.appendChild(lead);
+    txt.appendChild(document.createTextNode(it[1]));
+
+    label.appendChild(box);
+    label.appendChild(txt);
+    li.appendChild(label);
+    ul.appendChild(li);
+  });
+  groups.appendChild(ul);
+});
+
+function tally() {
+  const done = boxes.filter(function (b) { return b.checked; }).length;
+  document.getElementById("count").innerHTML = "<b>" + done + "</b> of " + total + " done";
+  document.getElementById("meter").style.width = (done / total * 100) + "%";
+}
+
+document.getElementById("reset").addEventListener("click", function () {
+  boxes.forEach(function (b) { b.checked = false; });
+  state = {};
+  save(state);
+  tally();
+});
+
+tally();
+</script>

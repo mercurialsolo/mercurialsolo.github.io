@@ -76,17 +76,7 @@ The entry job now demands judgement not execution skills. So who's going to be q
 
 Narayanan, for all his caution about timing, agrees on the direction. He expects human effort to shift ["from building towards evaluation and monitoring"](https://icml.cc/virtual/2026/invited-talk/67274), with domain knowledge and normative judgment gaining in importance.
 
-**If you're a student**
-
-- **Learn to check the machine in your field.** In medicine that's validating a generated note; in law, sampling a model's document review; in software, writing the eval. Get reps at it before anyone pays you to.
-- **Pair your subject with the computational layer inside it.** Anthropic's interpretability team hires astronomers, physicists, mathematicians and biologists. Be the person in your field who can test what the model does.
-- **Practise judgment where mistakes are cheap.** Law firms are training new associates on simulated cases so they can fail safely. Find the equivalent in your field: projects where you make the call and someone senior checks it.
-
-**If you're already working**
-
-- **Move up a layer before yours moves.** List the operational parts of your job, because that's what goes first. Put your hours into the parts where you specify, evaluate and decide.
-- **Read job specs, not job titles.** The official categories are frozen until 2028. Postings show the new shape now, and 63% of US AI-titled postings are already outside tech.
-- **If you manage people, rebuild the rung.** Your juniors learned on the work you're automating. Give them the evals to write and the AI output to review, with a senior checking their calls.
+{{< chart src="roles-in-the-agent-era/checklist.html" caption="Tick these off as you go. Your progress is saved in this browser." >}}
 
 Look down the 31 rows below and notice what isn't there: a job that simply vanished. Every row is a role that changed shape. The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. What moved is the operational half underneath them.
 
