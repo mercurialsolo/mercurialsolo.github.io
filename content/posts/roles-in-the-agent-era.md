@@ -34,7 +34,7 @@ Arvind Narayanan has made a careful case that [AI spreads slowly](https://knight
 | Legal | Practice innovation | Director of AI |
 | Medicine | Medical scribe | Ambient recorder |
 
-Every domain is swapping out what you could open and read for something you can only sample. A reviewable pull request becomes an {{< term name="eval" text="eval suite" def="A test suite for a model or agent: a fixed set of inputs plus a way of scoring the outputs, used to decide whether behaviour improved or regressed." >}}. A clinical note becomes a draft to check. Each one buries a computational job inside a role that never had one.
+Every domain is swapping out what you could open and read for something you can only sample. A reviewable pull request becomes an {{< term name="eval" text="eval suite" def="A test suite for a model or agent: a fixed set of inputs plus a way of scoring the outputs, used to decide whether behaviour improved or regressed." >}}. A clinical note becomes a draft to check. Each one has a now computational role within.
 
 François Chollet predicted this in 2021: within ten to twenty years, nearly every branch of science would be ["for all intents and purposes, a branch of computer science"](https://x.com/fchollet/status/2102444225443029100). Anthropic's interpretability team now recruits from [astronomy, physics, mathematics and biology](https://www.anthropic.com/research/team/interpretability), because the model stopped being a program you debug and became a specimen you study.
 
