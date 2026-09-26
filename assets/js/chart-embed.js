@@ -29,6 +29,11 @@
   function sizeToContent(frame) {
     var height = measure(frame);
     if (!height) return;
+    // Never render shorter than the height the shortcode declared. A lazy
+    // iframe can be measured before its content lays out, which would
+    // otherwise collapse the chart to its padding.
+    var floor = parseInt(frame.getAttribute('data-min-height') || '0', 10);
+    if (floor && height < floor) height = floor;
     var previous = parseInt(frame.getAttribute('data-fitted-height') || '0', 10);
     if (Math.abs(height - previous) <= 1) return;
     frame.setAttribute('data-fitted-height', String(height));
@@ -61,7 +66,27 @@
     }
   }
 
+  // Panels that scroll internally (data-fit="off") do not grow to their content.
+  // Give them a height that follows the viewport, floored at the shortcode's
+  // value, so a phone shows several rows instead of one.
+  function sizePanel(frame) {
+    var floor = parseInt(frame.getAttribute('data-min-height') || '0', 10) || 520;
+    // Do not clamp to measured content: a fixed-height flex panel always
+    // measures exactly as tall as the iframe, which would pin it to the floor.
+    frame.style.height = Math.max(floor, Math.round(window.innerHeight * 0.82)) + 'px';
+  }
+
   function attach(frame) {
+    if (frame.getAttribute('data-fit') === 'off') {
+      if (frame.getAttribute('data-panel-bound') !== '1') {
+        frame.setAttribute('data-panel-bound', '1');
+        frame.addEventListener('load', function () { sizePanel(frame); });
+        var d = null;
+        try { d = frame.contentDocument; } catch (e) { d = null; }
+        if (d && d.readyState === 'complete') sizePanel(frame);
+      }
+      return;
+    }
     if (frame.getAttribute('data-chart-bound') === '1') return;
     frame.setAttribute('data-chart-bound', '1');
     frame.addEventListener('load', function () { watch(frame); });
@@ -84,6 +109,9 @@
 
   window.addEventListener('resize', function () {
     var frames = document.querySelectorAll('.chart-embed iframe');
-    for (var i = 0; i < frames.length; i++) sizeToContent(frames[i]);
+    for (var i = 0; i < frames.length; i++) {
+      if (frames[i].getAttribute('data-fit') === 'off') sizePanel(frames[i]);
+      else sizeToContent(frames[i]);
+    }
   });
 })();

@@ -1,0 +1,307 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Role morphs: find your role</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --g:#faf9f7;--ink:#16150f;--ink2:#55524a;--ink3:#817d72;--rule:#e3e0d8;--rs:#c9c5ba;
+  --chip:#f1efe9;--chipOn:#16150f;--chipOnInk:#faf9f7;--card:#fff;
+  --op:#eb6834;--dec:#2a78d6;--str:#8a877d;
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --g:#1a1a19;--ink:#f5f4ef;--ink2:#c3c2b7;--ink3:#8f8e84;--rule:#35352f;--rs:#4b4b43;
+  --chip:#2a2a26;--chipOn:#f5f4ef;--chipOnInk:#1a1a19;--card:#212120;
+  --op:#e0763c;--dec:#3987e5;--str:#8f8e84;
+}}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;background:var(--g);color:var(--ink);font-family:var(--sans);
+  padding:16px 14px 12px;-webkit-text-size-adjust:100%;font-variant-numeric:tabular-nums;
+  display:flex;flex-direction:column;overflow:hidden}
+.head{flex:none}
+.scroller{flex:1 1 auto;min-height:0;overflow-y:auto;overscroll-behavior:contain;
+  -webkit-overflow-scrolling:touch;padding-right:2px;
+  mask-image:linear-gradient(to bottom,#000 calc(100% - 18px),transparent 100%);
+  -webkit-mask-image:linear-gradient(to bottom,#000 calc(100% - 18px),transparent 100%)}
+.kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0 0 6px}
+h1{font-size:16px;font-weight:600;margin:0 0 4px;line-height:1.25}
+.lede{font-size:12.5px;color:var(--ink2);margin:0 0 14px;line-height:1.5;max-width:64ch}
+
+.controls{display:flex;flex-direction:column;gap:9px;margin:0 0 12px}
+.row{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.lbl{font-family:var(--mono);font-size:9px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink3);margin-right:2px;flex:none;min-width:62px}
+button.chip{font-family:var(--sans);font-size:11.5px;line-height:1;padding:6px 10px;border-radius:999px;
+  border:1px solid var(--rule);background:var(--chip);color:var(--ink2);cursor:pointer;
+  transition:background .12s,color .12s,border-color .12s}
+button.chip:hover{border-color:var(--rs)}
+button.chip[aria-pressed="true"]{background:var(--chipOn);color:var(--chipOnInk);border-color:var(--chipOn)}
+button.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:5px;vertical-align:1px}
+input[type=search]{font-family:var(--sans);font-size:12.5px;padding:7px 10px;border-radius:7px;
+  border:1px solid var(--rule);background:var(--card);color:var(--ink);width:100%;max-width:280px}
+input[type=search]:focus{outline:2px solid var(--dec);outline-offset:1px;border-color:var(--dec)}
+
+.tally{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;
+  font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink3);margin:0 0 10px;padding-bottom:9px;border-bottom:1px solid var(--rule)}
+.tally b{color:var(--ink);font-weight:500}
+.tally .sw{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;vertical-align:0}
+
+ul.list{list-style:none;margin:0;padding:0 0 20px;display:grid;gap:7px}
+li.item{background:var(--card);border:1px solid var(--rule);border-left:3px solid var(--rs);
+  border-radius:7px;padding:10px 12px}
+li.item[data-layer="Operational"]{border-left-color:var(--op)}
+li.item[data-layer="Decision"]{border-left-color:var(--dec)}
+li.item[data-layer="Structural"]{border-left-color:var(--str)}
+.morph{font-size:13.5px;line-height:1.35;margin:0 0 3px}
+.was{color:var(--ink2)}
+.arrow{font-family:var(--mono);color:var(--ink3);margin:0 6px}
+.becomes{font-weight:600;color:var(--ink)}
+.moved{font-size:12px;color:var(--ink2);line-height:1.45;margin:0 0 7px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;align-items:center;
+  font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase}
+.tag{padding:2px 6px;border-radius:4px;background:var(--chip);color:var(--ink3);white-space:nowrap}
+.tag.layer{color:var(--chipOnInk)}
+.tag.layer[data-l="Operational"]{background:var(--op)}
+.tag.layer[data-l="Decision"]{background:var(--dec)}
+.tag.layer[data-l="Structural"]{background:var(--str)}
+.meta a{color:var(--ink3);text-decoration:underline;text-underline-offset:2px}
+.meta a:hover{color:var(--ink)}
+.note{font-size:11.5px;color:var(--ink3);line-height:1.45;margin:7px 0 0;
+  padding-top:7px;border-top:1px dotted var(--rule)}
+.empty{font-size:12.5px;color:var(--ink3);padding:20px 0;text-align:center}
+.src{flex:none;font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;color:var(--ink3);
+  margin:8px 0 0;padding-top:8px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.55}
+@media(max-width:560px){
+  body{padding:13px 12px 9px}
+  .kicker{display:none}
+  h1{font-size:15px;margin-bottom:6px}
+  .lede{display:none}                 /* the caption under the embed says the same */
+  .controls{gap:7px;margin-bottom:9px}
+  .lbl{min-width:100%;margin-bottom:-3px}
+  .row{gap:5px}
+  input[type=search]{max-width:100%}
+  button.chip{font-size:11px;padding:5px 9px}
+  button.chip .hint{display:none}     /* keep just Operational / Decision / Structural */
+  .tally{font-size:9.5px;gap:8px;margin-bottom:8px;padding-bottom:7px}
+  .morph{font-size:13px}
+  .moved{font-size:11.5px}
+  li.item{padding:9px 10px}
+  .src{font-size:8px;line-height:1.5}
+}
+</style>
+
+<div class="head">
+<p class="kicker">Role morphs &middot; 31 rows, six disciplines</p>
+<h1>Find your role</h1>
+<p class="lede">The <b>layer</b> is the argument: every field automates its operational work first and its decision work last. Filter to see where your own job sits, and how well each row is actually evidenced.</p>
+
+<div class="controls">
+  <div class="row"><span class="lbl">Search</span>
+    <input type="search" id="q" placeholder="role, e.g. postdoc, QA, scribe" aria-label="Search roles">
+  </div>
+  <div class="row" id="disc"><span class="lbl">Discipline</span></div>
+  <div class="row" id="layer"><span class="lbl">Layer</span></div>
+</div>
+
+<p class="tally" id="tally"></p>
+</div>
+<div class="scroller"><ul class="list" id="list"></ul></div>
+<p class="src" id="src"></p>
+
+<script>
+const ROWS = [
+{d:"Software",l:"Operational",w:"Software engineer",b:"AI engineer",m:"Shipping code to shipping evals and context",e:"Job posting",s:"https://www.anthropic.com/careers/jobs",n:""},
+{d:"Software",l:"Operational",w:"Infrastructure engineering",b:"Inference engineering",m:"Keeping servers up to keeping tokens cheap",e:"Job posting",s:"https://www.anthropic.com/careers/jobs",n:"Anthropic lists Performance Engineer, Inference Systems and EM, GPU (ML Accelerator)"},
+{d:"Software",l:"Operational",w:"QA",b:"RL environment design",m:"Labs buy 10-20 environments at a time, for millions",e:"Job posting",s:"https://openai.com/careers/agent-post-training-frontier-evals-and-environments-research-san-francisco/",n:"A supplier industry now exists: Idler, Turing, Mercor/Deeptune. Market figure via Nathan Lambert."},
+{d:"Software",l:"Operational",w:"Solutions engineer",b:"FDE",m:"Configuring a product to building inside the customer",e:"Job posting",s:"https://openai.com/careers/forward-deployed-engineer-%28fde%29-sf-san-francisco/",n:""},
+{d:"Software",l:"Decision",w:"Debugging",b:"Mechanistic interpretability",m:"Reading logs to reading weights",e:"Research team page",s:"https://www.anthropic.com/research/team/interpretability",n:"The tell is the hiring pool: the team recruits from astronomy, physics, mathematics and biology."},
+{d:"Software",l:"Decision",w:"Issue",b:"Hypothesis",m:"Fixing the known to testing the unknown",e:"Job posting",s:"https://openai.com/careers/agent-post-training-frontier-evals-and-environments-research-san-francisco/",n:"Verbatim in the job description: turn qualitative behavior into concrete hypotheses, experiments and fixes."},
+
+{d:"Product",l:"Operational",w:"Product manager",b:"AI builder",m:"Writing the spec to running the prototype",e:"Industry reporting",s:"https://x.com/lennysan/status/2102422882341322779",n:"Nearly half of 25 listed PM roles ask for eval experience. Small sample."},
+{d:"Product",l:"Decision",w:"Product design",b:"Model behaviour",m:"Designing the interface to designing the disposition",e:"Job posting",s:"https://openai.com/careers/research-engineer-research-scientist-model-behavior",n:"The team describes itself as expert tastemakers, designers, PMs and researchers."},
+{d:"Product",l:"Decision",w:"Analytics & insights",b:"Behavioural models",m:"Reporting the past to simulating the population",e:"Named study",s:"https://arxiv.org/abs/2411.10109",n:"Agents built from two-hour interviews with 1,052 Americans."},
+{d:"Product",l:"Decision",w:"Partner",b:"Embedded evaluator",m:"Implementation hours to judging behaviour",e:"Industry reporting",s:"https://x.com/HamelHusain/status/2079938784205140175",n:"n=25+ companies, first-hand. No market data on evals-as-a-service."},
+{d:"Product",l:"Structural",w:"Product",b:"Agent",m:"Interface to behaviour, seats to resolutions",e:"Industry reporting",s:"https://sierra.ai/blog/outcome-based-pricing-for-ai-agents",n:""},
+
+{d:"Science",l:"Operational",w:"Bench scientist",b:"Autonomous lab supervisor",m:"Running the experiment to overseeing the robot that runs it",e:"Industry reporting",s:"https://www.nature.com/collections/cgbiacfcgc",n:"Nature: humans were always pulling the strings. Now that paradigm is changing."},
+{d:"Science",l:"Operational",w:"Lab automation",b:"AI-lab innovation",m:"Scripting instruments to closing the hypothesis loop",e:"Job posting",s:"https://www.lila.ai",n:"VP, Head of AI-Lab Innovation is a named role."},
+{d:"Science",l:"Operational",w:"Postdoc",b:"AI-paired researcher",m:"Learning the bench to directing agents",e:"Industry reporting",s:"https://www.futurehouse.org/",n:"AI-for-Science Independent Postdoctoral Fellowship."},
+{d:"Science",l:"Operational",w:"Reading the literature",b:"Understanding extraction",m:"Absorbing findings to reverse-engineering why the machine was right",e:"Argued only",s:"https://www.normaltech.ai/p/what-will-be-left-for-us-to-work",n:"Narayanan's prediction, not an observed role. Human understanding is not friction to be automated away."},
+{d:"Science",l:"Decision",w:"Experiment design",b:"Open-ended search",m:"Picking the next test to defining the space to search",e:"Industry reporting",s:"https://www.lila.ai",n:"Lila runs an Open-Endedness team under Ken Stanley."},
+
+{d:"Legal",l:"Operational",w:"Junior associate",b:"The diamond's missing base",m:"Billable training hours to automated first pass",e:"Industry reporting",s:"https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/",n:"Firms moving from pyramid to diamond: fewer entry roles, thicker middle."},
+{d:"Legal",l:"Operational",w:"Document review",b:"Audit sampling",m:"Reading everything to checking a model that read everything",e:"Industry reporting",s:"https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/",n:"Adopted early, well before AI touched legal judgment."},
+{d:"Legal",l:"Decision",w:"Practising attorney",b:"Legal engineer",m:"Harvey pays $220-320K for lawyers who left practice",e:"Job posting",s:"https://www.harvey.ai/company/careers/f4d70ed0-010e-40f5-b194-2813e55f6e0c",n:""},
+{d:"Legal",l:"Structural",w:"Apprenticeship on live matters",b:"Case simulator",m:"Learning on real clients to rehearsing against synthetic ones",e:"Industry reporting",s:"https://www.thomsonreuters.com/en/institute/articles/legalweek-2026-new-existential-crisis",n:"AI-powered simulations so new lawyers can build courtroom skills and fail safely."},
+{d:"Legal",l:"Structural",w:"Billable hour",b:"Outcome pricing",m:"Selling time to selling resolution",e:"Industry reporting",s:"https://www.thomsonreuters.com/en/institute/articles/lawyer-development-ai-enabled-law-firms",n:""},
+
+{d:"Medicine",l:"Operational",w:"Medical scribe",b:"Ambient recorder",m:"Transcribing the visit to validating the transcript",e:"Named study",s:"https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes",n:"The most widely implemented generative AI in healthcare. 40% of UK GPs, 44.6% at UCSF. Adopted early, not late."},
+{d:"Medicine",l:"Operational",w:"Clinical note",b:"Note review",m:"Writing the record to auditing a generated one",e:"Named study",s:"https://bmjdigitalhealth.bmj.com/content/2/1/e000091",n:"BMJ: drafts are sensitive to hallucinations, omissions and invented diagnoses. The clinician becomes the validator."},
+{d:"Medicine",l:"Decision",w:"Radiologist",b:"AI-assisted reader",m:"Reading the image to reading the model reading the image",e:"Industry reporting",s:"https://www.auntminnie.com/imaging-informatics/artificial-intelligence/article/15746014/hinton-acknowledges-mistake-in-predicting-ai-replacement-of-radiologists",n:"The decision layer, not the operational one. This is the row that lagged, and Hinton's five-year call missed by a decade."},
+{d:"Medicine",l:"Decision",w:"Clinical audit",b:"Continuous model monitoring",m:"Periodic review to watching drift",e:"Named study",s:"https://bmjdigitalhealth.bmj.com/content/2/1/e000091",n:""},
+{d:"Medicine",l:"Structural",w:"Health IT procurement",b:"Chief Health AI Officer",m:"Buying software to governing model behaviour",e:"Industry reporting",s:"https://www.bitelabs.io/news/art-ai-careers-clinicians",n:"The newest C-suite role in healthcare; NHS trusts and US systems have created it."},
+
+{d:"The firm",l:"Decision",w:"Compliance",b:"AI assurance",m:"Checking the process to auditing the behaviour",e:"Industry reporting",s:"https://www.mercor.com/resources/experts/new-artificial-intelligence-job-opportunities/",n:""},
+{d:"The firm",l:"Structural",w:"Economist",b:"In-house measurer",m:"Forecasting the market to measuring your own effect on it",e:"Job posting",s:"https://www.anthropic.com/economic-index",n:"Chief economists at both Anthropic (McCrory) and OpenAI (Chatterji)."},
+{d:"The firm",l:"Structural",w:"Org behaviour",b:"Agent society behaviour",m:"Managing people to designing coordination",e:"Job posting",s:"https://www.anthropic.com/research/multiagent-systems",n:"Anthropic hires a Research Scientist, Multi-Agent. The Frontier Red Team has published on multiagent failure patterns."},
+{d:"The firm",l:"Structural",w:"Practising professional",b:"Training data",m:"micro1 pays firms $100k-$2M+ for operational data",e:"Vendor claim",s:"https://x.com/micro1_ai/status/2072800904332644429",n:"Vendor promotion, cited only for the published rate. Mercor claims 30k+ experts."},
+{d:"The firm",l:"Structural",w:"Software company",b:"Computational lab",m:"Shipping features to running experiments",e:"Argued only",s:"",n:"The weakest row. Four research passes produced no primary source."}
+];
+
+const DISCIPLINES = ["Software","Product","Science","Legal","Medicine","The firm"];
+const LAYERS = [
+  {k:"Operational", hint:"automated first"},
+  {k:"Decision",    hint:"still human"},
+  {k:"Structural",  hint:"the job's shape changes"}
+];
+
+let fDisc = "All", fLayer = "All", fQ = "";
+
+function chip(parent, label, active, onClick, dotVar){
+  const b = document.createElement("button");
+  b.className = "chip";
+  b.type = "button";
+  b.setAttribute("aria-pressed", String(active));
+  if (dotVar){
+    const dot = document.createElement("span");
+    dot.className = "dot";
+    dot.style.background = dotVar;
+    b.appendChild(dot);
+  }
+  b.appendChild(document.createTextNode(label));
+  b.addEventListener("click", onClick);
+  parent.appendChild(b);
+  return b;
+}
+
+function buildControls(){
+  const d = document.getElementById("disc");
+  chip(d, "All", fDisc === "All", () => { fDisc = "All"; render(); });
+  DISCIPLINES.forEach(function (name) {
+    chip(d, name, fDisc === name, () => { fDisc = name; render(); });
+  });
+
+  const l = document.getElementById("layer");
+  chip(l, "All", fLayer === "All", () => { fLayer = "All"; render(); });
+  LAYERS.forEach(function (L) {
+    const varName = L.k === "Operational" ? "var(--op)" : L.k === "Decision" ? "var(--dec)" : "var(--str)";
+    const b = chip(l, L.k, fLayer === L.k, () => { fLayer = L.k; render(); }, varName);
+    const hint = document.createElement("span");
+    hint.className = "hint";
+    hint.textContent = " · " + L.hint;
+    b.appendChild(hint);
+  });
+
+  document.getElementById("q").addEventListener("input", function (ev) {
+    fQ = ev.target.value.trim().toLowerCase();
+    render();
+  });
+}
+
+function syncChips(){
+  const d = document.getElementById("disc").querySelectorAll("button");
+  d[0].setAttribute("aria-pressed", String(fDisc === "All"));
+  DISCIPLINES.forEach((name, i) => d[i + 1].setAttribute("aria-pressed", String(fDisc === name)));
+  const l = document.getElementById("layer").querySelectorAll("button");
+  l[0].setAttribute("aria-pressed", String(fLayer === "All"));
+  LAYERS.forEach((L, i) => l[i + 1].setAttribute("aria-pressed", String(fLayer === L.k)));
+}
+
+function matches(r){
+  if (fDisc !== "All" && r.d !== fDisc) return false;
+  if (fLayer !== "All" && r.l !== fLayer) return false;
+  if (fQ){
+    const hay = (r.w + " " + r.b + " " + r.m + " " + r.d + " " + r.n).toLowerCase();
+    if (hay.indexOf(fQ) === -1) return false;
+  }
+  return true;
+}
+
+function render(){
+  syncChips();
+  const sc = document.querySelector(".scroller");
+  if (sc) sc.scrollTop = 0;
+  const shown = ROWS.filter(matches);
+  const list = document.getElementById("list");
+  list.textContent = "";
+
+  const counts = {Operational: 0, Decision: 0, Structural: 0};
+  shown.forEach(r => counts[r.l]++);
+
+  const tally = document.getElementById("tally");
+  tally.textContent = "";
+  const n = document.createElement("span");
+  n.innerHTML = "<b>" + shown.length + "</b> of 31 rows";
+  tally.appendChild(n);
+  LAYERS.forEach(function (L) {
+    if (!counts[L.k]) return;
+    const varName = L.k === "Operational" ? "var(--op)" : L.k === "Decision" ? "var(--dec)" : "var(--str)";
+    const s = document.createElement("span");
+    s.innerHTML = '<span class="sw" style="background:' + varName + '"></span><b>' + counts[L.k] + "</b> " + L.k;
+    tally.appendChild(s);
+  });
+
+  if (!shown.length){
+    const p = document.createElement("li");
+    p.className = "empty";
+    p.textContent = "No rows match. Try clearing the search, or picking All.";
+    list.appendChild(p);
+    return;
+  }
+
+  shown.forEach(function (r) {
+    const li = document.createElement("li");
+    li.className = "item";
+    li.setAttribute("data-layer", r.l);
+
+    const morph = document.createElement("p");
+    morph.className = "morph";
+    const was = document.createElement("span"); was.className = "was"; was.textContent = r.w;
+    const ar = document.createElement("span"); ar.className = "arrow"; ar.textContent = "→";
+    const bec = document.createElement("span"); bec.className = "becomes"; bec.textContent = r.b;
+    morph.appendChild(was); morph.appendChild(ar); morph.appendChild(bec);
+    li.appendChild(morph);
+
+    const moved = document.createElement("p");
+    moved.className = "moved";
+    moved.textContent = r.m;
+    li.appendChild(moved);
+
+    const meta = document.createElement("div");
+    meta.className = "meta";
+    const lt = document.createElement("span");
+    lt.className = "tag layer"; lt.setAttribute("data-l", r.l); lt.textContent = r.l;
+    meta.appendChild(lt);
+    const dt = document.createElement("span"); dt.className = "tag"; dt.textContent = r.d;
+    meta.appendChild(dt);
+    const et = document.createElement("span"); et.className = "tag"; et.textContent = r.e;
+    meta.appendChild(et);
+    if (r.s){
+      const a = document.createElement("a");
+      a.href = r.s; a.target = "_blank"; a.rel = "noopener noreferrer";
+      a.textContent = "source";
+      meta.appendChild(a);
+    }
+    li.appendChild(meta);
+
+    if (r.n){
+      const note = document.createElement("p");
+      note.className = "note";
+      note.textContent = r.n;
+      li.appendChild(note);
+    }
+
+    list.appendChild(li);
+  });
+}
+
+document.getElementById("src").textContent =
+  "Scanned off career pages, research-team pages and industry reporting, March–September 2026 · " +
+  "4 rows rest on a named study, 10 on job postings, 13 on industry reporting, 1 on a research team page, " +
+  "1 on a vendor's own claim, 2 on argument alone";
+
+buildControls();
+render();
+</script>
