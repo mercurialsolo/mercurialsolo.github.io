@@ -22,7 +22,7 @@ TocOpen: false
 
 **Job specs are changing years before the official stats reflect. In every field AI is starting with the operational work first. The entry role now asks for judgment.**
 
-## Job specs are moving first
+## Every job has a computational section
 
 Anthropic and OpenAI now both employ a chief economist. The job is to measure what their own employer is doing to the labour market.
 
