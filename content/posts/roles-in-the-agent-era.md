@@ -20,8 +20,6 @@ TocOpen: false
 - The most AI-exposed entry-level jobs are 7x more likely than the least exposed to ask for traditionally senior skills (PwC).
 {{< /highlight-box >}}
 
-**Job specs are changing years before the official stats reflect. In every field AI is starting with the operational work first. The entry role now asks for judgment.**
-
 ## Every job spec has a computational section
 
 Anthropic and OpenAI now both employ a chief economist who actively measure the impact of AI on the labour market. Anthropic's Peter McCrory told a Harvard forum this week that he wants to use [the tools of economics to help Anthropic understand the impact of its own decisions](https://www.thecrimson.com/article/2026/9/24/anthropic-economist-forum/).
@@ -47,6 +45,10 @@ Nathan Lambert describes [an environments industry](https://x.com/natolambert/st
 Indeed's Hiring Lab found AI-touched job titles [more common outside tech than inside it](https://www.hiringlab.org/2026/07/08/ai-is-no-longer-just-a-tech-occupation-story/) in five of six markets, with 63% of US AI-titled postings now outside tech occupations. This isn't a forecast.
 
 ## No country for beginners
+
+{{< highlight-box >}}
+Job specs are changing years before the official stats reflect. In every field AI is starting with the operational work first. The entry role now asks for judgment.
+{{< /highlight-box >}}
 
 Geoffrey Hinton predicted in 2016 that AI would do a radiologist's job within five years, and he's since [admitted he was wrong on the timing](https://www.auntminnie.com/imaging-informatics/artificial-intelligence/article/15746014/hinton-acknowledges-mistake-in-predicting-ai-replacement-of-radiologists). He bet on the judgement, medicine automated the operational paperwork first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
 
@@ -86,7 +88,9 @@ Narayanan, for all his caution about timing, agrees on the direction. He expects
 - **Read job specs, not job titles.** The official categories are frozen until 2028. Postings show the new shape now, and 63% of US AI-titled postings are already outside tech.
 - **If you manage people, rebuild the rung.** Your juniors learned on the work you're automating. Give them the evals to write and the AI output to review, with a senior checking their calls.
 
-The official numbers will catch up in 2028. Don't wait for them.
+Look down the 31 rows below and notice what isn't there: a job that simply vanished. Every row is a role that changed shape. The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. What moved is the operational half underneath them.
+
+The work isn't disappearing, it's changing. Job specs are where you read that first; the official numbers will catch up in 2028. Don't wait for them.
 
 {{< highlight-box title="Try it yourself" >}}
 Anthropic's [Economic Scenarios explorer](https://www.anthropic.com/institute/econ-scenarios) lets you set capability and adoption assumptions and watch GDP, wages and labour share move. MIT CTL's [AI Labor Exposure Map](https://www.workanalyticslab.com/us-ai-map/) shows exposure by metro area, industry and job. MIT's [Iceberg Index](https://iceberg.mit.edu/report.pdf) is the skill-level report behind the 2.2% and the 11.7%.
