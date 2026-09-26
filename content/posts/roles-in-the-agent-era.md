@@ -46,7 +46,7 @@ Nathan Lambert describes [an environments industry](https://x.com/natolambert/st
 
 Indeed's Hiring Lab found AI-touched job titles [more common outside tech than inside it](https://www.hiringlab.org/2026/07/08/ai-is-no-longer-just-a-tech-occupation-story/) in five of six markets, with 63% of US AI-titled postings now outside tech occupations. This isn't a forecast.
 
-## Every field is starting with the junior work first
+## No country for beginners
 
 Geoffrey Hinton predicted in 2016 that AI would do a radiologist's job within five years, and he's since [admitted he was wrong on the timing](https://www.auntminnie.com/imaging-informatics/artificial-intelligence/article/15746014/hinton-acknowledges-mistake-in-predicting-ai-replacement-of-radiologists). He bet on the judgement, medicine automated the operational paperwork first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
 
