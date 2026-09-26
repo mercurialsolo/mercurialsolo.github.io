@@ -17,7 +17,7 @@ TocOpen: false
 - The US has no official job code for an AI engineer. The next set of occupation codes won't be in use until 2028.
 - Visible AI adoption covers 2.2% of US wage value. Work AI can already do covers 11.7% (MIT Project Iceberg).
 - In every field AI takes the operational work first: the note before the diagnosis, first-pass review before the advice.
-- The most AI-exposed entry-level jobs are 7x more likely than the least exposed to ask for traditionally senior skills (PwC).
+- In 94 of every 100 occupations, the work people hand to Claude shows more education than the task requires (Anthropic Economic Index).
 {{< /highlight-box >}}
 
 ## Every job spec has a computational section
@@ -50,7 +50,7 @@ Indeed's Hiring Lab found AI-touched job titles [more common outside tech than i
 Job specs are changing years before the official stats reflect. In every field AI is starting with the operational work first. The entry role now asks for judgment.
 {{< /highlight-box >}}
 
-Geoffrey Hinton predicted in 2016 that AI would do a radiologist's job within five years, and he's since [admitted he was wrong on the timing](https://www.auntminnie.com/imaging-informatics/artificial-intelligence/article/15746014/hinton-acknowledges-mistake-in-predicting-ai-replacement-of-radiologists). He bet on the judgement, medicine automated the operational paperwork first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
+Hinton predicted in 2016 that AI would do a radiologist's job within five years, and he's since [admitted he was wrong on the timing](https://www.auntminnie.com/imaging-informatics/artificial-intelligence/article/15746014/hinton-acknowledges-mistake-in-predicting-ai-replacement-of-radiologists). He bet on the judgement, medicine automated the operational paperwork first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
 
 Legal firms are moving from the pyramid to what iManage calls [the diamond](https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/), with fewer entry roles and a thicker middle of specialists and technologists.
 
@@ -60,7 +60,7 @@ Inside every field the sequencing looks similar - AI’s taking the operational 
 
 {{< chart src="roles-in-the-agent-era/automation-gap.html" caption="Anthropic classifies each Claude conversation as automation or augmentation. In five fields of six, the support role sits further right than the professional one." >}}
 
-Stanford finds employment for 22-25 year olds in the most AI-exposed occupations [down about 11% since late 2022](https://digitaleconomy.stanford.edu/publications/canaries-in-the-coal-mine/), while the least exposed grew about 10%. [Ramp](https://ramp.com/data/heavy-ai-adopters-hire-more) joined its card-spend records to workforce data across 21,000 firms and found entry-level headcount up 12% at heavy AI adopters. The skills data is pointing the other way. PwC finds the most exposed entry-level jobs are [7x more likely than the least exposed](https://www.pwc.com/gx/en/issues/artificial-intelligence/job-barometer/2026/2026-global-ai-jobs-barometer-global-findings.pdf) to demand traditionally senior skills. The New York Fed's regional surveys describe AI's effect so far as [changing skill requirements rather than eliminating jobs](https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/).
+Stanford finds employment for 22-25 year olds in the most AI-exposed occupations [down about 11% since late 2022](https://digitaleconomy.stanford.edu/publications/canaries-in-the-coal-mine/), while the least exposed grew about 10%. [Ramp](https://ramp.com/data/heavy-ai-adopters-hire-more) joined its card-spend records to workforce data across 21,000 firms and found entry-level headcount up 12% at heavy AI adopters. The skills data is pointing the other way. Anthropic's own [economic index](https://www.anthropic.com/research/economic-index-june-2026-report) puts a number on the bar: across 718 occupations, the work people hand to Claude demonstrates about eight months more education than the task itself nominally requires, and that holds in 94 of every 100. The New York Fed's regional surveys describe AI's effect so far as [changing skill requirements rather than eliminating jobs](https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/).
 
 ## Why the official numbers can't see it yet?
 
