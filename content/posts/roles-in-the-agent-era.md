@@ -22,13 +22,11 @@ TocOpen: false
 
 **Job specs are changing years before the official stats reflect. In every field AI is starting with the operational work first. The entry role now asks for judgment.**
 
-## Every job has a computational section
+## Every job spec has a computational section
 
-Anthropic and OpenAI now both employ a chief economist. The job is to measure what their own employer is doing to the labour market.
+Anthropic and OpenAI now both employ a chief economist who actively measure the impact of AI on the labour market. Anthropic's Peter McCrory told a Harvard forum this week that he wants to use [the tools of economics to help Anthropic understand the impact of its own decisions](https://www.thecrimson.com/article/2026/9/24/anthropic-economist-forum/).
 
-Anthropic's Peter McCrory told a Harvard forum this week that he wants to use [the tools of economics to help Anthropic understand the impact of its own decisions](https://www.thecrimson.com/article/2026/9/24/anthropic-economist-forum/).
-
-The argument about AI and work gets settled with payroll data -> this trails the hiring that produces it by years. Arvind Narayanan has made a careful case that [AI spreads slowly](https://knightcolumbia.org/content/ai-as-normal-technology), and he puts the adaptation at [a decade or two](https://www.normaltech.ai/p/what-will-be-left-for-us-to-work). But he's describing payroll. Employers are rewriting roles the quarter they believe something; payrolls record it years later, once training and org design have caught up. The job specs are changing now, and not only in software.
+Arvind Narayanan has made a careful case that [AI spreads slowly](https://knightcolumbia.org/content/ai-as-normal-technology), and he puts the adaptation at [a decade or two](https://www.normaltech.ai/p/what-will-be-left-for-us-to-work). But he's describing payroll. Employers are rewriting roles the quarter they believe something; payrolls record it years later, once training and org design have caught up. The job specs are changing now, and not only in software.
 
 | Discipline | Was | Becomes |
 |------------|-----|---------|
