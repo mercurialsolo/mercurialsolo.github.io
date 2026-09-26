@@ -35,7 +35,7 @@ The argument about AI and work gets settled with payroll data -> this trails the
 | Science | Bench scientist | Autonomous lab supervisor |
 | Software | Debugging | Mechanistic interpretability |
 | Product | Product design | Agent behaviour |
-| Legal | Junior associate | The diamond's missing base |
+| Legal | Practice innovation | Director of AI |
 | Medicine | Medical scribe | Ambient recorder |
 
 Every domain is swapping out what you could open and read for something you can only sample. A reviewable pull request becomes an {{< term name="eval" text="eval suite" def="A test suite for a model or agent: a fixed set of inputs plus a way of scoring the outputs, used to decide whether behaviour improved or regressed." >}}. A clinical note becomes a draft to check. Each one buries a computational job inside a role that never had one.
