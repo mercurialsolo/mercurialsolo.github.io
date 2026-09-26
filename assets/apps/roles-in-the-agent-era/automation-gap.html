@@ -43,7 +43,6 @@ h3{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.3}
 .ticks{position:relative;height:16px}
 .ticks span{position:absolute;font-family:var(--mono);font-size:9.5px;color:var(--ink3);transform:translateX(-50%)}
 
-.note{font-size:11.5px;color:var(--ink2);line-height:1.5;margin:12px 0 0;max-width:70ch}
 .src{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ink3);
   margin:12px 0 0;padding-top:9px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.6}
 
@@ -57,7 +56,7 @@ h3{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.3}
 
 <p class="kicker">Anthropic Economic Index &middot; Claude.ai, May 2026</p>
 <h3>The support role is handed over first</h3>
-<p class="lede">Share of each occupation's Claude conversations that Anthropic classifies as <b>automation</b>, where the model does the task, rather than <b>augmentation</b>, where a person works through it with the model. In five fields of six the support role sits further right than the professional one.</p>
+<p class="lede">Share of each occupation's Claude conversations that Anthropic classifies as <b>automation</b>, where the model does the task, rather than <b>augmentation</b>, where a person works through it with the model.</p>
 
 <div class="key">
   <span><i style="background:var(--op)"></i>Support / operational role</span>
@@ -67,7 +66,6 @@ h3{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.3}
 <div class="rows" id="rows"></div>
 <div class="axis"><div></div><div class="ticks" id="ticks"></div></div>
 
-<p class="note" id="note"></p>
 <p class="src">Source <b>Anthropic Economic Index</b>, release 2026-06-26, <code>aei_claude_ai</code>, global, May 2026, SOC detailed occupations &middot; Automation = directive and feedback-loop conversation patterns</p>
 
 <script>
@@ -91,7 +89,7 @@ DATA.forEach(function (r) {
 
   const f = document.createElement("div");
   f.className = "fld";
-  f.textContent = r.f + (r.rev ? " ↑" : "");
+  f.textContent = r.f;
   el.appendChild(f);
 
   const t = document.createElement("div");
@@ -135,8 +133,5 @@ const ticks = document.getElementById("ticks");
   ticks.appendChild(s);
 });
 
-document.getElementById("note").innerHTML =
-  "Chemistry runs the other way, and is marked ↑: chemists show a higher automation share than chemical technicians. " +
-  "This measures what people bring to Claude, not what AI is capable of and not what employers have replaced. " +
-  "Which occupation stands for each layer is my choice, from the published SOC list.";
+
 </script>

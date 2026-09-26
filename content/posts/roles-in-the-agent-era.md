@@ -36,13 +36,13 @@ Arvind Narayanan has made a careful case that [AI spreads slowly](https://knight
 
 Every domain is swapping out what you could open and read for something you can only sample. A reviewable pull request becomes an {{< term name="eval" text="eval suite" def="A test suite for a model or agent: a fixed set of inputs plus a way of scoring the outputs, used to decide whether behaviour improved or regressed." >}}. A clinical note becomes a draft to check. Each one now has a computational role within.
 
-François Chollet predicted this in 2021: within ten to twenty years, nearly every branch of science would be ["for all intents and purposes, a branch of computer science"](https://x.com/fchollet/status/2102444225443029100). Anthropic's interpretability team now recruits from [astronomy, physics, mathematics and biology](https://www.anthropic.com/research/team/interpretability), because the model stopped being a program you debug and became a specimen you study.
+Anthropic's interpretability team now recruits from [astronomy, physics, mathematics and biology](https://www.anthropic.com/research/team/interpretability) - the model stopped becoming a program to debug, it's now a specimen to study.
 
 ![François Chollet on 22 September 2026 quote-tweeting his own May 2021 prediction that nearly every branch of science would become a branch of computer science, with the comment that it is looking obvious by the day now. 869.6K views.](/images/roles-in-the-agent-era/chollet-quote-tweet.png)
 
 Nathan Lambert describes [an environments industry](https://x.com/natolambert/status/2023549545045467615) where labs buy ten to twenty environments at a time for millions of dollars, and micro1 offers companies [$100k to $2M+](https://x.com/micro1_ai/status/2072800904332644429) for the anonymised operational data those environments are built from. Professional judgment is now in high-demand.
 
-Indeed's Hiring Lab found AI-touched job titles [more common outside tech than inside it](https://www.hiringlab.org/2026/07/08/ai-is-no-longer-just-a-tech-occupation-story/) in five of six markets, with 63% of US AI-titled postings now outside tech occupations. This isn't a forecast.
+Indeed's Hiring Lab found AI-touched job titles [more common outside tech than inside it](https://www.hiringlab.org/2026/07/08/ai-is-no-longer-just-a-tech-occupation-story/) in five of six markets, with 63% of US AI-titled postings now outside tech occupations.
 
 ## No country for beginners
 
@@ -58,7 +58,7 @@ Labs have automated routine work for decades, but ["humans were always pulling t
 
 Inside every field the sequencing looks similar - AI’s taking the operational work first and the decisions last. The cost of a wrong draft is cheap vs a wrong call. We’ve seen it in medicine and law, software handed over the code before the architecture; science is handing over the literature search and the experiments before the choice of what to test. Unfortunately the operational layer is where the juniors learn the judgement.
 
-{{< chart src="roles-in-the-agent-era/automation-gap.html" caption="Anthropic classifies each Claude conversation as automation or augmentation. In five fields of six, the support role sits further right than the professional one." >}}
+{{< chart min="540px" src="roles-in-the-agent-era/automation-gap.html" caption="Anthropic classifies each Claude conversation as automation or augmentation. In five fields of six, the support role sits further right than the professional one." >}}
 
 Stanford finds employment for 22-25 year olds in the most AI-exposed occupations [down about 11% since late 2022](https://digitaleconomy.stanford.edu/publications/canaries-in-the-coal-mine/), while the least exposed grew about 10%. [Ramp](https://ramp.com/data/heavy-ai-adopters-hire-more) joined its card-spend records to workforce data across 21,000 firms and found entry-level headcount up 12% at heavy AI adopters. The skills data is pointing the other way. Anthropic's own [economic index](https://www.anthropic.com/research/economic-index-june-2026-report) puts a number on the bar: across 718 occupations, the work people hand to Claude demonstrates about eight months more education than the task itself nominally requires, and that holds in 94 of every 100. The New York Fed's regional surveys describe AI's effect so far as [changing skill requirements rather than eliminating jobs](https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/).
 
