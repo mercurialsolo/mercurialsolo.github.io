@@ -40,6 +40,15 @@ li[data-now] .txt{color:var(--ink)}
 .src{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ink3);
   margin:16px 0 0;padding-top:9px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.6}
 
+@media(max-width:560px){
+  body{padding:16px 14px 12px}
+  h3{font-size:16px}
+  .lede{font-size:13.5px}
+  .txt{font-size:14.5px}
+  .yr{font-size:11.5px}
+  .src{font-size:10px}
+  ol.tl li{padding-bottom:18px}
+}
 @media(max-width:420px){
   ol.tl li{grid-template-columns:16px 1fr;grid-template-areas:"rail yr" "rail txt";row-gap:2px}
   .rail{grid-area:rail}

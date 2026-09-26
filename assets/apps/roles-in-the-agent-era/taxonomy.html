@@ -73,22 +73,29 @@ li.item[data-layer="Structural"]{border-left-color:var(--str)}
 .empty{font-size:12.5px;color:var(--ink3);padding:20px 0;text-align:center}
 .src{flex:none;font-family:var(--mono);font-size:8.5px;letter-spacing:.04em;color:var(--ink3);
   margin:8px 0 0;padding-top:8px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.55}
+/* Mobile scales type UP, not down, and every control clears a 44px tap
+   target (WCAG 2.2 AA asks 24px; 44px is the comfortable thumb size). */
 @media(max-width:560px){
-  body{padding:13px 12px 9px}
+  body{padding:14px 13px 10px}
   .kicker{display:none}
-  h1{font-size:15px;margin-bottom:6px}
+  h1{font-size:17px;margin-bottom:8px}
   .lede{display:none}                 /* the caption under the embed says the same */
-  .controls{gap:7px;margin-bottom:9px}
-  .lbl{min-width:100%;margin-bottom:-3px}
-  .row{gap:5px}
-  input[type=search]{max-width:100%}
-  button.chip{font-size:11px;padding:5px 9px}
+  .controls{gap:10px;margin-bottom:12px}
+  .lbl{min-width:100%;margin-bottom:-2px;font-size:10.5px}
+  .row{gap:8px}
+  /* 16px keeps iOS from zooming the page when the field takes focus */
+  input[type=search]{max-width:100%;font-size:16px;padding:11px 12px;min-height:44px}
+  button.chip{font-size:14px;padding:0 15px;min-height:44px}
   button.chip .hint{display:none}     /* keep just Operational / Decision / Structural */
-  .tally{font-size:9.5px;gap:8px;margin-bottom:8px;padding-bottom:7px}
-  .morph{font-size:13px}
-  .moved{font-size:11.5px}
-  li.item{padding:9px 10px}
-  .src{font-size:8px;line-height:1.5}
+  .tally{font-size:11px;gap:10px;margin-bottom:10px;padding-bottom:9px}
+  .morph{font-size:15px}
+  .moved{font-size:13.5px}
+  .meta{font-size:11px;gap:8px}
+  .tag{padding:4px 8px}
+  .meta a{display:inline-block;padding:7px 0;min-height:24px}
+  .note{font-size:13px}
+  li.item{padding:12px 13px}
+  .src{font-size:10px;line-height:1.6}
 }
 </style>
 

@@ -890,6 +890,22 @@
     outline-offset: 3px;
 }
 
+/* On a phone the chart controls need a real tap target, and the labels were
+   sitting at ~11px. WCAG 2.2 AA asks 24px minimum; 44px is thumb-comfortable. */
+@media (max-width: 560px) {
+    .chart-embed .chart-tools {
+        gap: 1.25rem;
+        font-size: 0.82rem;
+        margin-bottom: 0.5rem;
+    }
+    .chart-embed .chart-tools button,
+    .chart-embed .chart-tools a {
+        min-height: 44px;
+        display: inline-flex;
+        align-items: center;
+    }
+}
+
 /* the iframe fills the screen when promoted, whatever inline height it had */
 .chart-embed iframe:fullscreen,
 .chart-embed iframe:-webkit-full-screen {

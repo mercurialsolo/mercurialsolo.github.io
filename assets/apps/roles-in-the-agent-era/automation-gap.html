@@ -47,10 +47,22 @@ h3{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.3}
   margin:12px 0 0;padding-top:9px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.6}
 
 @media(max-width:560px){
-  .row,.axis{grid-template-columns:1fr;gap:3px}
-  .fld{text-align:left}
-  .track{height:56px}
-  .lab{font-size:10.5px}
+  body{padding:16px 14px 12px}
+  h3{font-size:16px}
+  .lede{font-size:13.5px}
+  .key{font-size:13px;gap:12px}
+  .row,.axis{grid-template-columns:1fr;gap:4px}
+  .fld{text-align:left;font-size:11px}
+  /* taller track so the bigger dots and labels stay clear of each other */
+  .track{height:66px}
+  .base{top:32px}
+  .link{top:30px;height:4px}
+  .pt{top:26px;width:14px;height:14px;margin-left:-7px}
+  .lab{font-size:12.5px}
+  .lab.up{top:2px}
+  .lab.dn{top:44px}
+  .ticks span{font-size:10.5px}
+  .src{font-size:10px}
 }
 </style>
 
@@ -115,15 +127,29 @@ DATA.forEach(function (r) {
     // the lower value labels below the line, the higher one above, so they never collide
     lab.className = "lab " + (v[1] === lo ? "dn" : "up");
     lab.innerHTML = v[0] + " <b>" + v[1].toFixed(1) + "%</b>";
-    // keep the label inside the box
-    if (x(v[1]) > 62) { lab.style.right = (100 - x(v[1])) + "%"; lab.style.marginRight = "10px"; }
-    else { lab.style.left = x(v[1]) + "%"; lab.style.marginLeft = "10px"; }
+    lab.dataset.x = x(v[1]);
     t.appendChild(lab);
   });
 
   el.appendChild(t);
   rows.appendChild(el);
 });
+
+// Label placement. On a narrow screen the labels are long relative to the
+// track, so anchoring them beside their dot pushes them off the right edge.
+// There they go flush left instead; the dot still carries the position.
+function placeLabels() {
+  const narrow = window.innerWidth <= 560;
+  document.querySelectorAll(".lab").forEach(function (lab) {
+    const xv = parseFloat(lab.dataset.x);
+    lab.style.left = lab.style.right = lab.style.marginLeft = lab.style.marginRight = "";
+    if (narrow) { lab.style.left = "0"; return; }
+    if (xv > 62) { lab.style.right = (100 - xv) + "%"; lab.style.marginRight = "10px"; }
+    else { lab.style.left = xv + "%"; lab.style.marginLeft = "10px"; }
+  });
+}
+placeLabels();
+window.addEventListener("resize", placeLabels);
 
 const ticks = document.getElementById("ticks");
 [0, 20, 40, 60, 80].forEach(function (v) {

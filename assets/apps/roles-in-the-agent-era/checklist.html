@@ -64,11 +64,17 @@ button.reset{font-family:var(--mono);font-size:9px;letter-spacing:.07em;text-tra
   border-bottom:1px solid var(--rule)}
 button.reset:hover{color:var(--ink);border-bottom-color:var(--ink)}
 
-@media(max-width:480px){
+@media(max-width:560px){
   body{padding:15px 13px 12px}
-  .txt{font-size:12px}
-  li label{padding:10px 11px;grid-template-columns:20px 1fr;gap:0 9px}
-  .tabs .count{margin-left:0;width:100%;order:3}
+  h1{font-size:17px}
+  .tabs button{font-size:14px;padding:0 16px;min-height:44px}
+  .tabs .count{margin-left:0;width:100%;order:3;font-size:11px}
+  .txt{font-size:15px;line-height:1.5}
+  li label{padding:13px 13px;grid-template-columns:28px 1fr;gap:0 11px}
+  li input{width:24px;height:24px}
+  li input::after{width:12px;height:7px;border-left-width:2.5px;border-bottom-width:2.5px}
+  button.reset{font-size:11px;padding:11px 0;min-height:44px}
+  .note{font-size:10px}
 }
 </style>
 
