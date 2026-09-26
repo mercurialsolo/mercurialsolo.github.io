@@ -80,7 +80,7 @@ Narayanan, for all his caution about timing, agrees on the direction. He expects
 
 Look down the 31 rows below and notice what isn't there: a job that simply vanished. Every job looks like it transformed. The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. What moved is the operational half underneath them.
 
-The work isn't disappearing, it's changing. Job specs are where you read that first; the official numbers will catch up in 2028. Don't wait for them.
+The work isn't disappearing, it's changing - the (Job) specs are where you catch it first.
 
 {{< highlight-box title="Try it yourself" >}}
 Anthropic's [Economic Scenarios explorer](https://www.anthropic.com/institute/econ-scenarios) lets you set capability and adoption assumptions and watch GDP, wages and labour share move. MIT CTL's [AI Labor Exposure Map](https://www.workanalyticslab.com/us-ai-map/) shows exposure by metro area, industry and job. MIT's [Iceberg Index](https://iceberg.mit.edu/report.pdf) is the skill-level report behind the 2.2% and the 11.7%.
