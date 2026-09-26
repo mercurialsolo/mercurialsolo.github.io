@@ -1,0 +1,142 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Automation share: support roles vs professional roles</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* HTML, not a scaling SVG, so the text stays readable on a phone. */
+:root{
+  --g:#faf9f7;--ink:#16150f;--ink2:#55524a;--ink3:#817d72;--rule:#e3e0d8;--rs:#d6d2c7;
+  --op:#eb6834;   /* support / operational role */
+  --dec:#2a78d6;  /* professional / decision role */
+  --sans:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,monospace;
+}
+@media(prefers-color-scheme:dark){:root{
+  --g:#1a1a19;--ink:#f5f4ef;--ink2:#c3c2b7;--ink3:#8f8e84;--rule:#35352f;--rs:#4b4b43;
+  --op:#e0763c;--dec:#3987e5;
+}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--g);color:var(--ink);font-family:var(--sans);
+  padding:18px 16px 14px;-webkit-text-size-adjust:100%;font-variant-numeric:tabular-nums}
+.kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0 0 6px}
+h3{font-size:15px;font-weight:600;margin:0 0 3px;line-height:1.3}
+.lede{font-size:12.5px;color:var(--ink2);margin:0 0 12px;line-height:1.5;max-width:64ch}
+
+.key{display:flex;flex-wrap:wrap;gap:14px;margin:0 0 14px;font-size:11.5px;color:var(--ink2)}
+.key span{display:inline-flex;align-items:center;gap:6px}
+.key i{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+
+.rows{display:grid;gap:13px}
+.row{display:grid;grid-template-columns:104px 1fr;gap:0 12px;align-items:center}
+.fld{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;
+  color:var(--ink3);text-align:right;line-height:1.35}
+.track{position:relative;height:42px}
+.base{position:absolute;left:0;right:0;top:21px;height:1px;background:var(--rule)}
+.link{position:absolute;top:20px;height:3px;background:var(--rs);border-radius:2px}
+.pt{position:absolute;top:15px;width:11px;height:11px;border-radius:50%;margin-left:-5.5px}
+.pt.o{background:var(--op)} .pt.d{background:var(--dec)}
+.lab{position:absolute;font-size:11px;color:var(--ink2);white-space:nowrap;line-height:1.2}
+.lab.up{top:-2px} .lab.dn{top:28px}
+.lab b{font-family:var(--mono);font-weight:500;color:var(--ink)}
+.row.rev .fld{color:var(--op)}
+
+.axis{display:grid;grid-template-columns:104px 1fr;gap:0 12px;margin-top:2px}
+.ticks{position:relative;height:16px}
+.ticks span{position:absolute;font-family:var(--mono);font-size:9.5px;color:var(--ink3);transform:translateX(-50%)}
+
+.note{font-size:11.5px;color:var(--ink2);line-height:1.5;margin:12px 0 0;max-width:70ch}
+.src{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ink3);
+  margin:12px 0 0;padding-top:9px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.6}
+
+@media(max-width:560px){
+  .row,.axis{grid-template-columns:1fr;gap:3px}
+  .fld{text-align:left}
+  .track{height:56px}
+  .lab{font-size:10.5px}
+}
+</style>
+
+<p class="kicker">Anthropic Economic Index &middot; Claude.ai, May 2026</p>
+<h3>The support role is handed over first</h3>
+<p class="lede">Share of each occupation's Claude conversations that Anthropic classifies as <b>automation</b>, where the model does the task, rather than <b>augmentation</b>, where a person works through it with the model. In five fields of six the support role sits further right than the professional one.</p>
+
+<div class="key">
+  <span><i style="background:var(--op)"></i>Support / operational role</span>
+  <span><i style="background:var(--dec)"></i>Professional / decision role</span>
+</div>
+
+<div class="rows" id="rows"></div>
+<div class="axis"><div></div><div class="ticks" id="ticks"></div></div>
+
+<p class="note" id="note"></p>
+<p class="src">Source <b>Anthropic Economic Index</b>, release 2026-06-26, <code>aei_claude_ai</code>, global, May 2026, SOC detailed occupations &middot; Automation = directive and feedback-loop conversation patterns</p>
+
+<script>
+// Values read from the published CSV (collaboration_bucket_automation_pct).
+const DATA = [
+  {f:"Medicine",    o:["Medical records specialist", 74.9], d:["Family medicine physician", 42.1]},
+  {f:"Software",    o:["QA analyst / tester",        75.8], d:["Software developer",        60.8]},
+  {f:"Life science",o:["Biological technician",      59.3], d:["Medical scientist",         23.3]},
+  {f:"Finance",     o:["Bookkeeping clerk",          51.9], d:["Economist",                 26.6]},
+  {f:"Law",         o:["Legal secretary",            51.3], d:["Lawyer",                    31.5]},
+  {f:"Chemistry",   o:["Chemical technician",        48.1], d:["Chemist",                   69.1], rev:true}
+];
+
+const MAX = 90;
+const x = v => (v / MAX) * 100;
+
+const rows = document.getElementById("rows");
+DATA.forEach(function (r) {
+  const el = document.createElement("div");
+  el.className = "row" + (r.rev ? " rev" : "");
+
+  const f = document.createElement("div");
+  f.className = "fld";
+  f.textContent = r.f + (r.rev ? " ↑" : "");
+  el.appendChild(f);
+
+  const t = document.createElement("div");
+  t.className = "track";
+  t.innerHTML = '<span class="base"></span>';
+
+  const lo = Math.min(r.o[1], r.d[1]), hi = Math.max(r.o[1], r.d[1]);
+  const link = document.createElement("span");
+  link.className = "link";
+  link.style.left = x(lo) + "%";
+  link.style.width = (x(hi) - x(lo)) + "%";
+  t.appendChild(link);
+
+  [["o", r.o], ["d", r.d]].forEach(function (pair) {
+    const cls = pair[0], v = pair[1];
+    const p = document.createElement("span");
+    p.className = "pt " + cls;
+    p.style.left = x(v[1]) + "%";
+    p.title = v[0] + ": " + v[1] + "% automation";
+    t.appendChild(p);
+
+    const lab = document.createElement("span");
+    // the lower value labels below the line, the higher one above, so they never collide
+    lab.className = "lab " + (v[1] === lo ? "dn" : "up");
+    lab.innerHTML = v[0] + " <b>" + v[1].toFixed(1) + "%</b>";
+    // keep the label inside the box
+    if (x(v[1]) > 62) { lab.style.right = (100 - x(v[1])) + "%"; lab.style.marginRight = "10px"; }
+    else { lab.style.left = x(v[1]) + "%"; lab.style.marginLeft = "10px"; }
+    t.appendChild(lab);
+  });
+
+  el.appendChild(t);
+  rows.appendChild(el);
+});
+
+const ticks = document.getElementById("ticks");
+[0, 20, 40, 60, 80].forEach(function (v) {
+  const s = document.createElement("span");
+  s.style.left = x(v) + "%";
+  s.textContent = v + "%";
+  ticks.appendChild(s);
+});
+
+document.getElementById("note").innerHTML =
+  "Chemistry runs the other way, and is marked ↑: chemists show a higher automation share than chemical technicians. " +
+  "This measures what people bring to Claude, not what AI is capable of and not what employers have replaced. " +
+  "Which occupation stands for each layer is my choice, from the published SOC list.";
+</script>

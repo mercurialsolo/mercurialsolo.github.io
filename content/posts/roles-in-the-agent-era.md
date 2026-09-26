@@ -56,6 +56,8 @@ Labs have automated routine work for decades, but ["humans were always pulling t
 
 Inside every field the sequencing looks similar - AI’s taking the operational work first and the decisions last. The cost of a wrong draft is cheap vs a wrong call. We’ve seen it in medicine and law, software handed over the code before the architecture; science is handing over the literature search and the experiments before the choice of what to test. Unfortunately the operational layer is where the juniors learn the job.
 
+{{< chart src="roles-in-the-agent-era/automation-gap.html" caption="Anthropic classifies each Claude conversation as automation or augmentation. In five fields of six, the support role sits further right than the professional one." >}}
+
 Whether that means fewer junior jobs is still open, and I'd rather say so than quote the half that suits me. Stanford finds employment for 22-25 year olds in the most AI-exposed occupations [down about 11% since late 2022](https://digitaleconomy.stanford.edu/publications/canaries-in-the-coal-mine/), while the least exposed grew about 10%. [Ramp](https://ramp.com/data/heavy-ai-adopters-hire-more) joined its card-spend records to workforce data across 21,000 firms and found entry-level headcount up 12% at heavy AI adopters. The skills data is pointing the other way. PwC finds the most exposed entry-level jobs are [7x more likely than the least exposed](https://www.pwc.com/gx/en/issues/artificial-intelligence/job-barometer/2026/2026-global-ai-jobs-barometer-global-findings.pdf) to demand traditionally senior skills. The New York Fed's regional surveys describe AI's effect so far as [changing skill requirements rather than eliminating jobs](https://libertystreeteconomics.newyorkfed.org/2026/08/ais-impact-on-labor-and-hiring/).
 
 ## Why the official numbers can't see it yet?
@@ -66,11 +68,9 @@ Read the official statistics and it looks like none of this has happened and is 
 
 MIT's [Project Iceberg](https://iceberg.mit.edu/report.pdf) gets underneath the codes by counting skills. The technology roles the headlines cover account for 2.2% of US wage value, about $211 billion. Skills AI can already perform across administrative, financial and professional work account for 11.7%, about $1.2 trillion, and they're spread across every state. Delaware and South Dakota score higher than California.
 
-Even the direct measurements are struggling to keep up. METR has [retired its 2025 finding](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study) that AI made experienced developers slower, and its [late-2025 follow-up](https://metr.org/blog/2026-02-24-uplift-update/) estimates an 18% speedup for the returning developers. The study itself is being redesigned because too few developers will work without AI to fill a control group.
-
 ## What to do before the data catches up
 
-Every role in the taxonomy below asks for judgment. The first rung now asks for the judgment you used to earn by climbing. So who's going to be qualified to write the evals in 2035? The people who start building that judgment now, on purpose, because the work that used to build it by accident is going first.
+The entry job now demands judgement not execution skills. So who's going to be qualified to write the evals in 2035? The folks who start building judgment deliberately, coz the work that used to build it by accident is going first.
 
 Narayanan, for all his caution about timing, agrees on the direction. He expects human effort to shift ["from building towards evaluation and monitoring"](https://icml.cc/virtual/2026/invited-talk/67274), with domain knowledge and normative judgment gaining in importance.
 
@@ -95,7 +95,5 @@ Anthropic's [Economic Scenarios explorer](https://www.anthropic.com/institute/ec
 ---
 
 ## The full taxonomy
-
-Find your role below. Thirty-one role morphs across six disciplines, scanned off career pages, research-team pages and industry reporting between March and September 2026. Four rows rest on a named study, 10 on job postings, 13 on industry reporting, one on a research team page, one on a vendor's own claim, and two on nothing but my argument.
 
 {{< chart src="roles-in-the-agent-era/taxonomy.html" caption="Filter by discipline or layer, or search for your own role. Every row links to its source." min="620px" fit="off" >}}
