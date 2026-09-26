@@ -25,31 +25,58 @@
     margin-bottom: var(--gap);
 }
 
-/* Better table styling */
-.post-content table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 1.5em 0;
-    font-size: 0.95em;
+/* Better table styling.
+   The scroll container lives on .table-wrap (see layouts/_default/_markup/
+   render-table.html), NOT on the table. A display:block table stops laying
+   out as a table: columns shrink to their content and width:100% no longer
+   distributes them, which left tables narrow with dead space beside them. */
+.post-content .table-wrap {
     overflow-x: auto;
-    display: block;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.75em 0;
 }
 
-.post-content table thead {
-    background: var(--tertiary);
+.post-content table {
+    /* PaperMod's core CSS sets display:block on tables; override it or the
+       columns hug their content and leave the row half empty. */
+    display: table;
+    width: 100%;
+    min-width: 100%;
+    border-collapse: collapse;
+    margin: 0;
+    font-size: 0.95em;
+    table-layout: auto;
 }
 
 .post-content table th {
     font-weight: 600;
     text-align: left;
-    padding: 0.75em 1em;
+    padding: 0.55em 1.25em 0.55em 0;
     border-bottom: 2px solid var(--border);
+    font-size: 0.82em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--secondary);
+    white-space: nowrap;
 }
 
 .post-content table td {
-    padding: 0.75em 1em;
+    padding: 0.7em 1.25em 0.7em 0;
     border-bottom: 1px solid var(--border);
     vertical-align: top;
+    line-height: 1.5;
+}
+
+/* last column carries no trailing gutter */
+.post-content table th:last-child,
+.post-content table td:last-child {
+    padding-right: 0;
+}
+
+/* the leading column is a label, so let it recede and keep it on one line */
+.post-content table td:first-child {
+    color: var(--secondary);
+    white-space: nowrap;
 }
 
 .post-content table tbody tr:hover {
@@ -64,6 +91,9 @@
 @media (max-width: 600px) {
     .post-content table {
         font-size: 0.85em;
+    }
+    .post-content table td:first-child {
+        white-space: normal;
     }
     .post-content table th,
     .post-content table td {
@@ -813,4 +843,96 @@
 
 .bias-card__detail p:last-child {
     margin-bottom: 0;
+}
+
+
+/* Chart embeds: toolbar + full screen
+   (see layouts/shortcodes/chart.html and assets/js/chart-embed.js) */
+/* margin lives here, not inline: an inline margin outranks the
+   .is-expanded rule and left a strip of the page showing above the overlay. */
+.chart-embed { position: relative; margin: 1.75rem 0; }
+
+.chart-embed .chart-tools {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.9rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.chart-embed .chart-tools button,
+.chart-embed .chart-tools a {
+    text-transform: inherit;
+    letter-spacing: inherit;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+    color: var(--secondary);
+    font: inherit;
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+}
+
+.chart-embed .chart-tools button:hover,
+.chart-embed .chart-tools a:hover {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.chart-embed .chart-tools button:focus-visible,
+.chart-embed .chart-tools a:focus-visible {
+    outline: 2px solid var(--primary);
+    outline-offset: 3px;
+}
+
+/* the iframe fills the screen when promoted, whatever inline height it had */
+.chart-embed iframe:fullscreen,
+.chart-embed iframe:-webkit-full-screen {
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    border-radius: 0;
+}
+
+
+/* Expanded chart: pinned over the viewport. Used natively where the
+   Fullscreen API grants the request, and as the fallback where it does not. */
+.chart-embed.is-expanded {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 9999;
+    margin: 0;
+    padding: 0.75rem 1rem 1rem;
+    background: var(--theme);
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-embed.is-expanded .chart-tools {
+    flex: none;
+    margin-bottom: 0.6rem;
+}
+
+.chart-embed.is-expanded iframe {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: 100%;
+    border-radius: 6px;
+}
+
+.chart-embed.is-expanded figcaption {
+    flex: none;
+}
+
+html.chart-expanded-lock,
+html.chart-expanded-lock body {
+    overflow: hidden;
 }

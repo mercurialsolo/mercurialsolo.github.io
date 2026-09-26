@@ -21,21 +21,35 @@
   title    iframe accessible name (defaults to the caption)
 */ -}}
 {{- $src := .Get "src" -}}
-{{- if not (hasPrefix $src "/") -}}{{- $src = printf "/apps/%s" $src -}}{{- end -}}
+{{- /* Fingerprint the chart file. As a plain static file it was served from
+       cache after every edit, so readers could get a stale chart and local
+       checks silently tested old markup. */ -}}
+{{- $asset := resources.Get (printf "apps/%s" $src) -}}
+{{- if $asset -}}
+  {{- $src = ($asset | fingerprint "sha256").RelPermalink -}}
+{{- else if not (hasPrefix $src "/") -}}
+  {{- $src = printf "/apps/%s" $src -}}
+{{- end -}}
 {{- $caption := .Get "caption" -}}
 {{- $min := .Get "min" | default "320px" -}}
 {{- $title := .Get "title" | default (cond (ne $caption "") $caption "Chart") -}}
 {{- $fit := .Get "fit" | default "on" -}}
 
-<figure class="chart-embed" style="margin:1.75rem 0;">
+<figure class="chart-embed">
+  <div class="chart-tools">
+    <button type="button" class="chart-fs" hidden>Expand</button>
+    <a class="chart-open" href="{{ $src }}" target="_blank" rel="noopener">Open in new tab &#8599;</a>
+  </div>
   <iframe
-    src="{{ $src | relURL }}"
+    src="{{ $src }}"
     title="{{ $title }}"
     data-fit="{{ $fit }}"
     data-min-height="{{ replaceRE "[^0-9]" "" $min }}"
     scrolling="no"
     loading="lazy"
     sandbox="allow-scripts allow-same-origin"
+    allowfullscreen
+    allow="fullscreen"
     style="width:100%;height:{{ $min }};border:1px solid var(--border);border-radius:8px;display:block;overflow:hidden;background:transparent;"
   ></iframe>
   {{- with $caption }}

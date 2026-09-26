@@ -96,10 +96,84 @@
     if (doc && doc.readyState === 'complete') watch(frame);
   }
 
+  // Expand to fill the window.
+  //
+  // Tries the native Fullscreen API first, then falls back to pinning the
+  // figure over the viewport with CSS. The fallback matters: requestFullscreen
+  // needs transient user activation and rejects with "not granted" whenever it
+  // does not have it, and the CSS path has no such requirement, so the button
+  // always does something.
+  // While expanded the figure is moved to <body>. position:fixed is relative to
+  // the nearest ancestor with a transform, filter or containment, not to the
+  // viewport, and the theme has one: left in place the overlay sat ~37px low.
+  // A placeholder marks where to put it back.
+  function setExpanded(figure, on) {
+    var frame = figure.querySelector('iframe');
+    var btn = figure.querySelector('.chart-fs');
+    if (on) {
+      var mark = document.createElement('span');
+      mark.hidden = true;
+      mark.className = 'chart-placeholder';
+      figure.parentNode.insertBefore(mark, figure);
+      figure._placeholder = mark;
+      document.body.appendChild(figure);
+
+      frame.setAttribute('data-prev-height', frame.style.height || '');
+      figure.classList.add('is-expanded');
+      frame.style.height = '100%';
+      document.documentElement.classList.add('chart-expanded-lock');
+      if (btn) { btn.textContent = 'Close'; btn.setAttribute('aria-expanded', 'true'); }
+    } else {
+      figure.classList.remove('is-expanded');
+      document.documentElement.classList.remove('chart-expanded-lock');
+
+      var ph = figure._placeholder;
+      if (ph && ph.parentNode) {
+        ph.parentNode.insertBefore(figure, ph);
+        ph.parentNode.removeChild(ph);
+      }
+      figure._placeholder = null;
+
+      if (frame.hasAttribute('data-prev-height')) {
+        frame.style.height = frame.getAttribute('data-prev-height');
+        frame.removeAttribute('data-prev-height');
+      }
+      if (btn) { btn.textContent = 'Expand'; btn.setAttribute('aria-expanded', 'false'); }
+      if (frame.getAttribute('data-fit') === 'off') sizePanel(frame);
+      else sizeToContent(frame);
+    }
+  }
+
+  function wireFullscreen(figure) {
+    var btn = figure.querySelector('.chart-fs');
+    if (!btn || !figure.querySelector('iframe')) return;
+    btn.hidden = false;
+    btn.setAttribute('aria-expanded', 'false');
+    btn.addEventListener('click', function () {
+      setExpanded(figure, !figure.classList.contains('is-expanded'));
+    });
+  }
+
+  // The native Fullscreen API is deliberately not used here. requestFullscreen
+  // needs transient user activation, and when it does not have it Chrome either
+  // throws "TypeError: not granted" or leaves the promise pending forever, so a
+  // catch-based fallback never runs and the button appears dead. The CSS
+  // overlay below behaves the same from the reader's point of view, works in
+  // every browser, and is testable.
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    var fig = document.querySelector('.chart-embed.is-expanded');
+    if (fig) setExpanded(fig, false);
+  });
+
   function init() {
+    var figures = document.querySelectorAll('.chart-embed');
+    for (var j = 0; j < figures.length; j++) wireFullscreen(figures[j]);
     var frames = document.querySelectorAll('.chart-embed iframe');
     for (var i = 0; i < frames.length; i++) attach(frames[i]);
   }
+
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

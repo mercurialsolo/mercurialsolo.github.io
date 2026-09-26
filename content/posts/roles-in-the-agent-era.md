@@ -60,7 +60,7 @@ Whether that means fewer junior jobs is still open, and I'd rather say so than q
 
 ## Why the official numbers can't see it yet?
 
-Read the official statistics and none of this has happened. Yale's Budget Lab finds [no link yet](https://budgetlab.yale.edu/research/tracking-impact-ai-labor-market) between AI use and employment in the August 2026 survey data. Part of that silence is mechanical. Federal occupational statistics are still counted in the [2018 Standard Occupational Classification](https://www.bls.gov/soc/2028/2028_soc_revision.htm), fixed before ChatGPT existed. It has no code for an AI engineer, a forward deployed engineer or an interpretability researcher, and the 2028 revision won't be in use until reference year 2028. When Yale says the occupational mix isn't changing, it's reporting the mix of categories frozen in 2018.
+Read the official statistics and it looks like none of this has happened and is in the future. Yale's Budget Lab finds [no link yet](https://budgetlab.yale.edu/research/tracking-impact-ai-labor-market) between AI use and employment in the August 2026 survey data. But part of that silence is because Federal job statistics are still counted in the [2018 Standard Occupational Classification](https://www.bls.gov/soc/2028/2028_soc_revision.htm), fixed before ChatGPT existed. It has no code for an AI engineer, a forward deployed engineer or an interpretability researcher, and the 2028 revision won't be in use until reference year 2028. When Yale says the occupational mix isn't changing, it's reporting the mix of categories frozen in 2018.
 
 {{< chart src="roles-in-the-agent-era/soc-timeline.html" caption="No official code for an AI engineer until 2028." >}}
 
