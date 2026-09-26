@@ -41,6 +41,13 @@ button.chip .dot{display:inline-block;width:7px;height:7px;border-radius:50%;mar
 input[type=search]{font-family:var(--sans);font-size:12.5px;padding:7px 10px;border-radius:7px;
   border:1px solid var(--rule);background:var(--card);color:var(--ink);width:100%;max-width:280px}
 input[type=search]:focus{outline:2px solid var(--dec);outline-offset:1px;border-color:var(--dec)}
+/* Seven discipline chips wrap to two rows on a phone and swallow the panel.
+   There they collapse into one native select, which is a single 44px target
+   and keeps the filter rather than dropping it. */
+.discSelRow{display:none}
+select#discSel{font-family:var(--sans);font-size:12.5px;padding:7px 10px;border-radius:7px;
+  border:1px solid var(--rule);background:var(--card);color:var(--ink);width:100%;max-width:280px}
+select#discSel:focus{outline:2px solid var(--dec);outline-offset:1px;border-color:var(--dec)}
 
 .tally{display:flex;flex-wrap:wrap;gap:10px;align-items:baseline;
   font-family:var(--mono);font-size:10px;letter-spacing:.05em;text-transform:uppercase;
@@ -81,7 +88,13 @@ li.item[data-layer="Structural"]{border-left-color:var(--str)}
   h1{font-size:17px;margin-bottom:8px}
   .lede{display:none}                 /* the caption under the embed says the same */
   .controls{gap:10px;margin-bottom:12px}
-  .lbl{min-width:100%;margin-bottom:-2px;font-size:10.5px}
+  /* the controls say what they are: a placeholder, a select of disciplines,
+     chips named Operational / Decision / Structural. The labels above them
+     cost ~60px of a panel that only has room for a card or two. */
+  .lbl{display:none}
+  #disc{display:none}
+  .discSelRow{display:flex}
+  select#discSel{max-width:100%;font-size:16px;padding:11px 12px;min-height:44px}
   .row{gap:8px}
   /* 16px keeps iOS from zooming the page when the field takes focus */
   input[type=search]{max-width:100%;font-size:16px;padding:11px 12px;min-height:44px}
@@ -108,6 +121,9 @@ li.item[data-layer="Structural"]{border-left-color:var(--str)}
     <input type="search" id="q" placeholder="role, e.g. postdoc, QA, scribe" aria-label="Search roles">
   </div>
   <div class="row" id="disc"><span class="lbl">Discipline</span></div>
+  <div class="row discSelRow"><span class="lbl">Discipline</span>
+    <select id="discSel" aria-label="Filter by discipline"></select>
+  </div>
   <div class="row" id="layer"><span class="lbl">Layer</span></div>
 </div>
 
@@ -200,6 +216,14 @@ function buildControls(){
     b.appendChild(hint);
   });
 
+  const sel = document.getElementById("discSel");
+  ["All"].concat(DISCIPLINES).forEach(function (name) {
+    const o = document.createElement("option");
+    o.value = name; o.textContent = name === "All" ? "All disciplines" : name;
+    sel.appendChild(o);
+  });
+  sel.addEventListener("change", function () { fDisc = sel.value; render(); });
+
   document.getElementById("q").addEventListener("input", function (ev) {
     fQ = ev.target.value.trim().toLowerCase();
     render();
@@ -210,6 +234,8 @@ function syncChips(){
   const d = document.getElementById("disc").querySelectorAll("button");
   d[0].setAttribute("aria-pressed", String(fDisc === "All"));
   DISCIPLINES.forEach((name, i) => d[i + 1].setAttribute("aria-pressed", String(fDisc === name)));
+  const sel = document.getElementById("discSel");
+  if (sel && sel.value !== fDisc) sel.value = fDisc;
   const l = document.getElementById("layer").querySelectorAll("button");
   l[0].setAttribute("aria-pressed", String(fLayer === "All"));
   LAYERS.forEach((L, i) => l[i + 1].setAttribute("aria-pressed", String(fLayer === L.k)));

@@ -73,7 +73,9 @@
     var floor = parseInt(frame.getAttribute('data-min-height') || '0', 10) || 520;
     // Do not clamp to measured content: a fixed-height flex panel always
     // measures exactly as tall as the iframe, which would pin it to the floor.
-    frame.style.height = Math.max(floor, Math.round(window.innerHeight * 0.82)) + 'px';
+    // a phone's header eats proportionally more of the panel, so give it more screen
+    var share = window.innerWidth <= 560 ? 0.88 : 0.82;
+    frame.style.height = Math.max(floor, Math.round(window.innerHeight * share)) + 'px';
   }
 
   function attach(frame) {
