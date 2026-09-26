@@ -1,0 +1,67 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Projected change, AI-related occupations</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--g:#faf9f7;--ink:#16150f;--ink2:#55524a;--ink3:#8a877d;--rule:#e8e5dd;--rs:#c9c5ba;
+--pos:#2a78d6;--neg:#d03b3b;--sans:"IBM Plex Sans",system-ui,sans-serif;--mono:"IBM Plex Mono",ui-monospace,monospace}
+@media(prefers-color-scheme:dark){:root{--g:#1a1a19;--ink:#f5f4ef;--ink2:#c3c2b7;--ink3:#8f8e84;
+--rule:#2f2f2a;--rs:#4b4b43;--pos:#3987e5;--neg:#e06666}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--g);color:var(--ink);font-family:var(--sans);
+padding:18px 18px 14px;font-variant-numeric:tabular-nums;-webkit-text-size-adjust:100%}
+.kicker{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink3);margin:0 0 6px}
+h3{font-size:15.5px;font-weight:600;margin:0 0 4px;line-height:1.25}
+.lede{font-size:12.5px;color:var(--ink2);margin:0 0 16px;line-height:1.45;max-width:58ch}
+.chart{display:grid;grid-template-columns:150px 1fr;gap:0 14px;align-items:center}
+.nm{font-size:12.5px;line-height:1.3;padding:7px 0;text-align:right;color:var(--ink)}
+.nm i{display:block;font-style:normal;font-size:10.5px;color:var(--ink3);margin-top:1px}
+.track{position:relative;height:34px}
+.zero{position:absolute;left:22%;top:0;bottom:0;width:1px;background:var(--rs)}
+.b{position:absolute;top:8px;height:18px;border-radius:3px}
+.vv{position:absolute;top:8px;height:18px;line-height:18px;font-family:var(--mono);font-size:11.5px;font-weight:500;white-space:nowrap}
+.faint{opacity:.45}.g2{color:var(--ink2);font-weight:400}
+.axis{grid-column:2;position:relative;height:15px;margin-top:2px}
+.axis span{position:absolute;font-family:var(--mono);font-size:9.5px;color:var(--ink3);transform:translateX(-50%)}
+.lg{display:flex;flex-wrap:wrap;gap:13px;margin:14px 0 0;font-size:11.5px;color:var(--ink2)}
+.k{display:inline-flex;align-items:center;gap:5px}.sw{width:10px;height:10px;border-radius:2px;flex:none}
+.src{font-family:var(--mono);font-size:9px;letter-spacing:.04em;color:var(--ink3);
+margin:11px 0 0;padding-top:9px;border-top:1px dotted var(--rule);text-transform:uppercase;line-height:1.6}
+@media(max-width:460px){.chart{grid-template-columns:110px 1fr}.nm{font-size:11.5px}}
+</style>
+<p class="kicker">BLS Employment Projections &middot; 2024&ndash;34</p>
+<h3>One technology, a 42-point spread</h3>
+<p class="lede">Nineteen AI- and IT-related occupations span &minus;8.7% to +33.5%. Only four figures are named in the release; only those four are drawn.</p>
+
+<div class="chart">
+  <div class="nm">Data scientists</div>
+  <div class="track"><span class="zero"></span>
+    <span class="b" style="left:22%;width:62%;background:var(--pos)"></span>
+    <span class="vv" style="left:85.5%">+33.5%</span></div>
+
+  <div class="nm">Security analysts,<br>actuaries, +2 <i>one group</i></div>
+  <div class="track"><span class="zero"></span>
+    <span class="b faint" style="left:22%;width:35%;background:var(--pos)"></span>
+    <span class="vv g2" style="left:58.5%">&ge; +19.0%</span></div>
+
+  <div class="nm">Software developers <i>+267,000 jobs</i></div>
+  <div class="track"><span class="zero"></span>
+    <span class="b" style="left:22%;width:29%;background:var(--pos)"></span>
+    <span class="vv" style="left:52.5%">+15.8%</span></div>
+
+  <div class="nm">Clerical &amp; customer<br>support roles <i>four occupations</i></div>
+  <div class="track"><span class="zero"></span>
+    <span class="b faint" style="left:6%;width:16%;background:var(--neg)"></span>
+    <span class="vv g2" style="left:23.5%">decline, figure not published</span></div>
+
+  <div class="axis">
+    <span style="left:6%">&minus;10%</span><span style="left:22%">0%</span>
+    <span style="left:40%">10%</span><span style="left:58%">20%</span><span style="left:76%">30%</span>
+  </div>
+</div>
+
+<div class="lg">
+  <span class="k"><span class="sw" style="background:var(--pos)"></span>Growth</span>
+  <span class="k"><span class="sw" style="background:var(--neg)"></span>Decline</span>
+  <span class="k"><span class="sw faint" style="background:var(--pos)"></span>Figure not published as a single value</span>
+</div>
+<p class="src">Source <b>BLS, The Economics Daily</b>, 16 July 2026 &middot; Counted in SOC 2018 codes</p>

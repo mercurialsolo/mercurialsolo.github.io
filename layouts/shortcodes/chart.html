@@ -1,0 +1,42 @@
+{{- /*
+  chart: embed a self-contained HTML chart from /static/apps/ and size the
+  iframe to its content, so short charts leave no dead space and tall ones are
+  not clipped.
+
+  Unlike {{< app >}}, this needs no cooperation from the embedded page. The
+  iframe is same-origin, so /js/chart-embed.js measures the document directly
+  and re-measures on resize, on font load and on content change. Plain
+  self-contained HTML charts can be dropped into static/apps/ and embedded
+  without modification.
+
+    {{< chart src="roles-in-the-agent-era/soc-timeline.html" caption="..." >}}
+    {{< chart src="roles/bls.html" caption="..." min="260px" >}}
+
+  src      path under /apps/ (a leading slash or full path is also accepted)
+  caption  optional figure caption rendered under the chart
+  min      height used before measurement, and the fallback if JS is off
+  title    iframe accessible name (defaults to the caption)
+*/ -}}
+{{- $src := .Get "src" -}}
+{{- if not (hasPrefix $src "/") -}}{{- $src = printf "/apps/%s" $src -}}{{- end -}}
+{{- $caption := .Get "caption" -}}
+{{- $min := .Get "min" | default "320px" -}}
+{{- $title := .Get "title" | default (cond (ne $caption "") $caption "Chart") -}}
+
+<figure class="chart-embed" style="margin:1.75rem 0;">
+  <iframe
+    src="{{ $src | relURL }}"
+    title="{{ $title }}"
+    scrolling="no"
+    loading="lazy"
+    sandbox="allow-scripts allow-same-origin"
+    style="width:100%;height:{{ $min }};border:1px solid var(--border);border-radius:8px;display:block;overflow:hidden;background:transparent;"
+  ></iframe>
+  {{- with $caption }}
+  <figcaption style="margin-top:.6rem;font-size:.85rem;line-height:1.45;color:var(--secondary);">{{ . | markdownify }}</figcaption>
+  {{- end }}
+</figure>
+{{- if not (.Page.Scratch.Get "chartEmbedJS") }}
+{{- .Page.Scratch.Set "chartEmbedJS" true }}
+<script src="{{ "js/chart-embed.js" | relURL }}" defer></script>
+{{- end }}
