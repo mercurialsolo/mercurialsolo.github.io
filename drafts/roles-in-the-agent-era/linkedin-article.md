@@ -37,9 +37,9 @@ Indeed's Hiring Lab found AI-touched job titles more common outside tech than in
 
 **No country for beginners**
 
-In 2016 Hinton predicted AI would do a radiologist's job within five years. He bet on the judgement. What went first was the paperwork. Ambient scribes are the most widely deployed AI use case in healthcare, cutting EHR time by 13.4 minutes a day across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
+In 2016 Hinton predicted AI would do a radiologist's job within five years. He bet on the judgement. What went first was the paperwork. Ambient scribes are the most widely deployed AI use case in healthcare, cutting EHR time by 13.4 minutes a day, and the clinician now checks a draft that can invent a diagnosis.
 
-Law is running the same sequence. Firms are moving from the pyramid to what iManage calls the diamond: fewer entry roles, a thicker middle of specialists and technologists. Software handed over the code before the architecture. Science is handing over the literature search and the experiments before the choice of what to test. As Nature puts it, humans were always the ones developing the hypotheses and deciding which experiments were needed to test them, and that paradigm is now changing.
+Law is running the same sequence. Firms are moving from the pyramid to a diamond: fewer entry roles, a thicker middle of specialists and technologists. Software handed over the code before the architecture. Science is handing over the literature search and the experiments before the choice of what to test. As Nature puts it, humans were always the ones developing the hypotheses and deciding which experiments were needed to test them, and that paradigm is now changing.
 
 The sequencing follows the cost of being wrong. A wrong draft is cheap, a wrong call is not. And we develop judgement only by doing the work.
 

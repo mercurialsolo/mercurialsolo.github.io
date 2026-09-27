@@ -1,0 +1,46 @@
+{{- /*
+  x: embed a post from X, overriding Hugo's built-in shortcode.
+
+  Hugo's version emits the oEmbed blockquote and widgets.js and stops there.
+  That leaves a white card sitting on the dark theme, and the card does not
+  follow the site's theme toggle, because widgets.js reads data-theme once at
+  render time and never again.
+
+  This version wraps the card so /js/x-embed.js can stamp the theme before
+  widgets.js claims the blockquote, and rebuild it when the reader flips the
+  toggle.
+
+    {{< x user="fchollet" id="2102444225443029100" >}}
+
+  user  the account handle, without the @
+  id    the status id
+*/ -}}
+{{- $user := .Get "user" | default (.Get 0) -}}
+{{- $id := .Get "id" | default (.Get 1) -}}
+{{- if not (and $user $id) -}}
+  {{- errorf "the %q shortcode needs a user and an id. See %s" .Name .Position -}}
+{{- end -}}
+
+{{- $url := printf "https://x.com/%s/status/%s" $user $id -}}
+{{- $query := querify "url" $url "dnt" true "omit_script" true -}}
+{{- $api := printf "https://publish.x.com/oembed?%s" $query -}}
+
+{{- with try (resources.GetRemote $api) -}}
+  {{- with .Err -}}
+    {{- /* No network at build time, or X refused. Degrade to a link rather
+           than failing the build: the reader can still reach the post. */ -}}
+    {{- warnidf "shortcode-x-getremote" "the %q shortcode could not fetch %s: %s" $.Name $url . -}}
+    <p class="x-embed-fallback"><a href="{{ $url }}" rel="noopener">View this post by @{{ $user }} on X &#8599;</a></p>
+  {{- else with .Value -}}
+    <div class="x-embed" data-x-url="{{ $url }}">{{ (. | transform.Unmarshal).html | safeHTML }}</div>
+    {{- if not ($.Page.Scratch.Get "xEmbedJS") -}}
+      {{- $.Page.Scratch.Set "xEmbedJS" true -}}
+      {{- $js := resources.Get "js/x-embed.js" | fingerprint "sha256" }}
+      <script src="{{ $js.RelPermalink }}"></script>
+      <script async src="https://platform.x.com/widgets.js" charset="utf-8"></script>
+    {{- end -}}
+  {{- else -}}
+    {{- warnidf "shortcode-x-getremote" "the %q shortcode got no data for %s" $.Name $url -}}
+    <p class="x-embed-fallback"><a href="{{ $url }}" rel="noopener">View this post by @{{ $user }} on X &#8599;</a></p>
+  {{- end -}}
+{{- end -}}

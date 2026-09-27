@@ -37,7 +37,7 @@ Every domain is swapping out what you could open and read for something you can 
 
 Anthropic's interpretability team recruits from [astronomy, physics, mathematics and biology](https://www.anthropic.com/research/team/interpretability) - the model stopped becoming a program to debug, it's now a specimen to study.
 
-![François Chollet on 22 September 2026 quote-tweeting his own May 2021 prediction that nearly every branch of science would become a branch of computer science, with the comment that it is looking obvious by the day now. 869.6K views.](/images/roles-in-the-agent-era/chollet-quote-tweet.png)
+{{< x user="fchollet" id="2102444225443029100" >}}
 
 The [environments industry](https://x.com/natolambert/status/2023549545045467615) where labs buy ten to twenty environments at a time is now worth several hundreds of millions of dollars. micro1 offers companies [$100k to $2M+](https://x.com/micro1_ai/status/2072800904332644429) for the anonymised operational data to build these environments. Professional judgment is now in high-demand.
 
