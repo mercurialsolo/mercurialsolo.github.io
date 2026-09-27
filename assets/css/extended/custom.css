@@ -952,3 +952,14 @@ html.chart-expanded-lock,
 html.chart-expanded-lock body {
     overflow: hidden;
 }
+
+/* X embeds
+   ---------------------------------------------------------------------------
+   widgets.js swaps the blockquote for a cross-origin iframe whose document is
+   painted white, and draws its own rounded card inside it. On a dark page the
+   square iframe corners show through as white triangles. Clipping the iframe
+   to the card's own radius removes them; the radius has to match X's, which is
+   16px. See assets/js/x-embed.js for the theme half of this. */
+.x-embed iframe {
+  border-radius: 16px;
+}
