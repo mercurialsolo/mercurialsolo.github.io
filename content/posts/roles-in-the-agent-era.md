@@ -72,13 +72,15 @@ MIT's [Project Iceberg](https://iceberg.mit.edu/report.pdf) gets underneath the 
 
 ## What to do before the data catches up
 
+{{< highlight-box >}}
+The radiologist still reads, the lawyer still advises, the scientist still selects the experiment. The work's not disappearing, it's changing & the (job) specs are where you are going to see it first.
+{{< /highlight-box >}}
+
 The entry job now demands judgement not execution skills. So who's going to be qualified to write the evals in 2035? The folks who start building judgment deliberately, coz the work to build it by accident is disappearing fast.
 
 Narayanan, for all his caution about timing, agrees on the direction. He expects human effort to shift ["from building towards evaluation and monitoring"](https://icml.cc/virtual/2026/invited-talk/67274), with domain knowledge and normative judgment gaining in importance.
 
 {{< chart src="roles-in-the-agent-era/checklist.html" >}}
-
-The radiologist still reads, the lawyer still advises, the scientist still selects the experiment. The work's not disappearing, it's changing & the (job) specs are where you are going to see it first.
 
 {{< highlight-box title="Try it yourself" >}}
 Anthropic's [Economic Scenarios explorer](https://www.anthropic.com/institute/econ-scenarios) lets you set capability and adoption assumptions and watch GDP, wages and labour share move. MIT CTL's [AI Labor Exposure Map](https://www.workanalyticslab.com/us-ai-map/) shows exposure by metro area, industry and job. MIT's [Iceberg Index](https://iceberg.mit.edu/report.pdf) is the skill-level report behind the 2.2% and the 11.7%.
