@@ -40,7 +40,7 @@ Anthropic's interpretability team now recruits from [astronomy, physics, mathema
 
 ![François Chollet on 22 September 2026 quote-tweeting his own May 2021 prediction that nearly every branch of science would become a branch of computer science, with the comment that it is looking obvious by the day now. 869.6K views.](/images/roles-in-the-agent-era/chollet-quote-tweet.png)
 
-Nathan Lambert describes [an environments industry](https://x.com/natolambert/status/2023549545045467615) where labs buy ten to twenty environments at a time for millions of dollars, and micro1 offers companies [$100k to $2M+](https://x.com/micro1_ai/status/2072800904332644429) for the anonymised operational data those environments are built from. Professional judgment is now in high-demand.
+The [environments industry](https://x.com/natolambert/status/2023549545045467615) where labs buy ten to twenty environments at a time is now worth several hundreds of millions of dollars. micro1 offers companies [$100k to $2M+](https://x.com/micro1_ai/status/2072800904332644429) for the anonymised operational data to build these environments. Professional judgment is now in high-demand.
 
 Indeed's Hiring Lab found AI-touched job titles [more common outside tech than inside it](https://www.hiringlab.org/2026/07/08/ai-is-no-longer-just-a-tech-occupation-story/) in five of six markets, with 63% of US AI-titled postings now outside tech occupations.
 
