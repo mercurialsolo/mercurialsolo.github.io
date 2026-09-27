@@ -50,13 +50,13 @@ Indeed's Hiring Lab found AI-touched job titles [more common outside tech than i
 Job specs are changing years before the official stats reflect. In every field AI is starting with the operational work first. The entry role now asks for judgment.
 {{< /highlight-box >}}
 
-Hinton predicted in 2016 that AI would do a radiologist's job within five years, and he's since admitted he was wrong on the timing. He bet on the judgement, we saw the operational paperwork go first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
+In 2016 Hinton had predicted that AI would do a radiologist's job within five years. He bet on the judgement, what we have seen since is the operational paperwork go first. Ambient scribes are now the most widely deployed generative AI in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
 
 Legal firms are moving from the pyramid to what iManage calls [the diamond](https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/), with fewer entry roles and a thicker middle of specialists and technologists.
 
 Labs have automated routine work for decades, but ["humans were always pulling the strings. They were the ones developing the hypotheses and deciding which experiments were needed to test them. Now that paradigm is changing."](https://www.nature.com/collections/cgbiacfcgc)
 
-Inside every field the sequencing looks similar - AI’s taking the operational work first and the decisions last. The cost of a wrong draft is cheap vs a wrong call. We’ve seen it in medicine and law, software handed over the code before the architecture; science is handing over the literature search and the experiments before the choice of what to test. Unfortunately the operational layer is where the juniors learn the judgement.
+Inside every field the sequencing's similar - AI’s taking the operational work first and the decisions last. The cost of a wrong draft is cheap vs a wrong call. We’ve seen it in medicine and law, software handed over the code before the architecture; science is handing over the literature search and the experiments before the choice of what to test. Unfortunately the operational layer is where the juniors learn the judgement.
 
 {{< chart min="540px" src="roles-in-the-agent-era/automation-gap.html" caption="Anthropic classifies each Claude conversation as automation or augmentation. In five fields of six, the support role sits further right than the professional one." >}}
 
