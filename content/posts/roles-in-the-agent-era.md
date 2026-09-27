@@ -78,7 +78,7 @@ Narayanan, for all his caution about timing, agrees on the direction. He expects
 
 {{< chart src="roles-in-the-agent-era/checklist.html" >}}
 
-The radiologist still reads, the lawyer still advises, the scientist still chooses the experiment. The work isn't disappearing, it's changing - the (job) specs are where you going to see it first.
+The radiologist still reads, the lawyer still advises, the scientist still selects the experiment. The work's not disappearing, it's changing & the (job) specs are where you are going to see it first.
 
 {{< highlight-box title="Try it yourself" >}}
 Anthropic's [Economic Scenarios explorer](https://www.anthropic.com/institute/econ-scenarios) lets you set capability and adoption assumptions and watch GDP, wages and labour share move. MIT CTL's [AI Labor Exposure Map](https://www.workanalyticslab.com/us-ai-map/) shows exposure by metro area, industry and job. MIT's [Iceberg Index](https://iceberg.mit.edu/report.pdf) is the skill-level report behind the 2.2% and the 11.7%.
