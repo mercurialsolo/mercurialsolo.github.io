@@ -35,7 +35,7 @@ Arvind Narayanan made a careful case that [AI spreads slowly](https://knightcolu
 
 Every domain is swapping out what you could open and read for something you can only sample. A reviewable pull request becomes an {{< term name="eval" text="eval suite" def="A test suite for a model or agent: a fixed set of inputs plus a way of scoring the outputs, used to decide whether behaviour improved or regressed." >}}. A clinical note becomes a draft to check. Each role now embeds a computational one within.
 
-Anthropic's interpretability team now recruits from [astronomy, physics, mathematics and biology](https://www.anthropic.com/research/team/interpretability) - the model stopped becoming a program to debug, it's now a specimen to study.
+Anthropic's interpretability team recruits from [astronomy, physics, mathematics and biology](https://www.anthropic.com/research/team/interpretability) - the model stopped becoming a program to debug, it's now a specimen to study.
 
 ![François Chollet on 22 September 2026 quote-tweeting his own May 2021 prediction that nearly every branch of science would become a branch of computer science, with the comment that it is looking obvious by the day now. 869.6K views.](/images/roles-in-the-agent-era/chollet-quote-tweet.png)
 
