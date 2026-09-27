@@ -23,7 +23,7 @@ TocOpen: false
 
 Anthropic and OpenAI now both employ a chief economist who actively measure the impact of AI on the labour market. Peter McCrory (Anthropic) told a Harvard forum this week that he wants to use [the tools of economics to help Anthropic understand the impact of its own decisions](https://www.thecrimson.com/article/2026/9/24/anthropic-economist-forum/).
 
-Arvind Narayanan has made a careful case that [AI spreads slowly](https://knightcolumbia.org/content/ai-as-normal-technology), and he puts the adaptation at [a decade or two](https://www.normaltech.ai/p/what-will-be-left-for-us-to-work). But this is describing payroll data. Employers are rewriting roles the quarter they believe something; payrolls record it years later, once training and org design have caught up. The job specs are changing in realtime, and not only in the tech industry.
+Arvind Narayanan made a careful case that [AI spreads slowly](https://knightcolumbia.org/content/ai-as-normal-technology), and he put the adaptation at [1-2 decades](https://www.normaltech.ai/p/what-will-be-left-for-us-to-work). But this is describing payroll data. Employers are rewriting roles the quarter they believe something; payrolls record it years later, once training and org design have caught up. The job specs are changing in realtime, and not only in the tech industry.
 
 | Discipline | Was | Becomes |
 |------------|-----|---------|
