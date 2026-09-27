@@ -51,7 +51,7 @@ Job specs are changing years before the official stats reflect. In every field A
 
 In 2016 Hinton had predicted that AI would do a radiologist's job within five years. He bet on the judgement, what we have seen since is the operational paperwork go first. Ambient scribes are now the most widely deployed AI use-case in healthcare, cutting EHR time by [13.4 minutes a day](https://www.aha.org/aha-center-health-innovation-market-scan/2026-04-14-6-health-systems-enhancing-care-delivery-ambient-ai-scribes) across five academic centres, and the clinician now checks a draft that can invent a diagnosis.
 
-Legal firms are moving from the pyramid to what iManage calls [the diamond](https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/), with fewer entry roles and a thicker middle of specialists and technologists.
+Legal firms are moving from the pyramid to [a diamond](https://imanage.com/resources/resource-center/blog/how-law-firms-are-adapting-to-the-age-of-ai/), with fewer entry roles and a thicker middle of specialists and technologists.
 
 Labs have automated routine work for decades, but ["humans were always pulling the strings. They were the ones developing the hypotheses and deciding which experiments were needed to test them. Now that paradigm is changing."](https://www.nature.com/collections/cgbiacfcgc)
 
