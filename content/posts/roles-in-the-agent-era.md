@@ -16,7 +16,6 @@ TocOpen: false
 {{< highlight-box title="In brief" >}}
 - The US has no official job code for an AI engineer.
 - Visible AI adoption covers 2.2% of US wage value. Work AI can already do covers 11.7% (MIT Project Iceberg).
-- In every field AI takes the operational work first: the note before the diagnosis, first-pass review before the advice.
 - In 94 of every 100 occupations, the work people hand to Claude shows more education than the task requires (Anthropic Economic Index).
 {{< /highlight-box >}}
 
