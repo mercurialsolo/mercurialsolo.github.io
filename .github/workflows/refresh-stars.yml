@@ -1,0 +1,52 @@
+# Keeps the GitHub star counts on content/projects/_index.md current.
+name: Refresh project stars
+
+on:
+  schedule:
+    # Daily at 05:17 UTC. Off-the-hour: GitHub's scheduler runs late at :00.
+    - cron: '17 5 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  actions: write
+
+concurrency:
+  group: "refresh-stars"
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Test
+        run: python3 scripts/test_refresh_stars.py
+
+      - name: Refresh star counts
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: python3 scripts/refresh-stars.py
+
+      - name: Commit and publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          if git diff --quiet content/projects/_index.md; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/projects/_index.md
+          git commit -m "Refresh project star counts"
+          git push
+          # A GITHUB_TOKEN push does not trigger other workflows, so ask the
+          # Pages build to run explicitly.
+          gh workflow run hugo.yml --ref main

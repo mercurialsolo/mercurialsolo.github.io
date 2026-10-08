@@ -22,6 +22,10 @@ hugo new posts/my-post-title.md
 
 # Create new content in any section
 hugo new <section>/filename.md
+
+# Refresh GitHub star counts on the projects page (runs daily in CI)
+python3 scripts/refresh-stars.py
+python3 scripts/test_refresh_stars.py
 ```
 
 ## Content Structure
