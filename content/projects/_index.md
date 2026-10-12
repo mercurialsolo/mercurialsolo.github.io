@@ -7,7 +7,7 @@ description: "Things I'm building and have built"
 
 | Project | Why it matters | Stack | Links |
 |---------|----------------|-------|-------|
-| **claudectl** | Swarm orchestrator for claude code agents with a local brain that steers based on your preferences | Rust · ⭐ 202 | [GitHub](https://github.com/mercurialsolo/claudectl) · [Site](https://mercurialsolo.github.io/claudectl/) |
+| **claudectl** | Swarm orchestrator for claude code agents with a local brain that steers based on your preferences | Rust · ⭐ 203 | [GitHub](https://github.com/mercurialsolo/claudectl) · [Site](https://mercurialsolo.github.io/claudectl/) |
 | **plan-lint** | Static analysis for LLM agent plans — the eval/safety credential | Python · ⭐ 13 | [GitHub](https://github.com/cirbuk/plan-lint) · [Site](https://cirbuk.github.io/plan-lint/) |
 | **safeguards** | Agentic safety framework | Python · ⭐ 4 | [GitHub](https://github.com/cirbuk/safeguards) · [Site](https://cirbuk.github.io/safeguards/) |
 | **counsel-mcp** | Multi-LLM council as an MCP server — orchestrates debate & synthesis across Claude, GPT, Gemini for deep research | JavaScript · ⭐ 6 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
@@ -22,7 +22,7 @@ description: "Things I'm building and have built"
 | **sa-opsd** | Reliability measurement for agentic computer-use RL — single-run numbers mislead, report K seeds | Python | 2026-07 | [GitHub](https://github.com/mercurialsolo/sa-opsd) · [Paper](https://arxiv.org/abs/2607.17136) |
 | **tribe-replay-heatmaps** | Does a predicted-fMRI drive signal from TRIBE predict YouTube replay heatmaps? A position-controlled null-result study (N=48) | Python | 2026-07 | [GitHub](https://github.com/mercurialsolo/tribe-replay-heatmaps) |
 | **augur-sdk** | Instrument any screenshot-grounded computer-use agent — local bundle writer plus Sentry-style DSN streaming | Python | 2026-05 | [GitHub](https://github.com/mercurialsolo/augur-sdk) · [Site](https://mercurialsolo.github.io/augur-sdk/) |
-| **claudectl** | Swarm orchestrator for claude code agents with a local brain that steers based on your preferences | Rust · ⭐ 202 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) · [Site](https://mercurialsolo.github.io/claudectl/) |
+| **claudectl** | Swarm orchestrator for claude code agents with a local brain that steers based on your preferences | Rust · ⭐ 203 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) · [Site](https://mercurialsolo.github.io/claudectl/) |
 | **realstars** | Detect fake GitHub stars using CMU StarScout research — Chrome extension and Claude Code plugin | JavaScript · ⭐ 15 | 2026-04 | [GitHub](https://github.com/mercurialsolo/realstars) |
 | **mantis** | Unified perception-reasoning-action agent for computer use | Python · ⭐ 4 | 2026-04 | [GitHub](https://github.com/mercurialsolo/mantis) · [Site](https://mercurialsolo.github.io/mantis/) |
 | **claude-talk** | Give Claude Code agents a voice — macOS TTS announcements, notifications, and terminal focus switching | Shell | 2026-03 | [GitHub](https://github.com/mercurialsolo/claude-talk) |
