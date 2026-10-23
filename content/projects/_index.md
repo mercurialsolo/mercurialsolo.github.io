@@ -23,7 +23,7 @@ description: "Things I'm building and have built"
 | **tribe-replay-heatmaps** | Does a predicted-fMRI drive signal from TRIBE predict YouTube replay heatmaps? A position-controlled null-result study (N=48) | Python | 2026-07 | [GitHub](https://github.com/mercurialsolo/tribe-replay-heatmaps) |
 | **augur-sdk** | Instrument any screenshot-grounded computer-use agent — local bundle writer plus Sentry-style DSN streaming | Python | 2026-05 | [GitHub](https://github.com/mercurialsolo/augur-sdk) · [Site](https://mercurialsolo.github.io/augur-sdk/) |
 | **claudectl** | Swarm orchestrator for claude code agents with a local brain that steers based on your preferences | Rust · ⭐ 202 | 2026-04 | [GitHub](https://github.com/mercurialsolo/claudectl) · [Site](https://mercurialsolo.github.io/claudectl/) |
-| **realstars** | Detect fake GitHub stars using CMU StarScout research — Chrome extension and Claude Code plugin | JavaScript · ⭐ 15 | 2026-04 | [GitHub](https://github.com/mercurialsolo/realstars) |
+| **realstars** | Detect fake GitHub stars using CMU StarScout research — Chrome extension and Claude Code plugin | JavaScript · ⭐ 16 | 2026-04 | [GitHub](https://github.com/mercurialsolo/realstars) |
 | **mantis** | Unified perception-reasoning-action agent for computer use | Python · ⭐ 4 | 2026-04 | [GitHub](https://github.com/mercurialsolo/mantis) · [Site](https://mercurialsolo.github.io/mantis/) |
 | **claude-talk** | Give Claude Code agents a voice — macOS TTS announcements, notifications, and terminal focus switching | Shell | 2026-03 | [GitHub](https://github.com/mercurialsolo/claude-talk) |
 | **openhydra** | Lightweight, local OS for agents | Python · ⭐ 3 | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
