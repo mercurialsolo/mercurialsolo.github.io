@@ -86,20 +86,20 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 <body>
 <div class="wrap">
 
-  <h1>The TTFA pipeline</h1>
-  <div class="sub">Ten stages from <code>speech_final</code> to first audio out. Cold path runs them serially. Speculation collapses five of them to ~50 ms each on hit.</div>
+  <h1>The TTFA pipeline (menta's budget model)</h1>
+  <div class="sub">Ten stages from <code>speech_final</code> to first audio out, as budgeted per stage. The cold path runs them one after another. On a cache hit, speculation shrinks five of them to between 5 and 50 ms.</div>
 
   <div class="controls">
-    <button id="replay" class="primary">▶ Replay animation</button>
-    <button id="show-cold" class="on">Show cold</button>
-    <button id="show-warm" class="on">Show warm</button>
+    <button id="replay" class="primary">▶ Replay</button>
+    <button id="pause">⏸ Pause loop</button>
+    <span style="font-size:11px;color:var(--muted)">Loops on its own: cold path first, then the same turn with every speculation cache warm.</span>
   </div>
 
   <div class="chart">
     <div class="path" id="path-cold">
       <div class="path-hdr">
         <span class="name cold">Default cold · no caches warm</span>
-        <span><span class="total cold" id="total-cold">2135</span><span class="verdict fail" style="margin-left:8px">over the 1500 ms gate</span></span>
+        <span><span class="total cold" id="total-cold">2,145 ms</span><span class="verdict fail" style="margin-left:8px">over the 1500 ms gate</span></span>
       </div>
       <div class="barwrap" id="bar-cold">
         <div class="gateline" id="gate-cold"><span class="lbl">1500 ms gate</span></div>
@@ -109,7 +109,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     <div class="path" id="path-warm">
       <div class="path-hdr">
         <span class="name warm">Optimized warm · all speculation hits</span>
-        <span><span class="total warm" id="total-warm">625</span><span class="verdict pass" style="margin-left:8px">passes with margin</span></span>
+        <span><span class="total warm" id="total-warm">635 ms</span><span class="verdict pass" style="margin-left:8px">passes with margin</span></span>
       </div>
       <div class="barwrap" id="bar-warm">
         <div class="gateline" id="gate-warm"><span class="lbl">1500 ms gate</span></div>
@@ -135,7 +135,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     <h3>Where the speculation saves time</h3>
     <div class="row"><span class="stage">RAG retrieval</span><span><span class="delta">50 → 5 ms</span> (cache hit)</span></div>
     <div class="row"><span class="stage">Memory load</span><span><span class="delta">20 → 5 ms</span> (cache hit)</span></div>
-    <div class="row"><span class="stage">LLM TTFT</span><span><span class="delta">900 → 50 ms</span> (the big one · ~95% hit in clean rooms)</span></div>
+    <div class="row"><span class="stage">LLM TTFT</span><span><span class="delta">900 → 50 ms</span> (the big one · budgeted ~95% hit in clean rooms)</span></div>
     <div class="row"><span class="stage">Tool dispatch</span><span><span class="delta">300 → 50 ms</span> (pre-dispatched read-only tool)</span></div>
     <div class="row"><span class="stage">LLM continuation</span><span><span class="delta">250 → 150 ms</span> (faster post-tool turn)</span></div>
     <div class="row"><span class="stage">TTS formatter</span><span><span class="delta">300 → 50 ms</span> (Haiku formatter pre-warmed)</span></div>
@@ -173,8 +173,8 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     { key:'pacer',  ms:10,  color:'#64748b', label:'10',  full:'TX pacer 10 ms' },
   ];
 
-  const COLD_TOTAL = COLD.reduce((a,s) => a + s.ms, 0); // 2145, close to 2135
-  const WARM_TOTAL = WARM.reduce((a,s) => a + s.ms, 0); // 635, close to 625
+  const COLD_TOTAL = COLD.reduce((a,s) => a + s.ms, 0); // 2145; the article quotes the same number
+  const WARM_TOTAL = WARM.reduce((a,s) => a + s.ms, 0); // 635
   const MAX = 2200; // both bars share this scale so warm visibly compresses
   const GATE = 1500;
 
@@ -225,9 +225,35 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     $('#total-warm').textContent = WARM_TOTAL.toLocaleString() + ' ms';
   }
 
-  $('#replay').addEventListener('click', renderAll);
+  // Auto-loop: cold reveal (~0.9 s), warm reveal starts at 0.85 s (~1.7 s total),
+  // hold so the reader can compare, then replay. Pauses off screen or on ⏸.
+  const CYCLE_MS = 1800 + 3200;
+  let loopTimer = null, paused = false, visible = true;
+  function schedule() {
+    if (loopTimer) clearTimeout(loopTimer);
+    loopTimer = setTimeout(() => { loopTimer = null; tickLoop(); }, CYCLE_MS);
+  }
+  function tickLoop() {
+    if (paused || !visible || document.hidden) return;
+    renderAll();
+    schedule();
+  }
+  $('#replay').addEventListener('click', () => { renderAll(); if (!paused) schedule(); });
+  $('#pause').addEventListener('click', () => {
+    paused = !paused;
+    $('#pause').textContent = paused ? '▶ Resume loop' : '⏸ Pause loop';
+    if (!paused) tickLoop();
+  });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && !loopTimer) tickLoop(); });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      visible = entries.some(e => e.isIntersecting);
+      if (visible && !loopTimer) tickLoop();
+    }, { threshold: 0.2 }).observe($('.chart'));
+  }
 
   renderAll();
+  schedule();
 
   // postMessage size
   function postSize() {

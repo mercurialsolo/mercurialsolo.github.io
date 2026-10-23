@@ -80,7 +80,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 @media(max-width:520px){.verdict-box{grid-template-columns:1fr}}
 .verdict-card{background:#08111f;border:1px solid var(--line);border-radius:8px;padding:10px 12px}
 .verdict-card .label{font-size:9.5px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:3px}
-.verdict-card .out{font-size:12.5px;font-weight:600}
+.verdict-card .out{font-size:12.5px;font-weight:600;min-height:3.6em}
 .verdict-card.bad{border-left:3px solid var(--bad)}
 .verdict-card.bad .label{color:#fca5a5}
 .verdict-card.good{border-left:3px solid var(--good)}
@@ -100,7 +100,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 <div class="wrap">
 
   <h1>Pre-gate moments</h1>
-  <div class="sub">Three failure modes that live upstream of <code>speech_final</code>. Headphones on; the audio is the point.</div>
+  <div class="sub">Three failure modes that live upstream of <code>speech_final</code>. The scenarios play through on their own, silently; press <b>▶ Play with sound</b> to hear one (browsers only allow audio after a click).</div>
 
   <div class="tabs" id="tabs">
     <button class="tab on" data-demo="semantic">Semantic turn detection</button>
@@ -143,18 +143,20 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     </div>
 
     <div class="controls">
-      <button class="btn" id="play">▶ Play scenario</button>
+      <button class="btn" id="play">▶ Play with sound</button>
       <button class="btn stop" id="stop">Stop</button>
+      <span class="note" id="autoNote" style="margin:0"></span>
     </div>
 
-    <div class="verdict-box" id="verdictBox" style="display:none">
+    <!-- always rendered so the iframe height does not jump mid-run -->
+    <div class="verdict-box" id="verdictBox">
       <div class="verdict-card bad">
         <div class="label">VAD-only result</div>
-        <div class="out" id="vadOut"></div>
+        <div class="out" id="vadOut">…</div>
       </div>
       <div class="verdict-card good">
         <div class="label">Semantic turn result</div>
-        <div class="out" id="smartOut"></div>
+        <div class="out" id="smartOut">…</div>
       </div>
     </div>
 
@@ -171,7 +173,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
   const SCENARIOS = {
     semantic: {
       title: 'Semantic turn detection',
-      desc: 'Caller is mid-thought with disfluencies. VAD-only treats the first 800 ms of silence as turn-final. A semantic classifier reads the trailing words ("uhm", "think") and holds.',
+      desc: 'The caller is mid-thought and pausing. VAD-only treats the first 800 ms of silence as the end of the turn. A semantic classifier reads the trailing words ("uhm", "think") and holds.',
       showB: false,
       // segments are spoken in order; pauses produce real silence
       // Each segment: { kind: 'speak' | 'pause', text?, durMs }
@@ -203,7 +205,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 
     bargein: {
       title: 'Barge-in vs backchannel',
-      desc: 'Agent is rattling off a list. The caller says "mhm" (acknowledgment) and then "wait, what about Cigna?" (real interrupt). A naive system flushes on both; a smart system flushes only on the real interrupt.',
+      desc: 'The agent is reading out a list of insurers. The caller says "mhm" (acknowledgment) and then "wait, what about Humana?" (a real interrupt). A naive system flushes on both; a smart one flushes only on the real interrupt.',
       showB: true,
       bRole: 'Agent',
       segs: [
@@ -211,7 +213,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
         { kind:'speak', text:'mhm', durMs:400, who:'caller', overlap:true },
         { kind:'speak', text:'United Healthcare, Cigna,', durMs:1800, who:'agent' },
         { kind:'pause', durMs:120, label:'gap' },
-        { kind:'speak', text:'wait, what about Aetna?', durMs:1700, who:'caller', overlap:true },
+        { kind:'speak', text:'wait, what about Humana?', durMs:1700, who:'caller', overlap:true },
       ],
       events: {
         vad: [
@@ -227,7 +229,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
         vad: 'Agent stops speaking on "mhm". Stutters and restarts. The caller has to repeat the question.',
         smart: 'Agent ignores the "mhm" backchannel, continues. Flushes cleanly on the "wait" interrupt and answers the real question.',
       },
-      note: 'A backchannel ("mhm", "yeah", "got it") is acknowledgment, not interrupt. The framework cannot tell the difference acoustically — it needs the agent to classify intent on the partial transcript before flushing TTS playout.'
+      note: 'A backchannel ("mhm", "yeah", "got it") is acknowledgment, not interrupt. The framework cannot tell the difference acoustically; it needs the agent to classify intent on the partial transcript before flushing TTS playout.'
     },
 
     multispeaker: {
@@ -288,8 +290,14 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     return m || pool[Math.min(1, pool.length - 1)];
   }
 
+  // Silent mode never touches speechSynthesis: Chrome refuses speak() without a
+  // click, and a refused utterance never fires onend, so the run would hang on
+  // maxMs per segment. Time the visuals off the scenario's durMs instead.
+  let muted = true;
+
   function speak(text, opts={}) {
     return new Promise(resolve => {
+      if (muted) { setTimeout(resolve, opts.visualMs || 1000); return; }
       if (!('speechSynthesis' in window)) { setTimeout(resolve, opts.maxMs || 1500); return; }
       try { speechSynthesis.cancel(); } catch(e){}
       const u = new SpeechSynthesisUtterance(text);
@@ -337,8 +345,9 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     // Pre-render timeline tracks with segments
     renderTracks(scn);
 
-    // hide verdict
-    $('#verdictBox').style.display = 'none';
+    // blank the verdict cards (kept in layout so the height does not jump)
+    $('#vadOut').textContent = '…';
+    $('#smartOut').textContent = '…';
     $('#demoNote').textContent = scn.note;
   }
 
@@ -408,7 +417,8 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     // reset reveal state
     $$('#textA .word, #textB .word').forEach(w => w.classList.remove('spoken'));
     $$('#trackVad .mark, #trackSmart .mark').forEach(m => m.classList.remove('shown'));
-    $('#verdictBox').style.display = 'none';
+    $('#vadOut').textContent = '…';
+    $('#smartOut').textContent = '…';
     $('#phVad').style.display = 'block';
     $('#phSmart').style.display = 'block';
 
@@ -433,7 +443,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 
     // Walk segments in order
     for (let i = 0; i < scn.segs.length; i++) {
-      if (me.abort) { cancelSpeech(); playheadActive = false; return cleanup(); }
+      if (me.abort) { cancelSpeech(); playheadActive = false; cleanup(); return false; }
       const s = scn.segs[i];
       const who = (s.who === 'agent') ? 'agent' : 'caller';
       const avatarSel = who === 'agent' ? '#avatarB' : '#avatarA';
@@ -446,9 +456,11 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 
         document.querySelector(avatarSel).classList.add('speaking');
         await speak(s.text, {
-          who, rate: 1.0, pitch: who === 'agent' ? 1.15 : (s.speakerVariant === 'B' ? 1.05 : 0.85),
+          // pitch close to 1.0 on both sides; 0.85 / 1.15 made the synth voices sound robotic
+          who, rate: 1.0, pitch: who === 'agent' ? 1.05 : (s.speakerVariant === 'B' ? 1.0 : 0.95),
           speakerVariant: s.speakerVariant,
           maxMs: s.durMs + 1500,
+          visualMs: s.durMs,
         });
         document.querySelector(avatarSel).classList.remove('speaking');
         elapsed = performance.now() - startWall;
@@ -461,17 +473,61 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     playheadActive = false;
     $('#phVad').style.display = 'none';
     $('#phSmart').style.display = 'none';
+    if (me.abort) { cleanup(); return false; }
 
     // show verdict
     $('#vadOut').textContent = scn.verdict.vad;
     $('#smartOut').textContent = scn.verdict.smart;
-    $('#verdictBox').style.display = 'grid';
-    if (window.innerWidth <= 520) $('#verdictBox').style.display = 'block';
 
     cleanup();
+    return true;
     function cleanup() {
       document.querySelectorAll('.avatar').forEach(a => a.classList.remove('speaking'));
     }
+  }
+
+  // ============================================================
+  // Silent auto-run: walk all three scenarios once when the panel is on
+  // screen, switching tabs between them. Any click by the reader ends it.
+  // ============================================================
+  const ORDER = ['semantic', 'bargein', 'multispeaker'];
+  let autoRunning = false, autoDone = false, autoAbort = false;
+
+  function selectTab(key) {
+    $$('#tabs .tab').forEach(x => x.classList.toggle('on', x.dataset.demo === key));
+    loadScenario(key);
+  }
+
+  async function autoRun() {
+    if (autoRunning || autoDone) return;
+    autoRunning = true; muted = true;
+    $('#autoNote').textContent = 'playing silently';
+    for (const key of ORDER) {
+      if (autoAbort) break;
+      selectTab(key);
+      await sleep(600);
+      if (autoAbort) break;
+      const finished = await play();
+      if (autoAbort || !finished) break;
+      await sleep(2600); // hold the verdicts
+    }
+    autoRunning = false; autoDone = true;
+    if (!autoAbort) { $('#autoNote').textContent = ''; selectTab('semantic'); }
+  }
+
+  function endAutoRun() {
+    autoAbort = true; autoDone = true;
+    if (activeRun) activeRun.abort = true;
+    $('#autoNote').textContent = '';
+  }
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) { io.disconnect(); autoRun(); }
+    }, { threshold: 0.35 });
+    io.observe($('#demo'));
+  } else {
+    setTimeout(autoRun, 800);
   }
 
   function stop() {
@@ -486,14 +542,15 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
   // Wiring
   // ============================================================
   $$('#tabs .tab').forEach(b => b.addEventListener('click', () => {
-    if (activeRun) activeRun.abort = true;
+    endAutoRun();
     cancelSpeech();
     $$('#tabs .tab').forEach(x => x.classList.remove('on'));
     b.classList.add('on');
     loadScenario(b.dataset.demo);
   }));
-  $('#play').addEventListener('click', play);
-  $('#stop').addEventListener('click', stop);
+  // The click is the user activation that lets speechSynthesis run.
+  $('#play').addEventListener('click', () => { endAutoRun(); muted = false; play(); });
+  $('#stop').addEventListener('click', () => { endAutoRun(); stop(); });
 
   loadScenario('semantic');
 

@@ -51,9 +51,8 @@ h1{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
 .speed button{cursor:pointer;padding:4px 9px;font:600 11px system-ui;background:transparent;border:1px solid var(--line-strong);border-radius:999px;color:var(--ink)}
 .speed button.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
 
-/* Result stage — hidden until first call */
-.result{display:none;margin-top:6px}
-.result.show{display:block}
+/* Result stage: always in layout so the iframe height does not jump mid-call */
+.result{display:block;margin-top:6px}
 .result .big-row{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:10px}
 .result .big{font-size:38px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
 .result .big.human{color:#86efac}
@@ -73,8 +72,7 @@ h1{font-size:20px;margin:0 0 4px;letter-spacing:-.01em}
 .wave .ph{position:absolute;top:0;bottom:0;width:2px;background:#fde047;pointer-events:none;display:none}
 
 /* Transcript */
-.transcript{font-size:12px;color:var(--muted);line-height:1.5;max-height:90px;overflow-y:auto;padding:8px 10px;background:#08111f;border-radius:6px;border:1px solid var(--line);margin-top:6px}
-.transcript:empty{display:none}
+.transcript{font-size:12px;color:var(--muted);line-height:1.5;height:90px;overflow-y:auto;padding:8px 10px;background:#08111f;border-radius:6px;border:1px solid var(--line);margin-top:6px}
 .transcript .line{margin:2px 0}
 .transcript .line.caller b{color:var(--caller)}
 .transcript .line.agent b{color:var(--agent)}
@@ -180,7 +178,7 @@ details.dd .body{padding:0 12px 12px}
 <div class="wrap">
 
   <h1>Hear what each stack sounds like</h1>
-  <div class="sub">Pick three settings. Place the call. The dead air between caller and agent is the latency.</div>
+  <div class="sub">Pick a stack, a network and a call pattern, then place the call. The dead air between caller and agent is the latency. The first call runs on its own, silently; press <b>▶ Place the call</b> to hear one (browsers only allow audio after a click).</div>
 
   <div class="row" id="pickProvider">
     <span class="lbl">Stack</span>
@@ -310,11 +308,11 @@ details.dd .body{padding:0 12px 12px}
       turns: [
         { type: 'caller', text: "Hi, I need to reschedule an appointment." },
         { type: 'pipeline' },
-        { type: 'agent',  text: "Of course. What day works?" },
+        { type: 'agent',  text: "Of course, what day works for you?" },
         { type: 'gap',    label: 'human gap (~600 ms)', durMs: 600 },
         { type: 'caller', text: "Thursday afternoon if you have it." },
         { type: 'pipeline' },
-        { type: 'agent',  text: "I have two thirty or four. Which?" },
+        { type: 'agent',  text: "I have two thirty or four o'clock, which do you prefer?" },
       ],
     },
     bargein: {
@@ -326,7 +324,7 @@ details.dd .body{padding:0 12px 12px}
         { type: 'bargein' },
         { type: 'caller', text: "I just have Aetna." },
         { type: 'pipeline' },
-        { type: 'agent',  text: "Aetna is fully covered." },
+        { type: 'agent',  text: "Aetna's covered, you're all set." },
       ],
     },
     noise: {
@@ -336,11 +334,11 @@ details.dd .body{padding:0 12px 12px}
       turns: [
         { type: 'caller', text: "Hi, checking on a prescription refill." },
         { type: 'pipeline' },
-        { type: 'agent',  text: "Sure. Name on the prescription?" },
+        { type: 'agent',  text: "Sure, what's the name on the prescription?" },
         { type: 'gap',    label: 'human gap (~600 ms)', durMs: 600 },
         { type: 'caller', text: "Sarah Chen, S-A-R-A-H." },
         { type: 'pipeline' },
-        { type: 'agent',  text: "Found it. Ready for pickup today." },
+        { type: 'agent',  text: "Found it, that's ready for pickup today." },
       ],
     },
   };
@@ -790,8 +788,14 @@ details.dd .body{padding:0 12px 12px}
     return m || pool[Math.min(1, pool.length - 1)];
   }
 
+  // Silent mode never touches speechSynthesis: Chrome refuses speak() without a
+  // click, and a refused utterance never fires onend, so each segment would
+  // hang for maxMs. Time the visuals off the segment's durMs instead.
+  let muted = true;
+
   function speak(text, opts={}) {
     return new Promise(resolve => {
+      if (muted) { setTimeout(resolve, (opts.visualMs || 1000) * speed); return; }
       if (!('speechSynthesis' in window)) {
         setTimeout(resolve, opts.maxMs || 4000);
         return;
@@ -856,11 +860,11 @@ details.dd .body{padding:0 12px 12px}
     const totalT = timeline.total;
     if (totalT === 0) return;
 
-    $('#result').classList.add('show');
     $('#playhead').style.display = 'block';
     clearTranscript();
+    if (muted) logTranscript('system', 'silent run; press ▶ Place the call to hear it');
 
-    if (flow.background) {
+    if (flow.background && !muted) {
       startBackground();
       logTranscript('system', '… cafe background bed on …');
     }
@@ -884,10 +888,12 @@ details.dd .body{padding:0 12px 12px}
         $('#status').textContent = 'Caller speaking…';
         $('#status').className = 'status';
         logTranscript('caller', seg.text);
+        // pitch stays close to 1.0; 0.85 / 1.15 made the synth voices sound robotic
         const callerSpeech = speak(seg.text, {
-          who: 'caller', pitch: 0.85, rate: 1.0 / speed,
+          who: 'caller', pitch: 0.95, rate: 1.0 / speed,
           volume: flow.background ? 0.95 : 1.0,
           maxMs: Math.max(seg.durMs + 2000, 8000),
+          visualMs: seg.durMs,
         });
         const callerVisual = tick(seg.durMs, cur => setPlayhead(elapsed + cur));
         await Promise.all([callerSpeech, callerVisual]);
@@ -900,9 +906,10 @@ details.dd .body{padding:0 12px 12px}
         const agentText = seg.interrupted ? seg.text.replace(/…$/, '') : seg.text;
         logTranscript('agent', agentText + (seg.interrupted ? ' [interrupted]' : ''));
         const agentSpeech = speak(seg.text, {
-          who: 'agent', pitch: 1.15, rate: 1.0 / speed,
+          who: 'agent', pitch: 1.05, rate: 1.0 / speed,
           volume: flow.background ? 0.95 : 1.0,
           maxMs: Math.max(seg.durMs + 2000, 7000),
+          visualMs: seg.durMs,
         });
         const agentVisual = tick(seg.durMs, cur => setPlayhead(elapsed + cur));
         await Promise.all([
@@ -914,7 +921,7 @@ details.dd .body{padding:0 12px 12px}
         if (me.abort) { cancelSpeech(); return cleanup(); }
       }
       else if (seg.kind === 'silence') {
-        $('#status').textContent = 'Dead air. Pipeline running.';
+        $('#status').textContent = 'Dead air, pipeline running.';
         $('#status').className = 'status silent';
         const segVerdict = verdictOf(seg.durMs);
         $('#clock').className = 'big ' + segVerdict.cls;
@@ -989,7 +996,8 @@ details.dd .body{padding:0 12px 12px}
     speed = +b.dataset.speed;
   }));
 
-  $('#play').addEventListener('click', () => { ensureCtx(); run(); });
+  // The click is the user activation that lets speechSynthesis and AudioContext run.
+  $('#play').addEventListener('click', () => { muted = false; ensureCtx(); run(); });
   $('#stop').addEventListener('click', () => {
     if (activeRun) activeRun.abort = true;
     cancelSpeech();
@@ -1001,6 +1009,23 @@ details.dd .body{padding:0 12px 12px}
 
   resizeCanvas();
   updateUI();
+
+  // One silent run of the default call when the panel scrolls into view, so
+  // the reader sees the dead air without having to press anything.
+  let autoRan = false;
+  function autoRun() {
+    if (autoRan || activeRun) return;
+    autoRan = true; muted = true;
+    run();
+  }
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(entries => {
+      if (entries.some(e => e.isIntersecting)) { io.disconnect(); autoRun(); }
+    }, { threshold: 0.35 });
+    io.observe($('#wave'));
+  } else {
+    setTimeout(autoRun, 800);
+  }
 
   // Auto-size iframe to fit content
   function postSize() {

@@ -48,7 +48,12 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 .pipeline .step.endpoint{flex:0 0 auto;color:var(--caller);font-size:14px;align-self:center;padding:0 2px;font-weight:300}
 .pipeline .step.caller{color:var(--caller);flex:0 0 38px}
 .pipeline .step.agent{color:var(--agent);flex:0 0 38px}
-.pipeline .step.boxed{background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3)}
+.pipeline .step.boxed{background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.3);transition:background .2s,border-color .2s,box-shadow .2s}
+.pipeline .step.boxed.live{background:rgba(34,211,238,.3);border-color:var(--framework);box-shadow:0 0 0 1px var(--framework)}
+.pipeline .step.caller.live,.pipeline .step.agent.live{text-shadow:0 0 8px currentColor}
+.pipeline .step .ms{display:block;font-size:9px;color:var(--framework);font-weight:700;margin-top:2px;min-height:11px;opacity:0;transition:opacity .2s}
+.pipeline .step.live .ms{opacity:1}
+.flow-note{font-size:10.5px;color:var(--muted);margin:4px 0 0;min-height:15px}
 
 .framework-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
 .framework-meta .tag{font-size:10.5px;color:var(--muted);padding:3px 8px;background:#08111f;border:1px dashed var(--line-strong);border-radius:999px}
@@ -141,32 +146,33 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
   <!-- FRAMEWORK LAYER (with pipeline) -->
   <div class="layer framework">
     <span class="badge framework">Framework</span>
-    <div class="ttl">The real-time turn loop <span class="meta">— mechanism only, policy plugs in from above</span></div>
+    <div class="ttl">The real-time turn loop <span class="meta">(mechanism only; policy plugs in from above)</span></div>
     <div class="pipeline">
-      <div class="step caller">Caller<span class="stt">in</span></div>
+      <div class="step caller" data-ms="speaks">Caller<span class="stt">in</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step boxed">AEC + VAD<span class="stt">echo · voice</span></div>
+      <div class="step boxed" data-ms="~20 ms">AEC + VAD<span class="stt">echo · voice</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step boxed">STT<span class="stt">interims</span></div>
+      <div class="step boxed" data-ms="200 ms">STT<span class="stt">interims</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step boxed">Dialog<span class="stt">turn + spec</span></div>
+      <div class="step boxed" data-ms="15 ms">Dialog<span class="stt">turn + spec</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step boxed">LLM<span class="stt">+ tools</span></div>
+      <div class="step boxed" data-ms="900 ms cold">LLM<span class="stt">+ tools</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step boxed">TTS<span class="stt">streamed</span></div>
+      <div class="step boxed" data-ms="250 ms">TTS<span class="stt">streamed</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step boxed">Transport<span class="stt">WebRTC/SIP</span></div>
+      <div class="step boxed" data-ms="30 ms">Transport<span class="stt">WebRTC/SIP</span><span class="ms"></span></div>
       <div class="step endpoint">▶</div>
-      <div class="step agent">Caller<span class="stt">out</span></div>
+      <div class="step agent" data-ms="hears">Caller<span class="stt">out</span><span class="ms"></span></div>
     </div>
+    <div class="flow-note" id="flowNote">One turn moving through the loop; the dwell on each stage is proportional to its cold-path latency.</div>
     <div class="framework-meta">
-      <span class="tag"><b>Barge-in</b> · transport-level flush, &lt;20 ms cancel</span>
+      <span class="tag"><b>Barge-in</b> · arm on speech start, confirm on transcript, then flush</span>
       <span class="tag"><b>Endpointing</b> · adaptive per slot kind</span>
       <span class="tag"><b>Speculation</b> · fire LLM/tools on stable interim</span>
       <span class="tag"><b>Confirmation hook</b> · regex fast-path, LLM fallback</span>
       <span class="tag"><b>Safety hook</b> · pre-LLM input + post-LLM output filters, ~10 ms · rules from agent</span>
     </div>
-    <div class="note">The framework should be the most swappable layer; the hooks above run under the cert-gate budget without stalling audio. Business logic in here = your moat coupled to a replaceable component.</div>
+    <div class="note">The framework should be the most swappable layer; the hooks above run under the cert-gate budget without stalling audio. Business logic in here couples your moat to a replaceable component.</div>
   </div>
 
   <div class="arrows" aria-hidden="true">↓ &nbsp; ↓ &nbsp; ↓</div>
@@ -232,6 +238,40 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
   postSize();
   window.addEventListener('load', postSize);
   new ResizeObserver(postSize).observe(document.body);
+
+  // Auto-playing turn: light each pipeline stage in order, dwell proportional
+  // to its cold-path latency (scaled up so the fast stages are visible),
+  // then loop. Pauses while the diagram is off screen or hovered.
+  const steps = Array.from(document.querySelectorAll('.pipeline .step:not(.endpoint)'));
+  const DWELL = [900, 350, 500, 300, 1400, 550, 350, 900]; // caller, aec, stt, dialog, llm, tts, transport, caller-out
+  const LOOP_GAP = 1200;
+  let idx = -1, timer = null, visible = true, hovered = false;
+
+  function clear() { steps.forEach(s => s.classList.remove('live')); }
+  function advance() {
+    timer = null;
+    if (!visible || hovered || document.hidden) return;
+    clear();
+    idx = (idx + 1) % steps.length;
+    const s = steps[idx];
+    s.classList.add('live');
+    s.querySelector('.ms').textContent = s.dataset.ms || '';
+    const wait = DWELL[idx] + (idx === steps.length - 1 ? LOOP_GAP : 0);
+    timer = setTimeout(advance, wait);
+  }
+  function resume() { if (!timer) advance(); }
+
+  const pipe = document.querySelector('.pipeline');
+  pipe.addEventListener('mouseenter', () => { hovered = true; });
+  pipe.addEventListener('mouseleave', () => { hovered = false; resume(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) resume(); });
+  if ('IntersectionObserver' in window) {
+    new IntersectionObserver(entries => {
+      visible = entries.some(e => e.isIntersecting);
+      if (visible) resume();
+    }, { threshold: 0.2 }).observe(pipe);
+  }
+  advance();
 })();
 </script>
 </body>

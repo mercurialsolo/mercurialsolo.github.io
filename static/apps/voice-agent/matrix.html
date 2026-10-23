@@ -115,7 +115,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
   <div class="principle">
     <div class="card f">
       <h4><span class="n">1</span>Framework</h4>
-      <p>Universal across all voice agents and latency-critical. Owns the <b>verb</b> — the real-time turn loop.</p>
+      <p>Universal across all voice agents and latency-critical. Owns the <b>verb</b>: the real-time turn loop.</p>
     </div>
     <div class="card i">
       <h4><span class="n">2</span>Infrastructure</h4>
@@ -123,7 +123,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     </div>
     <div class="card a">
       <h4><span class="n">3</span>Agent-specific</h4>
-      <p>Where you differentiate — domain logic, knowledge, behavior, policy. Owns the <b>what/which</b>.</p>
+      <p>Where you differentiate: domain logic, knowledge, behavior, policy. Owns the <b>what/which</b>.</p>
     </div>
   </div>
 
@@ -148,7 +148,7 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
 
   <div class="cross">
     <h2>Cross-cutting concerns</h2>
-    <div class="lead">Four concerns don't live in any single bucket — they audit all three. Forced into one column they get under-resourced, which is exactly how voice agents ship sounding bad.</div>
+    <div class="lead">Four concerns don't live in any single bucket; they audit all three. Forced into one column they get under-resourced, which is how voice agents ship sounding bad.</div>
 
     <div class="crow head">
       <div class="ccname">Concern</div>
@@ -200,8 +200,8 @@ h1{font-size:18px;margin:0 0 4px;letter-spacing:-.01em}
     ['Barge-in / interruption',                'primary', null,      'partial', 'Stop playout in ms, flush buffers. Agent decides if a backchannel ("mhm") counts as interrupt.'],
     ['STT / TTS streaming orchestration',      'primary', null,      null,      'The core real-time event loop.'],
     ['Transport (WebRTC / SIP / PSTN)',        'primary', 'partial', null,      'Framework abstracts the protocol; infra hosts the media servers.'],
-    ['AEC — WebRTC topology',                  'primary', null,      null,      'Commodity WebRTC AEC3 via transport/SDK; runs device-side. You do not build it.'],
-    ['AEC — PSTN topology',                    'partial', 'partial', null,      'No client AEC; agent must subtract its own TTS server-side. A DSP stage you own.'],
+    ['AEC (WebRTC topology)',                  'primary', null,      null,      'Commodity WebRTC AEC3 via transport/SDK; runs device-side. You do not build it.'],
+    ['AEC (PSTN topology)',                    'partial', 'partial', null,      'No client AEC; agent must subtract its own TTS server-side. A DSP stage you own.'],
     ['Noise suppression / jitter buffer',      'partial', 'partial', null,      'Mostly framework/SDK; jitter buffer is a tunable latency knob at transport.'],
     ['Dialog state / turn management',         'primary', null,      'partial', 'Mechanism in framework; flow design is yours.'],
     ['Model serving / inference hosting',      null,      'primary', null,      'GPU, autoscaling, colocation for latency.'],
