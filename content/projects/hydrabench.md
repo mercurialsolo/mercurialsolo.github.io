@@ -3,11 +3,21 @@ title: "HydraBench: Agent Infrastructure Resilience"
 date: 2026-02-23T00:00:00
 author: mercurialsolo
 tags: [ai, agents, benchmarks, infrastructure, security]
-summary: "23 scenarios, 4 frameworks, 460 runs. HydraBench tests what most agent benchmarks ignore: does your infrastructure survive crashes, contain secrets, deliver handoffs, enforce permissions, and control cost?"
+summary: "23 scenarios, 5 claims, 345 measured runs on OpenHydra (460 planned across 4 frameworks). HydraBench tests what most agent benchmarks ignore: does your infrastructure survive crashes, contain secrets, deliver handoffs, enforce permissions, and control cost?"
 description: "An open benchmark for agent infrastructure resilience. Tests crash recovery, secret containment, handoff reliability, channel security, and cost control across OpenHydra, LangGraph, CrewAI, and bare agents."
 ShowToc: true
 TocOpen: true
 ---
+
+> **Correction, 28 October 2026.** The leaderboard and the "460 runs" below were produced in February by a
+> generator script (a hand-written capability matrix plus Gaussian noise), not by running the harness.
+> The harness was first run on 27 October 2026: 115 runs on OpenHydra. A real kill on 28 October showed
+> the engine could not recover an interrupted workflow (crash recovery 32.5); `recover_workflow` was
+> added the same night (95). Cost control measures 40 in every real pass: the engine has no
+> workflow-level spend cap, step limit or timeout. LangGraph, CrewAI and the bare agent have not been
+> run; their adapters are scripted. Measured files: `bench/results/real-openhydra-2026-10-27.json`,
+> `-2026-10-28-v1.1.json`, `-2026-10-28-v1.2.json` in the openhydra repo. The generated numbers stay
+> on this page, labelled, until the interactive leaderboard is rebuilt from the measured files.
 
 Most agent benchmarks measure intelligence: can the agent solve a coding problem, answer a question, complete a task? HydraBench measures something different: can the infrastructure survive when things go wrong?
 
@@ -17,12 +27,12 @@ Most agent benchmarks measure intelligence: can the agent solve a coding problem
     <div class="stat-label">Scenarios tested</div>
   </div>
   <div class="stat">
-    <div class="stat-number">460</div>
-    <div class="stat-label">Total runs</div>
+    <div class="stat-number">345</div>
+    <div class="stat-label">Measured runs, OpenHydra (460 planned)</div>
   </div>
   <div class="stat">
-    <div class="stat-number">4</div>
-    <div class="stat-label">Frameworks compared</div>
+    <div class="stat-number">1 of 4</div>
+    <div class="stat-label">Frameworks run (3 audited from docs)</div>
   </div>
   <div class="stat">
     <div class="stat-number">5</div>
@@ -30,7 +40,7 @@ Most agent benchmarks measure intelligence: can the agent solve a coding problem
   </div>
 </div>
 
-## Leaderboard
+## Leaderboard (generated in February; not measured, see the correction above)
 
 {{< app src="/apps/hydrabench/leaderboard.html" height="680px" title="HydraBench Leaderboard" >}}
 
