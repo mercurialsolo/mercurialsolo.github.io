@@ -26,7 +26,7 @@ description: "Things I'm building and have built"
 | **realstars** | Detect fake GitHub stars using CMU StarScout research — Chrome extension and Claude Code plugin | JavaScript · ⭐ 16 | 2026-04 | [GitHub](https://github.com/mercurialsolo/realstars) |
 | **mantis** | Unified perception-reasoning-action agent for computer use | Python · ⭐ 4 | 2026-04 | [GitHub](https://github.com/mercurialsolo/mantis) · [Site](https://mercurialsolo.github.io/mantis/) |
 | **claude-talk** | Give Claude Code agents a voice — macOS TTS announcements, notifications, and terminal focus switching | Shell | 2026-03 | [GitHub](https://github.com/mercurialsolo/claude-talk) |
-| **openhydra** | Lightweight, local OS for agents | Python · ⭐ 3 | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
+| **openhydra** | Lightweight, local OS for agents | Python · ⭐ 4 | 2026-02 | [GitHub](https://github.com/mercurialsolo/openhydra) |
 | **pitch-timer** | macOS menu bar timer with overlay display, global hotkeys, and network sync | Swift | 2026-01 | [GitHub](https://github.com/mercurialsolo/pitch-timer) |
 | **counsel-mcp** | MCP server for counsel | JavaScript · ⭐ 6 | 2026-01 | [GitHub](https://github.com/mercurialsolo/counsel-mcp) |
 | **cabal-sandbox-python** | Open source project for running Cabal containers | — | 2025-08 | [GitHub](https://github.com/mercurialsolo/cabal-sandbox-python) |
